@@ -1,0 +1,30 @@
+# File binari ed eseguibili
+*.exe
+*.out
+*.app
+*.o
+*.obj
+*.lib
+*.dll
+*.dylib
+
+# Cartelle di build e compilazione
+build/
+bin/
+obj/
+out/
+
+# Configurazioni di IDE ed Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Log e file temporanei
+*.log
+tmp/
+.txt
+.csv
+.json
