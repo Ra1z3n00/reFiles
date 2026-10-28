@@ -24,6 +24,7 @@ enum class MenuMain {
     ESGUI_RINOMINA,
     RIGA_VUOTA,
     ABOUT_ME,
+    CAMBIA_LINGUA,
     CHIUDI
 };
 
@@ -45,3 +46,4 @@ void gestisci_sottomenu_generico(vector<valoriMenu>& menuTarget, const string& t
 void gestisci_menu_punteggiatura();
 void gestisci_menu_parentesi();
 void gestisci_menu_simboli();
+void aggiorna_testi_menu();

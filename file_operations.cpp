@@ -1,4 +1,6 @@
 #include "file_operations.hpp"
+#include "localization.hpp"
+
 
 // --- DEFINIZIONE DELLE VARIABILI DI CONFIGURAZIONE ---
 string estensioneTarget = "txt";
@@ -198,14 +200,14 @@ void applica_rimuovi_simboli(string& nome) {
 // --- GESTIONE PAROLE ED ESTENSIONI ---
 void gestisci_menu_parole() {
     system("cls");
-    cout << BOLD << "=== DEFINISCI PAROLE DA RIMUOVERE ===" << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_DEF_PAROLE") << RESET << endl << endl;
     if (!paroleDaRimuovere.empty()) {
-        cout << "Parole attualmente in lista: ";
+        cout << get_string("MSG_PAROLE_LISTA");
         for (const auto& p : paroleDaRimuovere) cout << "[" << YELLOW << p << RESET << "] ";
         cout << endl << endl;
     }
 
-    cout << "Inserisci le parole separate da spazio (oppure premi Invio per resettare):" << endl << "> ";
+    cout << get_string("PROMPT_INSERISCI_PAROLE") << endl << "> ";
     string linea, parola;
     getline(cin, linea);
 
@@ -220,16 +222,16 @@ void gestisci_menu_parole() {
 
 void gestisci_menu_estensioni_esporta() {
     system("cls");
-    cout << BOLD << "=== DEFINISCI ESTENSIONI DA ESPORTARE ===" << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_DEF_EXT_ESP") << RESET << endl << endl;
     if (!estensioniEsportate.empty()) {
-        cout << "Estensioni attualmente in lista: ";
+        cout << get_string("MSG_EXT_ATTUALI");
         for (const auto& e : estensioniEsportate) cout << "[" << YELLOW << e << RESET << "] ";
         cout << endl << endl;
     } else {
-        cout << "Nessuna estensione impostata (verranno considerate tutte)." << endl << endl;
+        cout << get_string("MSG_NO_EXT") << endl << endl;
     }
 
-    cout << "Inserisci le estensioni separate da spazio (oppure premi Invio per resettare):" << endl << "> ";
+    cout << get_string("PROMPT_INSERISCI_EST") << endl << "> ";
     string linea, ext;
     getline(cin, linea);
 
@@ -245,16 +247,16 @@ void gestisci_menu_estensioni_esporta() {
 
 void gestisci_menu_sottostringhe_esporta() {
     system("cls");
-    cout << BOLD << "=== DEFINISCI SOTTOSTRINGHE DA ESPORTARE ===" << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_DEF_SOTTO_ESP") << RESET << endl << endl;
     if (!sottostringheEsportate.empty()) {
-        cout << "Sottostringhe attualmente in lista: ";
+        cout << get_string("MSG_SOTTO_ATTUALI");
         for (const auto& s : sottostringheEsportate) cout << "[" << YELLOW << s << RESET << "] ";
         cout << endl << endl;
     } else {
-        cout << "Nessuna sottostringa impostata." << endl << endl;
+        cout << get_string("MSG_NO_SOTTO") << endl << endl;
     }
 
-    cout << "Inserisci le parole chiave separate da spazio (oppure premi Invio per resettare):" << endl << "> ";
+    cout << get_string("PROMPT_INSERISCI_SOTTO") << endl << "> ";
     string linea, sottos;
     getline(cin, linea);
 
@@ -269,9 +271,9 @@ void gestisci_menu_sottostringhe_esporta() {
 
 void imposta_estensioni() {
     system("cls");
-    cout << BOLD << "=== DEFINISCI ESTENSIONE TARGET ===" << RESET << endl << endl;
-    cout << "Estensione attuale: " << YELLOW << estensioneTarget << RESET << endl;
-    cout << "Inserisci la nuova estensione (senza punto, es: mp3, pdf, txt, cpp): ";
+    cout << BOLD << get_string("BANNER_DEF_TARGET") << RESET << endl << endl;
+    cout << get_string("MSG_ESTENSIONE_ATTUALE") << YELLOW << estensioneTarget << RESET << endl;
+    cout << get_string("PROMPT_NUOVA_ESTENSIONE");
     cin >> estensioneTarget;
     estensioneOutput = estensioneTarget;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -281,9 +283,9 @@ void imposta_estensioni() {
 
 void sostituisci_estensioni() {
     system("cls");
-    cout << BOLD << "=== DEFINISCI ESTENSIONE OUTPUT ===" << RESET << endl << endl;
-    cout << "Estensione attuale: " << YELLOW << estensioneOutput << RESET << endl;
-    cout << "Inserisci la nuova estensione (senza punto, es: mp3, pdf, txt, cpp): ";
+    cout << BOLD << get_string("BANNER_DEF_OUTPUT") << RESET << endl << endl;
+    cout << get_string("MSG_ESTENSIONE_ATTUALE") << YELLOW << estensioneOutput << RESET << endl;
+    cout << get_string("PROMPT_NUOVA_ESTENSIONE");
     cin >> estensioneOutput;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -294,7 +296,7 @@ void sostituisci_estensioni() {
 void mostra_lista() {
     int pos = 1;
     for (auto& item : subMenu) {
-        if (item.testo != "Esegui" && item.testo != "Torna al menu principale" && item.testo != " ") {
+        if (item.testo != get_string("SUB_ESEGUI") && item.testo != get_string("SUB_INDIETRO") && item.testo != " ") {
             item.decisione = false;
         }
     }
@@ -305,8 +307,8 @@ void mostra_lista() {
 
     while (1) {
         system("cls");
-        cout << BOLD << "=== MOSTRA LISTA: CONFIGURAZIONE FILTRI ===" << RESET << endl << endl;
-        cout << DIM << "Attiva le opzioni con [Invio] e seleziona [Esegui] per visualizzare." << RESET << endl << endl;
+        cout << BOLD << get_string("BANNER_CONFIG_FILTRI") << RESET << endl << endl;
+        cout << DIM << get_string("HINT_ATTIVA_FILTRI") << RESET << endl << endl;
         
         int sceltaMenu = menuScelta(pos, subMenu);
         pos = sceltaMenu;
@@ -341,8 +343,8 @@ void mostra_lista() {
             subMenu.at(4).decisione = !subMenu.at(4).decisione;
             if (subMenu.at(4).decisione) {
                 subMenu.at(0).decisione = false;
-                cout << BOLD << "\n=== DEFINISCI DATA ===" << RESET << endl;
-                cout << "Inserisci la data esatta in formato GG/MM/AAAA: ";
+                cout << BOLD << "\n" << get_string("BANNER_DEF_DATA") << RESET << endl;
+                cout << get_string("PROMPT_INSERISCI_DATA");
                 cin >> dataEsportate;
                 bool find = true;
                 for (int i = 0; i < (int)dataEsportate.size(); i++) {
@@ -351,12 +353,16 @@ void mostra_lista() {
                 }
                 clearBuffer();
                 
-                if (dataEsportate.empty() || to_lowercase(dataEsportate) == "basta" || 
+                if (dataEsportate.empty() || to_lowercase(dataEsportate) == "stop" || 
                     dataEsportate.length() != 10 || dataEsportate[2] != '/' || dataEsportate[5] != '/' || !find) {
                     subMenu.at(4).decisione = false;
                 } else {
-                    cout << "\nScegli il tipo di confronto temporale:" << endl;
-                    dataModalitaEsporta = static_cast<Tempi>(menuScelta(1, 3, "...fino a questa data (<=)", "Data esatta", "Da questa data in poi... (>=)"));
+                    cout << "\n" << get_string("PROMPT_SCELGI_CONFRONTO") << endl;
+                    dataModalitaEsporta = static_cast<Tempi>(menuScelta(1, 3, 
+                        get_string("POPUP_DATA_ESATTA").c_str(), 
+                        get_string("POPUP_FINO_DATA").c_str(), 
+                        get_string("POPUP_DA_DATA").c_str()
+                    ));
                 }
             } else {
                 dataEsportate = "";
@@ -366,16 +372,24 @@ void mostra_lista() {
             subMenu.at(5).decisione = !subMenu.at(5).decisione;
             if (subMenu.at(5).decisione) {
                 subMenu.at(0).decisione = false;
-                cout << BOLD << "\n=== DEFINISCI DIMENSIONE ===" << RESET << endl;
-                cout << "Scegli il tipo di confronto:" << endl;
-                dimTipoEsporta = static_cast<DirezioneDim>(menuScelta(1, 2, "Maggiore o uguale (>=)", "Minore o uguale (<=)"));
+                cout << BOLD << "\n" << get_string("BANNER_DEF_DIM") << RESET << endl;
+                cout << get_string("PROMPT_SCELGI_CONFRONTO") << endl;
+                dimTipoEsporta = static_cast<DirezioneDim>(menuScelta(1, 2, 
+                    get_string("POPUP_MAGGIORE").c_str(), 
+                    get_string("POPUP_MINORE").c_str()
+                ));
                 
-                cout << "\nInserisci il valore numerico: ";
+                cout << "\n" << get_string("PROMPT_VALORE_NUMERICO");
                 cin >> dimValoreEsporta;
                 clearBuffer();
 
-                cout << "\nScegli l'unita di misura:" << endl;
-                int sceltaUnita = menuScelta(1, 4, "Byte (B)", "Kilobyte (KB)", "MegaByte (MB)", "GigaByte (GB)");
+                cout << "\n" << get_string("PROMPT_UNITA_MISURA") << endl;
+                int sceltaUnita = menuScelta(1, 4, 
+                    get_string("POPUP_BYTE").c_str(), 
+                    get_string("POPUP_KB").c_str(), 
+                    get_string("POPUP_MB").c_str(), 
+                    get_string("POPUP_GB").c_str()
+                );
 
                 double moltiplicatore = 1.0;
                 if (sceltaUnita == 2) moltiplicatore = 1024.0;
@@ -397,9 +411,9 @@ void mostra_lista() {
             if (!attivoAlmenoUno) {
                 cout << endl;
                 cout <<           "  ==========================================================================    " << endl;
-                cout << YELLOW << "    [AVVISO] Nessun filtro attivo! Seleziona almeno un criterio o 'Tutto'.    "   << RESET << endl;
+                cout << YELLOW << "    " << get_string("AVVISO_NO_FILTRI") << "    "   << RESET << endl;
                 cout <<           "  ==========================================================================    " << endl;
-                PAUSE("  Premere un tasto per continuare . . . ");
+                PAUSE("  " + get_string("PROMPT_CONTINUA"));
                 continue;
             }
             break;
@@ -580,25 +594,25 @@ void mostra_lista() {
             if (!nomeCompleto.empty() && nomeCompleto[0] == '.') nascosto = true;
             #endif
 
-            info.statoStr = (modificabile ? "Mod." : "Blocc.") + string(nascosto ? " / Nasc." : " / Vis.");
+            info.statoStr = (modificabile ? "Mod." : "Blocc.") + string(nascosto ? " / Nasc." : " / Vis."); // TODO devo pensare come tradurre questo
             fileTrovati.push_back(info);
         }
     } catch (const fs::filesystem_error& e) {
-        cout << RED << "[ERRORE] Impossibile leggere la cartella: " << e.what() << RESET << endl;
+        cout << RED << get_string("ERR_DIR") << e.what() << RESET << endl;
     }
 
     system("cls");
-    cout << BOLD << "=== LISTA FILE E CARTELLA CORRENTE ===" << RESET << endl;
-    cout << "Percorso: " << YELLOW << fs::current_path().string() << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_LISTA_FILE") << RESET << endl;
+    cout << get_string("LABEL_PERCORSO") << YELLOW << fs::current_path().string() << RESET << endl << endl;
 
-    cout << left << setw(60) << "Nome" << "  " 
-         << setw(12) << "Peso" << "  " 
-         << setw(22) << "Ultima Modifica" << "  " 
-         << setw(15) << "Stato" << endl;
+    cout << left << setw(60) << get_string("COL_NOME") << "  " 
+         << setw(12) << get_string("COL_PESO") << "  " 
+         << setw(22) << get_string("COL_ULTIMA_MOD") << "  " 
+         << setw(15) << get_string("COL_STATO") << endl;
     cout << string(113, '-') << endl;
 
     if (fileTrovati.empty()) {
-        cout << YELLOW << left << setw(113) << "  Nessun Risultato trovato con i criteri selezionati." << RESET << endl;
+        cout << YELLOW << left << setw(113) << get_string("MSG_NO_RISULTATI") << RESET << endl;
     } else {
         for (const auto& f : fileTrovati) {
             int realCharCount = 0;
@@ -622,8 +636,8 @@ void mostra_lista() {
     }
 
     cout << string(113, '-') << endl;
-    cout << "Totale elementi filtrati: " << countFiles << " file, " << countDirs << " cartelle." << endl << endl;
-    PAUSE("Premere un tasto per continuare . . . ");
+    cout << get_string("MSG_TOTALE_ELEMENTI") << countFiles << get_string("MSG_FILE_CARTELLE") << countDirs << get_string("MSG_SOLO_CARTELLE") << endl << endl;
+    PAUSE(get_string("PROMPT_CONTINUA"));
 }
 
 string formattaDimensione(uintmax_t sizeBytes) {
@@ -644,8 +658,8 @@ void esporta_lista() {
     while (1) {
         inizioConfig:
         system("cls");
-        cout << BOLD << "=== CONFIGURAZIONE FILTRI ESPORTAZIONE ===" << RESET << endl << endl;
-        cout << DIM << "Gestisci i criteri e seleziona [Esegui] per procedere." << RESET << endl << endl;
+        cout << BOLD << get_string("BANNER_CONFIG_ESPORTAZIONE") << RESET << endl << endl;
+        cout << DIM << get_string("HINT_GESTISCI_CRITERI") << RESET << endl << endl;
         
         int sceltaMenu = menuScelta(pos, subMenu);
         pos = sceltaMenu;
@@ -676,8 +690,8 @@ void esporta_lista() {
             subMenu.at(4).decisione = !subMenu.at(4).decisione;
             if (subMenu.at(4).decisione) {
                 subMenu.at(0).decisione = false;
-                cout << BOLD << "\n=== DEFINISCI DATA ===" << RESET << endl;
-                cout << "Inserisci la data esatta in formato GG/MM/AAAA: ";
+                cout << BOLD << "\n" << get_string("BANNER_DEF_DATA") << RESET << endl;
+                cout << get_string("PROMPT_INSERISCI_DATA");
                 cin >> dataEsportate;
                 bool find = true;
                 for (int i = 0; i < (int)dataEsportate.size(); i++) {
@@ -690,8 +704,12 @@ void esporta_lista() {
                     dataEsportate.length() != 10 || dataEsportate[2] != '/' || dataEsportate[5] != '/' || !find) {
                     subMenu.at(4).decisione = false;
                 } else {
-                    cout << "\nScegli il tipo di confronto temporale:" << endl;
-                    dataModalitaEsporta = static_cast<Tempi>(menuScelta(1, 3, "Data esatta", "...fino a questa data (<=)", "Da questa data in poi... (>=)"));
+                    cout << "\n" << get_string("PROMPT_SCELGI_CONFRONTO") << endl;
+                    dataModalitaEsporta = static_cast<Tempi>(menuScelta(1, 3, 
+                        get_string("POPUP_DATA_ESATTA").c_str(), 
+                        get_string("POPUP_FINO_DATA").c_str(), 
+                        get_string("POPUP_DA_DATA").c_str()
+                    ));
                 }
             } else {
                 dataEsportate = "";
@@ -701,16 +719,24 @@ void esporta_lista() {
             subMenu.at(5).decisione = !subMenu.at(5).decisione;
             if (subMenu.at(5).decisione) {
                 subMenu.at(0).decisione = false;
-                cout << BOLD << "\n=== DEFINISCI DIMENSIONE ===" << RESET << endl;
-                cout << "Scegli il tipo di confronto:" << endl;
-                dimTipoEsporta = static_cast<DirezioneDim>(menuScelta(1, 2, "Maggiore o uguale (>=)", "Minore o uguale (<=)"));
+                cout << BOLD << "\n" << get_string("BANNER_DEF_DIM") << RESET << endl;
+                cout << get_string("PROMPT_SCELGI_CONFRONTO") << endl;
+                dimTipoEsporta = static_cast<DirezioneDim>(menuScelta(1, 2, 
+                    get_string("POPUP_MAGGIORE").c_str(), 
+                    get_string("POPUP_MINORE").c_str()
+                ));
                 
-                cout << "\nInserisci il valore numerico: ";
+                cout << "\n" << get_string("PROMPT_VALORE_NUMERICO");
                 cin >> dimValoreEsporta;
                 clearBuffer();
 
-                cout << "\nScegli l'unita di misura:" << endl;
-                int sceltaUnita = menuScelta(1, 4, "Byte (B)", "Kilobyte (KB)", "MegaByte (MB)", "GigaByte (GB)");
+                cout << "\n" << get_string("PROMPT_UNITA_MISURA") << endl;
+                int sceltaUnita = menuScelta(1, 4, 
+                    get_string("POPUP_BYTE").c_str(), 
+                    get_string("POPUP_KB").c_str(), 
+                    get_string("POPUP_MB").c_str(), 
+                    get_string("POPUP_GB").c_str()
+                );
 
                 double moltiplicatore = 1.0;
                 if (sceltaUnita == 2) moltiplicatore = 1024.0;
@@ -729,16 +755,21 @@ void esporta_lista() {
                 if (item.decisione) { attivoAlmenoUno = true; break; }
             }
             if (!attivoAlmenoUno) {
-                cout << YELLOW << "\n[AVVISO] Nessun filtro attivo! Seleziona almeno un criterio o 'Tutto'." << RESET << endl;
-                PAUSE("Premere un tasto per continuare . . . ");
+                cout << YELLOW << "\n" << get_string("AVVISO_NO_FILTRI") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
                 continue;
             }
             break;
         }
     }
 
-    cout << "\nCome vuoi esportare la lista?" << endl;
-    int sceltaFormato = menuScelta(1, 4, "TXT (Testo semplice)", "CSV (Valori separati da virgola)", "JSON (Formato strutturato)", "Annulla");
+    cout << "\n" << get_string("PROMPT_COME_ESPORTARE") << endl;
+    int sceltaFormato = menuScelta(1, 4, 
+        get_string("POPUP_TXT").c_str(), 
+        get_string("POPUP_CSV").c_str(), 
+        get_string("POPUP_JSON").c_str(), 
+        get_string("POPUP_ANNULLA").c_str()
+    );
 
     if (sceltaFormato == 4) goto inizioConfig;
 
@@ -828,11 +859,10 @@ void esporta_lista() {
 
         if (!incluso) continue;
 
-        string nomeSenzaExt = entry.path().stem().string(); // Nome senza estensione
+        string nomeSenzaExt = entry.path().stem().string();
         uintmax_t sizeBytes = fs::file_size(entry);
-        string dimensioneDinamica = formattaDimensione(sizeBytes); // Calcola KB, MB o GB
+        string dimensioneDinamica = formattaDimensione(sizeBytes);
 
-        // --- ESTRAZIONE ANNO E PULIZIA NOME ---
         string nomePulito = nomeSenzaExt;
         string annoStr = "";
         
@@ -853,15 +883,12 @@ void esporta_lista() {
 
         string rigaFormattata = "";
         if (sceltaFormato == 1) { 
-            // TXT: mantiene il nome pulito con l'anno se presente
             rigaFormattata = nomePulito + (annoStr.empty() ? "" : " (" + annoStr + ")");
         } 
         else if (sceltaFormato == 2) { 
-            // CSV: Nome, Estensione, Anno, Dimensione
             rigaFormattata = "\"" + nomePulito + "\"," + estensione + ",\"" + annoStr + "\"," + dimensioneDinamica;
         } 
         else if (sceltaFormato == 3) { 
-            // JSON: Nome, Estensione, Anno, Dimensione
             if (!primoJson) rigaFormattata += ",\n";
             rigaFormattata += "  {\n    \"nome\": \"" + nomePulito + "\",\n    \"estensione\": \"" + estensione + "\",\n    \"anno\": \"" + annoStr + "\",\n    \"dimensione\": \"" + dimensioneDinamica + "\"\n  }";
             primoJson = false;
@@ -872,12 +899,12 @@ void esporta_lista() {
     }
 
     if (countScelti == 0) {
-        cout << endl << YELLOW << "[AVVISO]: Nessun file trovato con i criteri selezionati. Esportazione annullata." << RESET << endl << endl;
-        PAUSE("Premere un tasto per continuare . . . ");
+        cout << endl << YELLOW << get_string("MSG_ESPORTAZIONE_ANNULLATA") << RESET << endl << endl;
+        PAUSE(get_string("PROMPT_CONTINUA"));
         goto inizioConfig;
     }
 
-    string nome_file_base = "lista_esportata.txt";
+    string nome_file_base = "lista_esportata.txt"; // TODO devo tradurre anche l'output?
     if (sceltaFormato == 2) nome_file_base = "lista_esportata.csv";
     else if (sceltaFormato == 3) nome_file_base = "lista_esportata.json";
 
@@ -885,13 +912,13 @@ void esporta_lista() {
 
     ofstream file(percorsoCompletoFile, ios::trunc);
     if (!file.is_open()) {
-        cout << RED << "[ERRORE]: Impossibile creare il file!" << RESET << endl;
-        PAUSE("Premere un tasto per continuare . . . ");
+        cout << RED << get_string("ERR_MAKE_FILE") << RESET << endl;
+        PAUSE(get_string("PROMPT_CONTINUA"));
         return;
     }
 
     if (sceltaFormato == 2) {
-        file << "NomeFile,Estensione,Anno,Dimensione\n";
+        file << "NomeFile,Estensione,Anno,Dimensione\n"; // TODO devo tradurre anche l'output?
     } else if (sceltaFormato == 3) {
         file << "[\n";
     }
@@ -902,20 +929,20 @@ void esporta_lista() {
 
     file.close();
 
-    cout << endl << GREEN << "[SUCCESSO] " << RESET << "Esportazione completata!" << endl;
-    cout << "File salvato in: " << YELLOW << percorsoCompletoFile.string() << RESET << endl;
-    cout << "Elementi esportati: " << BOLD << countScelti << RESET << endl << endl;
+    cout << endl << GREEN << get_string("POP_SCC") << RESET << get_string("MSG_SUCCESSO_ESPORTAZIONE") << endl;
+    cout << get_string("MSG_FILE_SALVATO") << YELLOW << percorsoCompletoFile.string() << RESET << endl;
+    cout << get_string("MSG_ELEMENTI_ESPORTATI") << BOLD << countScelti << RESET << endl << endl;
     
-    PAUSE("Premere un tasto per continuare . . . ");
+    PAUSE(get_string("PROMPT_CONTINUA"));
 }
 
 // --- RINOMINA BATCH ---
 void esegui_rinomina() {
     if (modAttivi(mainMenu) == 0) {
         cout << endl <<   "  ================================================================  " << endl;
-        cout << YELLOW << "    [AVVISO]: Nessun criterio selezionato. Rinomina annullata.  "     << RESET << endl;
+        cout << YELLOW << "    " << get_string("AVVISO_NO_FILTRI") << "  "     << RESET << endl;
         cout <<           "  ================================================================  " << endl;
-        PAUSE("  Premere un tasto per continuare . . . ");
+        PAUSE("  " + get_string("PROMPT_CONTINUA"));
         return;
     }
 
@@ -985,16 +1012,16 @@ void esegui_rinomina() {
 
     system("cls");
     if (listaModifiche.empty()) {
-        cout << YELLOW << "[AVVISO]: Nessun file verrà modificato (nessun file corrisponde ai criteri o alla target extension)." << RESET << endl << endl;
-        PAUSE("Premere un tasto per continuare . . . ");
+        cout << YELLOW << get_string("MSG_NO_MODIFICHE") << RESET << endl << endl;
+        PAUSE(get_string("PROMPT_CONTINUA"));
         return;
     }
 
-    cout << BOLD << RED << "=== [ATTENZIONE] CONFERMA MODIFICHE BATCH ===" << RESET << endl;
-    cout << "Cartella: " << YELLOW << percorso.string() << RESET << endl;
-    cout << "Verranno modificati " << BOLD << GREEN << listaModifiche.size() << RESET << " file in base alle regole attive:" << endl << endl;
+    cout << BOLD << RED << get_string("BANNER_CONFERMA_BATCH") << RESET << endl;
+    cout << get_string("MSG_CARTELLA") << YELLOW << percorso.string() << RESET << endl;
+    cout << get_string("MSG_VERRANNO_MODIFICATI") << BOLD << GREEN << listaModifiche.size() << RESET << get_string("MSG_FILE_REGOLE_ATTIVE") << endl << endl;
 
-    cout << left << setw(45) << "Nome Originale" << " -> " << setw(45) << "Nuovo Nome" << endl;
+    cout << left << setw(45) << get_string("COL_NOME_ORIGINALE") << " -> " << setw(45) << get_string("COL_NUOVO_NOME") << endl;
     cout << string(95, '-') << endl;
 
     for (const auto& item : listaModifiche) {
@@ -1007,18 +1034,21 @@ void esegui_rinomina() {
     }
 
     cout << string(95, '-') << endl << endl;
-    cout << BOLD << "Sei sicuro di voler procedere con la rinomina effettiva sui file?" << RESET << endl;
+    cout << BOLD << get_string("PROMPT_SICURO_PROCEDERE") << RESET << endl;
 
-    int sceltaConferma = menuScelta(1, 2, "Sì, applica le modifiche", "No, annulla e torna al menu");
-
+    int sceltaConferma = menuScelta(1, 2, 
+        get_string("POPUP_SI_APPLICA").c_str(), 
+        get_string("POPUP_NO_ANNULLA").c_str()
+    );
+    
     if (sceltaConferma == 2) {
-        cout << endl << YELLOW << "[OPERAZIONE ANNULLATA]: Nessun file è stato modificato." << RESET << endl << endl;
-        PAUSE("Premere un tasto per continuare . . . ");
+        cout << endl << YELLOW << get_string("MSG_OPERAZIONE_ANNULLATA") << RESET << endl << endl;
+        PAUSE(get_string("PROMPT_CONTINUA"));
         return;
     }
 
     system("cls");
-    cout << BOLD << "=== ESECUZIONE RINOMINA IN CORSO... ===" << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_ESECUZIONE_RINOMINA") << RESET << endl << endl;
 
     int successi = 0;
     int errori = 0;
@@ -1029,17 +1059,17 @@ void esegui_rinomina() {
             cout << GREEN << "[OK] " << RESET << item.vecchioNomeCompleto << " -> " << GREEN << item.nuovoNomeCompleto << RESET << endl;
             successi++;
         } catch (const fs::filesystem_error& e) {
-            cout << RED << "[ERRORE] " << RESET << item.vecchioNomeCompleto << endl;
+            cout << RED << get_string("POP_ERR") << RESET << item.vecchioNomeCompleto << endl;
             errori++;
         }
     }
 
     cout << endl << string(60, '=') << endl;
-    cout << BOLD << "Operazione completata. File rinominati: " << GREEN << successi << RESET;
-    if (errori > 0) cout << ", Errori: " << RED << errori << RESET;
+    cout << BOLD << get_string("MSG_OPERAZIONE_COMPLETATA") << GREEN << successi << RESET;
+    if (errori > 0) cout << get_string("MSG_ERRORI") << RED << errori << RESET;
     cout << endl << endl;
 
-    PAUSE("Premere un tasto per continuare . . . ");
+    PAUSE(get_string("PROMPT_CONTINUA"));
 }
 
 // --- INFORMATIONS ---
@@ -1057,22 +1087,22 @@ void aboutMe() {
     )" << RESET << endl;
 
     cout << string(60, '=') << endl;
-    cout << BOLD << "                RE(set)_FILES BATCH TOOL" << RESET << endl;
+    cout << BOLD << "                " << get_string("TITLE_ABOUT") << RESET << endl;
     cout << string(60, '=') << endl << endl;
 
-    cout << BOLD << "  [ INFORMAZIONI SOFTWARE ]" << RESET << endl;
-    cout << "  • Versione:       " << GREEN << "v1.0" << RESET << endl;
-    cout << "  • Sviluppatore:   " << YELLOW << "Raizen" << RESET << endl;
-    cout << "  • Licenza:        " << DIM << "MIT Open Source" << RESET << endl << endl;
+    cout << BOLD << "  " << get_string("SECTION_INFO") << RESET << endl;
+    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.0" << RESET << endl;
+    cout << "  " << get_string("INFO_SVILUPPATORE") << YELLOW << "Raizen" << RESET << endl;
+    cout << "  " << get_string("INFO_LICENZA") << DIM << "MIT Open Source" << RESET << endl << endl;
 
-    cout << BOLD << "  [ GUIDA RAPIDA ]" << RESET << endl;
-    cout << "  • " << YELLOW << "[Freccia SU / GIÙ]" << RESET << "     Spostati nel menu" << endl;
-    cout << "  • " << YELLOW << "[INVIO]" << RESET << "                Attiva / Disattiva regola" << endl;
-    cout << "  • " << YELLOW << "[Q]" << RESET << "                    Seleziona / Deseleziona tutto" << endl;
-    cout << "  • " << YELLOW << "[E]" << RESET << "                    Esci dal SottoMenu" << endl;
-    cout << "  • " << YELLOW << "[Esegui Rinomina]" << RESET << "      Applica tutte le regole TRUE in sequenza" << endl;
-    cout << "  • " << YELLOW << "[Esporta lista Files]" << RESET << "  Salva in TXT, CSV o JSON i file attuali" << endl;
+    cout << BOLD << "  " << get_string("SECTION_GUIDA") << RESET << endl;
+    cout << "  " << get_string("GUIDA_1") << endl;
+    cout << "  " << get_string("GUIDA_2") << endl;
+    cout << "  " << get_string("GUIDA_3") << endl;
+    cout << "  " << get_string("GUIDA_4") << endl;
+    cout << "  " << get_string("GUIDA_5") << endl;
+    cout << "  " << get_string("GUIDA_6") << endl;
 
     cout << endl << string(60, '-') << endl;
-    PAUSE("Premi INVIO per tornare al menu principale...");
+    PAUSE(get_string("PROMPT_ABOUT_EXIT"));
 }

@@ -46,3 +46,29 @@ int getch(void) {
     return ch;
 }
 #endif
+
+void PAUSE(const string& testo) {
+    cout << testo << endl;
+    #ifdef _WIN32
+    while (1) {
+        int ch = _getch();
+        if (ch == '\r' || ch == '\n') {
+            break;
+        } else if (ch == 0 || ch == 0xE0) {
+            _getch();
+            continue;
+        }
+    }
+    #else
+    while (1) {
+        int ch = getch();
+        if (ch == '\n' || ch == '\r') {
+            break;
+        } else if (ch == 27) {
+            getch();
+            getch();
+            continue;
+        }
+    }
+    #endif
+}

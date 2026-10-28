@@ -43,6 +43,7 @@ using namespace std;
 void clearBuffer();
 void hide_Input(bool value);
 void hide_Cursor(bool hide);
+void PAUSE(const string& testo);
 
 // --- GESTIONE GETCH CROSS-PLATFORM ---
 #ifdef _WIN32
@@ -53,36 +54,7 @@ void hide_Cursor(bool hide);
     int getch(void);
 #endif
 
-// --- MACRO PAUSA CROSS-PLATFORM ---
-#ifdef _WIN32
-    #define PAUSE(testo) do { \
-        printf("%s\n", testo); \
-        while (1) { \
-            int ch = _getch(); \
-            if (ch == '\r') { \
-                break; \
-            } else if (ch == 0 || ch == 0xE0) { \
-                _getch(); \
-                continue; \
-            } \
-        } \
-    } while(0)
-#else
-    #define PAUSE(testo) do { \
-        printf("%s\n", testo); \
-        while (1) { \
-            int ch = getch(); \
-            if (ch == '\n') { \
-                break; \
-            } else if (ch == 27) { \
-                getch(); \
-                getch(); \
-                continue; \
-            } \
-        } \
-    } while(0)
-#endif
-
+ 
 // --- TEMPLATE UTILITY PER UTF-8 ---
 template<typename tipo>
 int maxStringUTF8(const vector<tipo>& menu) {

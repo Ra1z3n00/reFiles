@@ -1,15 +1,26 @@
 #include "utilities.hpp"
 #include "menu.hpp"
 #include "file_operations.hpp"
+#include "localization.hpp"
 
-// Comando di compilazione consigliato:
-// g++ main.cpp menu.cpp file_operations.cpp utilities.cpp -o reFiles -std=c++20
+// Comando di compilazione aggiornato:
+// g++ main.cpp menu.cpp file_operations.cpp utilities.cpp localization.cpp -o reFiles -std=c++20
+
 
 int main() {
+    
+    #ifdef _WIN32
+        SetConsoleOutputCP(CP_UTF8);
+        SetConsoleCP(CP_UTF8);
+    #endif
+
     system("cls");
     int pos = 1;
     cout << HIDE_CURSOR;
     cout << boolalpha;
+
+    // Inizializza i testi della lingua predefinita all'avvio
+    aggiorna_testi_menu();
 
     while (1) {
         cout << fs::current_path().string() << endl << endl;
@@ -62,6 +73,14 @@ int main() {
                 break;
             case MenuMain::ABOUT_ME:
                 aboutMe();
+                break;
+            case MenuMain::CAMBIA_LINGUA: // <--- GESTIONE CAMBIO LINGUA NEL MAIN
+                if (ottieni_lingua_corrente() == Lingua::Italiano) {
+                    imposta_lingua(Lingua::Inglese);
+                } else {
+                    imposta_lingua(Lingua::Italiano);
+                }
+                aggiorna_testi_menu(); // Ricarica le etichette nel nuovo idioma
                 break;
             case MenuMain::CHIUDI:
                 system("cls");

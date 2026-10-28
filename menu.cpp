@@ -1,4 +1,5 @@
 #include "menu.hpp"
+#include "localization.hpp"
 
 // --- DEFINIZIONE DEI VETTORI DI MENU ---
 vector<valoriMenu> mainMenu {
@@ -18,7 +19,8 @@ vector<valoriMenu> mainMenu {
     {"[ ESEGUI RINOMINA ]",        false}, // 14
     {" ",                          false}, // 15
     {"About Me",                   false}, // 16
-    {"Chiudi",                     false}  // 17
+    {"Lingua: Italiano",           false}, // 17
+    {"Chiudi",                     false}  // 18
 };
 
 vector<valoriMenu> subMenu {
@@ -127,15 +129,15 @@ void gestisci_sottomenu_generico(vector<valoriMenu>& menuTarget, const string& t
 
 // --- SOTTOMENU SPECIFICI SEMPLIFICATI ---
 void gestisci_menu_punteggiatura() {
-    gestisci_sottomenu_generico(menuPunteggiatura, "=== CONFIGURAZIONE PUNTEGGIATURA ===", 1);
+    gestisci_sottomenu_generico(menuPunteggiatura, get_string("BANNER_PUNTEGGIATURA"), 1);
 }
 
 void gestisci_menu_parentesi() {
-    gestisci_sottomenu_generico(menuParentesi, "=== CONFIGURAZIONE PARENTESI ===", 2);
+    gestisci_sottomenu_generico(menuParentesi, get_string("BANNER_PARENTESI"), 2);
 }
 
 void gestisci_menu_simboli() {
-    gestisci_sottomenu_generico(menuSimboli, "=== CONFIGURAZIONE SIMBOLI ===", 6);
+    gestisci_sottomenu_generico(menuSimboli, get_string("BANNER_SIMBOLI"), 6);
 }
 
 // --- FUNZIONE MENU INTERATTIVO PER VECTOR ---
@@ -171,7 +173,7 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                     cout << " = [" << (menu.at(i - 1).decisione ? GREEN : RED) << menu.at(i - 1).decisione << RESET << "]";
                     cout << ((menu.at(i - 1).decisione) ? " " : "");
                 } else if (i == 11) {
-                    cout << " =          (Tutti i file: " << YELLOW << estensioneTarget << RESET << ")"; // Nota: estensioneTarget è definita in file_operations
+                    cout << get_string("LBL_TUTTI_FILE") << YELLOW << estensioneTarget << RESET << ")"; // Nota: estensioneTarget è definita in file_operations
                 }
             } 
             else if (&menu == &menuPunteggiatura || &menu == &menuParentesi || &menu == &menuSimboli) {
@@ -191,15 +193,15 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
             if (&menu == &mainMenu) {
                 if (i == 2) {
                     count = modAttivi(menuPunteggiatura);
-                    cout << "  (" << count << ((count == 1) ? " elemento attivo)" : " elementi attivi)");
+                    cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
                 } else if (i == 3) {
                     count = modAttivi(menuParentesi);
-                    cout << "  (" << count << ((count == 1) ? " elemento attivo)" : " elementi attivi)");
+                    cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
                 } else if (i == 7) {
                     count = modAttivi(menuSimboli);
-                    cout << "  (" << count << ((count == 1) ? " elemento attivo)" : " elementi attivi)");
+                    cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
                 } else if (i == 12) {
-                    cout << "  (Converti in: " << YELLOW << estensioneOutput << RESET << ")";
+                    cout << get_string("LBL_CONVERTI_IN") << YELLOW << estensioneOutput << RESET << ")";
                 }
             }
 
@@ -209,7 +211,7 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
         tasto = getch();
 
         if (tasto == 'e' || tasto == 'E') {
-            if (&menu == &menuPunteggiatura || &menu == &menuParentesi || &menu == &menuSimboli) {
+            if (&menu == &menuPunteggiatura || &menu == &menuParentesi || &menu == &menuSimboli || &menu == &subMenu) {
                 return menu.size();
             }
         }
@@ -310,3 +312,96 @@ void mutuaEsclusione(int scelta) {
         mainMenu.at(3).decisione = false;
     }
 }
+
+void aggiorna_testi_menu() {
+    // Aggiornamento Main Menu
+    mainMenu.at(0).testo = get_string("MENU_MOSTRA");
+    mainMenu.at(1).testo = get_string("MENU_PUNTEGGIATURA");
+    mainMenu.at(2).testo = get_string("MENU_PARENTESI");
+    mainMenu.at(3).testo = get_string("MENU_SPAZI");
+    mainMenu.at(4).testo = get_string("MENU_SPAZI_RIPETUTI");
+    mainMenu.at(5).testo = get_string("MENU_NUMERI");
+    mainMenu.at(6).testo = get_string("MENU_SIMBOLI");
+    mainMenu.at(7).testo = get_string("MENU_MAIUSCOLE");
+    mainMenu.at(8).testo = get_string("MENU_MINUSCOLE");
+    mainMenu.at(9).testo = get_string("MENU_PAROLE");
+    mainMenu.at(10).testo = get_string("MENU_DEF_EXT");
+    mainMenu.at(11).testo = get_string("MENU_SOS_EXT");
+    mainMenu.at(12).testo = get_string("MENU_ESPORTA");
+    mainMenu.at(13).testo = get_string("MENU_ESGUI");
+    // Indice 14 è la riga vuota " "
+    mainMenu.at(15).testo = get_string("MENU_ABOUT");
+    mainMenu.at(16).testo = get_string("MENU_LINGUA");
+    mainMenu.at(17).testo = get_string("MENU_CHIUDI");
+
+    // Aggiornamento SubMenu (Filtri)
+    subMenu.at(0).testo = get_string("SUB_TUTTO");
+    subMenu.at(1).testo = get_string("SUB_ESTENSIONI");
+    subMenu.at(2).testo = get_string("SUB_SOTTOSTRINGHE");
+    subMenu.at(3).testo = get_string("SUB_CIFRE");
+    subMenu.at(4).testo = get_string("SUB_DATA");
+    subMenu.at(5).testo = get_string("SUB_DIMENSIONE");
+    subMenu.at(6).testo = get_string("SUB_ESEGUI");
+    // Indice 7 è la riga vuota " "
+    subMenu.at(8).testo = get_string("SUB_INDIETRO");
+
+    // Aggiornamento Menu Punteggiatura
+    menuPunteggiatura.at(0).testo = get_string("PUNT_VIRGOLA");
+    menuPunteggiatura.at(1).testo = get_string("PUNT_PUNTO_VIRGOLA");
+    menuPunteggiatura.at(2).testo = get_string("PUNT_PUNTO");
+    menuPunteggiatura.at(3).testo = get_string("PUNT_DUE_PUNTI");
+    menuPunteggiatura.at(4).testo = get_string("PUNT_TRATTINO");
+    menuPunteggiatura.at(5).testo = get_string("PUNT_UNDERSCORE");
+    menuPunteggiatura.at(6).testo = get_string("PUNT_ESCLAMATIVO");
+    menuPunteggiatura.at(7).testo = get_string("PUNT_INTERROGATIVO");
+    menuPunteggiatura.at(8).testo = get_string("PUNT_APOSTROFO");
+    menuPunteggiatura.at(9).testo = get_string("PUNT_CIRCONFLESSO");
+    menuPunteggiatura.at(10).testo = get_string("PUNT_VIRGOLETTE");
+    menuPunteggiatura.at(11).testo = get_string("OP_CONSERVA_RIPETUTO");
+    menuPunteggiatura.at(12).testo = get_string("OP_SOSTITUISCI_SPAZIO");
+    // Indice 13 è " "
+    menuPunteggiatura.at(14).testo = get_string("SUB_INDIETRO");
+
+    // Aggiornamento Menu Parentesi
+    menuParentesi.at(0).testo = get_string("PAR_ANG_SX");
+    menuParentesi.at(1).testo = get_string("PAR_ANG_DX");
+    menuParentesi.at(2).testo = get_string("PAR_ROT_SX");
+    menuParentesi.at(3).testo = get_string("PAR_ROT_DX");
+    menuParentesi.at(4).testo = get_string("PAR_QUAD_SX");
+    menuParentesi.at(5).testo = get_string("PAR_QUAD_DX");
+    menuParentesi.at(6).testo = get_string("PAR_GRAF_SX");
+    menuParentesi.at(7).testo = get_string("PAR_GRAF_DX");
+    menuParentesi.at(8).testo = get_string("OP_CONSERVA_RIPETUTO");
+    menuParentesi.at(9).testo = get_string("OP_SOSTITUISCI_SPAZIO");
+    // Indice 10 è " "
+    menuParentesi.at(11).testo = get_string("SUB_INDIETRO");
+
+    // Aggiornamento Menu Simboli
+    menuSimboli.at(0).testo = get_string("SIMB_TILDE");
+    menuSimboli.at(1).testo = get_string("SIMB_BACKSLASH");
+    menuSimboli.at(2).testo = get_string("SIMB_STERLINA");
+    menuSimboli.at(3).testo = get_string("SIMB_DOLLARO");
+    menuSimboli.at(4).testo = get_string("SIMB_PERCENTUALE");
+    menuSimboli.at(5).testo = get_string("SIMB_AMPERSAND");
+    menuSimboli.at(6).testo = get_string("SIMB_DIVISO");
+    menuSimboli.at(7).testo = get_string("SIMB_UGUALE");
+    menuSimboli.at(8).testo = get_string("SIMB_SOMMA");
+    menuSimboli.at(9).testo = get_string("SIMB_MOLTIPLICAZIONE");
+    menuSimboli.at(10).testo = get_string("SIMB_E_ACC_GRAVE");
+    menuSimboli.at(11).testo = get_string("SIMB_E_ACC_ACUTA");
+    menuSimboli.at(12).testo = get_string("SIMB_CHIOCCIOLA");
+    menuSimboli.at(13).testo = get_string("SIMB_C_CEDIGLIA");
+    menuSimboli.at(14).testo = get_string("SIMB_O_ACC_GRAVE");
+    menuSimboli.at(15).testo = get_string("SIMB_A_ACC_GRAVE");
+    menuSimboli.at(16).testo = get_string("SIMB_GRADO");
+    menuSimboli.at(17).testo = get_string("SIMB_CANCELLETTO");
+    menuSimboli.at(18).testo = get_string("SIMB_U_ACC_GRAVE");
+    menuSimboli.at(19).testo = get_string("SIMB_PARAGRAFO");
+    menuSimboli.at(20).testo = get_string("SIMB_I_ACC_GRAVE");
+    menuSimboli.at(21).testo = get_string("SIMB_BARRA_VERT");
+    menuSimboli.at(22).testo = get_string("OP_CONSERVA_RIPETUTO");
+    menuSimboli.at(23).testo = get_string("OP_SOSTITUISCI_SPAZIO");
+    // Indice 24 è " "
+    menuSimboli.at(25).testo = get_string("SUB_INDIETRO");
+}
+
