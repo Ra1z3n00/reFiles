@@ -1091,7 +1091,7 @@ void aboutMe() {
     cout << string(60, '=') << endl << endl;
 
     cout << BOLD << "  " << get_string("SECTION_INFO") << RESET << endl;
-    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.0" << RESET << endl;
+    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.1" << RESET << endl;
     cout << "  " << get_string("INFO_SVILUPPATORE") << YELLOW << "Raizen" << RESET << endl;
     cout << "  " << get_string("INFO_LICENZA") << DIM << "MIT Open Source" << RESET << endl << endl;
 
