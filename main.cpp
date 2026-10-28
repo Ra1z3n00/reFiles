@@ -3,7 +3,7 @@
 #include "file_operations.hpp"
 
 // Comando di compilazione consigliato:
-// g++ main.cpp menu.cpp file_operations.cpp utilities.cpp -o CleanerFiles -std=c++20
+// g++ main.cpp menu.cpp file_operations.cpp utilities.cpp -o reFiles -std=c++20
 
 int main() {
     system("cls");

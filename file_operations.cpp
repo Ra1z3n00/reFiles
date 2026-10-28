@@ -626,6 +626,18 @@ void mostra_lista() {
     PAUSE("Premere un tasto per continuare . . . ");
 }
 
+string formattaDimensione(uintmax_t sizeBytes) {
+    if (sizeBytes < 1024) {
+        return to_string(sizeBytes) + " B";
+    } else if (sizeBytes < 1024ULL * 1024) {
+        return to_string(sizeBytes / 1024) + " KB";
+    } else if (sizeBytes < 1024ULL * 1024 * 1024) {
+        return to_string(sizeBytes / (1024 * 1024)) + " MB";
+    } else {
+        return to_string(sizeBytes / (1024ULL * 1024 * 1024)) + " GB";
+    }
+}
+
 // --- ESPORTAZIONE LISTA FILE ---
 void esporta_lista() {
     int pos = 1;
@@ -816,16 +828,42 @@ void esporta_lista() {
 
         if (!incluso) continue;
 
+        string nomeSenzaExt = entry.path().stem().string(); // Nome senza estensione
+        uintmax_t sizeBytes = fs::file_size(entry);
+        string dimensioneDinamica = formattaDimensione(sizeBytes); // Calcola KB, MB o GB
+
+        // --- ESTRAZIONE ANNO E PULIZIA NOME ---
+        string nomePulito = nomeSenzaExt;
+        string annoStr = "";
+        
+        std::regex regexAnno("(.*?)\\s*[\\(\\[]?\\b(19\\d{2}|20\\d{2})\\b[\\)\\]]?\\s*(.*)");
+        std::smatch matchAnno;
+        if (std::regex_match(nomeSenzaExt, matchAnno, regexAnno)) {
+            string partePrima = matchAnno[1];
+            annoStr = matchAnno[2];
+            string parteDopo = matchAnno[3];
+            
+            nomePulito = partePrima;
+            if (!partePrima.empty() && !parteDopo.empty()) nomePulito += " ";
+            nomePulito += parteDopo;
+            
+            while (!nomePulito.empty() && nomePulito.front() == ' ') nomePulito.erase(nomePulito.begin());
+            while (!nomePulito.empty() && nomePulito.back() == ' ') nomePulito.pop_back();
+        }
+
         string rigaFormattata = "";
-        if (sceltaFormato == 1) {
-            rigaFormattata = nomeCompleto;
+        if (sceltaFormato == 1) { 
+            // TXT: mantiene il nome pulito con l'anno se presente
+            rigaFormattata = nomePulito + (annoStr.empty() ? "" : " (" + annoStr + ")");
         } 
-        else if (sceltaFormato == 2) {
-            rigaFormattata = "\"" + nomeCompleto + "\"," + estensione + "," + to_string(fs::file_size(entry)) + "B";
+        else if (sceltaFormato == 2) { 
+            // CSV: Nome, Estensione, Anno, Dimensione
+            rigaFormattata = "\"" + nomePulito + "\"," + estensione + ",\"" + annoStr + "\"," + dimensioneDinamica;
         } 
-        else if (sceltaFormato == 3) {
+        else if (sceltaFormato == 3) { 
+            // JSON: Nome, Estensione, Anno, Dimensione
             if (!primoJson) rigaFormattata += ",\n";
-            rigaFormattata += "  {\n    \"nome\": \"" + nomeCompleto + "\",\n    \"estensione\": \"" + estensione + "\",\n    \"dimensione_bytes\": " + to_string(fs::file_size(entry)) + "\n  }";
+            rigaFormattata += "  {\n    \"nome\": \"" + nomePulito + "\",\n    \"estensione\": \"" + estensione + "\",\n    \"anno\": \"" + annoStr + "\",\n    \"dimensione\": \"" + dimensioneDinamica + "\"\n  }";
             primoJson = false;
         }
 
@@ -852,8 +890,11 @@ void esporta_lista() {
         return;
     }
 
-    if (sceltaFormato == 2) file << "NomeFile,Estensione,Dimensione\n";
-    else if (sceltaFormato == 3) file << "[\n";
+    if (sceltaFormato == 2) {
+        file << "NomeFile,Estensione,Anno,Dimensione\n";
+    } else if (sceltaFormato == 3) {
+        file << "[\n";
+    }
 
     for (const auto& riga : righeTemporanee) file << riga << "\n";
 
@@ -1007,21 +1048,20 @@ void aboutMe() {
 
     cout << CYAN << BOLD;
     cout << R"(
-   ______ _                             ________ _
-  / ____/| |                           |  ____(_) |          
- | |     | | ___  __ _ _ __   ___ _ __ | |__   _| | ___  ___ 
- | |     | |/ _ \/ _` | '_ \ / _ \ '__||  __| | | |/ _ \/ __|
- | |____ | |  __/ (_| | | | |  __/ |   | |    | | |  __/\__ \
-  \_____/|_|\___|\__,_|_| |_|\___|_|   |_|    |_|_|\___||___/
-    
+      _____       ______ _ _          
+     |  __ \     |  ____(_) |         
+     | |__) |___ | |__   _| | ___  ___ 
+     |  _  // _ \|  __| | | |/ _ \/ __|
+     | | \ \  __/| |    | | |  __/\__ \
+     |_|  \_\___||_|    |_|_|\___||___/
     )" << RESET << endl;
 
     cout << string(60, '=') << endl;
-    cout << BOLD << "                CLEANER FILES BATCH TOOL" << RESET << endl;
+    cout << BOLD << "                RE(set)_FILES BATCH TOOL" << RESET << endl;
     cout << string(60, '=') << endl << endl;
 
     cout << BOLD << "  [ INFORMAZIONI SOFTWARE ]" << RESET << endl;
-    cout << "  • Versione:       " << GREEN << "v1.2 (C++20)" << RESET << endl;
+    cout << "  • Versione:       " << GREEN << "v1.0" << RESET << endl;
     cout << "  • Sviluppatore:   " << YELLOW << "Raizen" << RESET << endl;
     cout << "  • Licenza:        " << DIM << "MIT Open Source" << RESET << endl << endl;
 
