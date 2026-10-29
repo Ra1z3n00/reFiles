@@ -9,6 +9,7 @@ struct valoriMenu {
 
 enum class MenuMain {
     MOSTRA_LISTA = 1,
+    CAMBIA_PATH,
     RIMUOVI_PUNTEGGIATURA,
     RIMUOVI_PARENTESI,
     RIMUOVI_SPAZI,

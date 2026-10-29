@@ -32,6 +32,9 @@ int main() {
             case MenuMain::MOSTRA_LISTA:
                 mostra_lista();
                 break;
+            case MenuMain::CAMBIA_PATH:
+                cambia_path();
+                break;
             case MenuMain::RIMUOVI_PUNTEGGIATURA:
                 gestisci_menu_punteggiatura();
                 break;

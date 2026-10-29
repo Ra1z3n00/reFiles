@@ -25,6 +25,104 @@ string to_uppercase(string str) {
     return str;
 }
 
+void cambia_path() {
+
+    int pos = 1;
+    while(1) {
+        system("cls");
+        cout << get_string("POS_CURRENT");
+        cout << fs::current_path().string() << endl << endl;
+
+        enum decisioni { AVANTI = 1, INDIETRO, DECISIONE, TORNA_AL_MAIN };
+        int scelta = menuScelta(pos, 4, get_string("POPUP_AVANTI").c_str(), 
+                                    get_string("POPUP_INDIETRO").c_str(), 
+                                    get_string("POPUP_DEFINISCI").c_str(), 
+                                    get_string("SUB_INDIETRO").c_str()
+                                );
+        pos = scelta;
+        cout << endl;
+
+        switch (scelta) {
+            case AVANTI: {
+                vector<string> cartelle;
+                try {
+                    for (const auto& entry : fs::directory_iterator(fs::current_path())) {
+                        if (entry.is_directory()) {
+                            cartelle.push_back(entry.path().filename().string());
+                        }
+                    }
+                } catch (const fs::filesystem_error& e) {
+                    // Gestione di eventuali errori di permessi nella lettura della cartella
+                    cout << RED << get_string("ERRORE_ACCESSO") << RESET << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+
+                if (cartelle.empty()) {
+                    cout << YELLOW << get_string("AVVISO_NO_CARTELLA") << RESET << endl << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                } else {
+                    // Costruiamo dinamicamente il menu delle sottocartelle compatibile con menuScelta
+                    vector<valoriMenu> menuCartelle;
+                    for (const auto& c : cartelle) {
+                        menuCartelle.push_back({c, false});
+                    }
+                    menuCartelle.push_back({get_string("POPUP_ANNULLA"), false}); // Opzione di sicurezza per uscire
+
+                    int sceltaCartella = menuScelta(1, menuCartelle);
+
+                    // Se l'utente ha scelto una cartella valida (escludendo l'ultima voce "Annulla")
+                    if (sceltaCartella > 0 && sceltaCartella <= (int)cartelle.size()) {
+                        string cartellaScelta = cartelle[sceltaCartella - 1];
+                        try {
+                            fs::current_path(fs::current_path() / cartellaScelta);
+                        } catch (const fs::filesystem_error& e) {
+                            cout << RED << get_string("ERRORE_ACCESSO") << RESET << endl;
+                            PAUSE(get_string("PROMPT_CONTINUA"));
+                        }
+                    }
+                }
+                break;
+            }
+            
+            case INDIETRO:
+                try {
+                    fs::current_path(fs::current_path().parent_path());
+                } catch (const fs::filesystem_error& e) {
+                    cout << RED << get_string("ERR_NO_DIR_BACK") << RESET << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+                break;
+
+            case DECISIONE: {
+                cout << BOLD << endl << get_string("BANNER_PERCORSO") << RESET << endl;
+                cout << get_string("INSERISCI_PERCORSO");
+                string nuovoPath;
+                getline(cin, nuovoPath);
+                if (nuovoPath.empty()) {
+                    getline(cin, nuovoPath); // Sicurezza extra per eventuali newline rimasti nel buffer
+                }
+
+                try {
+                    // Verifica se il percorso inserito esiste ed è effettivamente una directory
+                    if (fs::exists(nuovoPath) && fs::is_directory(nuovoPath)) {
+                        fs::current_path(nuovoPath);
+                    } else {
+                        cout << RED << get_string("AVVISO_MISS_DIRECTORY") << RESET << endl << endl;
+                        PAUSE(get_string("PROMPT_CONTINUA"));
+                    }
+                } catch (const fs::filesystem_error& e) {
+                    cout << RED << get_string("AVVISO_MISS_DIRECTORY") << RESET << endl << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+                break;
+            }
+
+            case TORNA_AL_MAIN:
+                return;
+        }
+    }
+}
+
 void applica_rimuovi_spazi(string& nome) {
     nome.erase(remove(nome.begin(), nome.end(), ' '), nome.end());
 }
@@ -217,7 +315,30 @@ void gestisci_menu_parole() {
         paroleDaRimuovere.push_back(parola);
     }
 
-    mainMenu.at(9).decisione = !paroleDaRimuovere.empty();
+    mainMenu.at(10).decisione = !paroleDaRimuovere.empty();
+}
+
+void imposta_estensioni() {
+    system("cls");
+    cout << BOLD << get_string("BANNER_DEF_TARGET") << RESET << endl << endl;
+    cout << get_string("MSG_ESTENSIONE_ATTUALE") << YELLOW << estensioneTarget << RESET << endl;
+    cout << get_string("PROMPT_NUOVA_ESTENSIONE");
+    cin >> estensioneTarget;
+    estensioneOutput = estensioneTarget;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    
+    mainMenu.at(12).decisione = false;
+}
+
+void sostituisci_estensioni() {
+    system("cls");
+    cout << BOLD << get_string("BANNER_DEF_OUTPUT") << RESET << endl << endl;
+    cout << get_string("MSG_ESTENSIONE_ATTUALE") << YELLOW << estensioneOutput << RESET << endl;
+    cout << get_string("PROMPT_NUOVA_ESTENSIONE");
+    cin >> estensioneOutput;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    
+    mainMenu.at(12).decisione = (to_lowercase(estensioneOutput) != to_lowercase(estensioneTarget));
 }
 
 void gestisci_menu_estensioni_esporta() {
@@ -267,29 +388,6 @@ void gestisci_menu_sottostringhe_esporta() {
     }
 
     subMenu.at(2).decisione = !sottostringheEsportate.empty();
-}
-
-void imposta_estensioni() {
-    system("cls");
-    cout << BOLD << get_string("BANNER_DEF_TARGET") << RESET << endl << endl;
-    cout << get_string("MSG_ESTENSIONE_ATTUALE") << YELLOW << estensioneTarget << RESET << endl;
-    cout << get_string("PROMPT_NUOVA_ESTENSIONE");
-    cin >> estensioneTarget;
-    estensioneOutput = estensioneTarget;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-    mainMenu.at(11).decisione = false;
-}
-
-void sostituisci_estensioni() {
-    system("cls");
-    cout << BOLD << get_string("BANNER_DEF_OUTPUT") << RESET << endl << endl;
-    cout << get_string("MSG_ESTENSIONE_ATTUALE") << YELLOW << estensioneOutput << RESET << endl;
-    cout << get_string("PROMPT_NUOVA_ESTENSIONE");
-    cin >> estensioneOutput;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-    mainMenu.at(11).decisione = (to_lowercase(estensioneOutput) != to_lowercase(estensioneTarget));
 }
 
 // --- VISUALIZZAZIONE LISTA FILE ---
@@ -912,7 +1010,7 @@ void esporta_lista() {
 
     ofstream file(percorsoCompletoFile, ios::trunc);
     if (!file.is_open()) {
-        cout << RED << get_string("ERR_MAKE_FILE") << RESET << endl;
+        cout << endl << RED << get_string("ERR_MAKE_FILE") << RESET << endl;
         PAUSE(get_string("PROMPT_CONTINUA"));
         return;
     }
@@ -1091,7 +1189,7 @@ void aboutMe() {
     cout << string(60, '=') << endl << endl;
 
     cout << BOLD << "  " << get_string("SECTION_INFO") << RESET << endl;
-    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.1" << RESET << endl;
+    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.1.2" << RESET << endl;
     cout << "  " << get_string("INFO_SVILUPPATORE") << YELLOW << "Raizen" << RESET << endl;
     cout << "  " << get_string("INFO_LICENZA") << DIM << "MIT Open Source" << RESET << endl << endl;
 

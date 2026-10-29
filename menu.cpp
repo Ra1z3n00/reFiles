@@ -4,23 +4,24 @@
 // --- DEFINIZIONE DEI VETTORI DI MENU ---
 vector<valoriMenu> mainMenu {
     {"Mostra Lista Files",         false}, // 1
-    {"Rimuovi Punteggiatura",      false}, // 2
-    {"Rimuovi Parentesi",          false}, // 3
-    {"Rimuovi Spazi",              false}, // 4
-    {"Rimuovi Spazi Ripetuti",     false}, // 5
-    {"Rimuovi Numeri",             false}, // 6
-    {"Rimuovi Simboli",            false}, // 7
-    {"Sostituisci con Maiuscole",  false}, // 8
-    {"Sostituisci con Minuscole",  false}, // 9
-    {"Rimuovi Parole:",            false}, // 10
-    {"Definisci estensioni",       false}, // 11
-    {"Sostituisci estensione",     false}, // 12
-    {"Esporta lista file",         false}, // 13
-    {"[ ESEGUI RINOMINA ]",        false}, // 14
-    {" ",                          false}, // 15
-    {"About Me",                   false}, // 16
-    {"Lingua: Italiano",           false}, // 17
-    {"Chiudi",                     false}  // 18
+    {"Cambia Posizione",           false}, // 2
+    {"Rimuovi Punteggiatura",      false}, // 3
+    {"Rimuovi Parentesi",          false}, // 4
+    {"Rimuovi Spazi",              false}, // 5
+    {"Rimuovi Spazi Ripetuti",     false}, // 6
+    {"Rimuovi Numeri",             false}, // 7
+    {"Rimuovi Simboli",            false}, // 8
+    {"Sostituisci con Maiuscole",  false}, // 9
+    {"Sostituisci con Minuscole",  false}, // 10
+    {"Rimuovi Parole:",            false}, // 11
+    {"Definisci estensioni",       false}, // 12
+    {"Sostituisci estensione",     false}, // 13
+    {"Esporta lista file",         false}, // 14
+    {"[ ESEGUI RINOMINA ]",        false}, // 15
+    {" ",                          false}, // 16
+    {"About Me",                   false}, // 17
+    {"Lingua: Italiano",           false}, // 18
+    {"Chiudi",                     false}  // 19
 };
 
 vector<valoriMenu> subMenu {
@@ -129,15 +130,15 @@ void gestisci_sottomenu_generico(vector<valoriMenu>& menuTarget, const string& t
 
 // --- SOTTOMENU SPECIFICI SEMPLIFICATI ---
 void gestisci_menu_punteggiatura() {
-    gestisci_sottomenu_generico(menuPunteggiatura, get_string("BANNER_PUNTEGGIATURA"), 1);
+    gestisci_sottomenu_generico(menuPunteggiatura, get_string("BANNER_PUNTEGGIATURA"), 2);
 }
 
 void gestisci_menu_parentesi() {
-    gestisci_sottomenu_generico(menuParentesi, get_string("BANNER_PARENTESI"), 2);
+    gestisci_sottomenu_generico(menuParentesi, get_string("BANNER_PARENTESI"), 3);
 }
 
 void gestisci_menu_simboli() {
-    gestisci_sottomenu_generico(menuSimboli, get_string("BANNER_SIMBOLI"), 6);
+    gestisci_sottomenu_generico(menuSimboli, get_string("BANNER_SIMBOLI"), 7);
 }
 
 // --- FUNZIONE MENU INTERATTIVO PER VECTOR ---
@@ -169,10 +170,10 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
             cout << left << setw(larghezzaAdattata) << menu.at(i - 1).testo << RESET;
 
             if (&menu == &mainMenu) {
-                if (i == 2 || i == 3 || i == 4 || i == 5 || i == 6 || i == 7 || i == 8 || i == 9 || i == 10 || i == 12) {
+                if (i == 3 || i == 4 || i == 5 || i == 6 || i == 7 || i == 8 || i == 9 || i == 10 || i == 11 || i == 13) {
                     cout << " = [" << (menu.at(i - 1).decisione ? GREEN : RED) << menu.at(i - 1).decisione << RESET << "]";
                     cout << ((menu.at(i - 1).decisione) ? " " : "");
-                } else if (i == 11) {
+                } else if (i == 12) {
                     cout << get_string("LBL_TUTTI_FILE") << YELLOW << estensioneTarget << RESET << ")"; // Nota: estensioneTarget è definita in file_operations
                 }
             } 
@@ -192,16 +193,16 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
             // Spiegazioni laterali del menu principale (quanti moduli sono attivi)
             int count = 0;
             if (&menu == &mainMenu) {
-                if (i == 2) {
+                if (i == 3) {
                     count = modAttivi(menuPunteggiatura);
                     cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
-                } else if (i == 3) {
+                } else if (i == 4) {
                     count = modAttivi(menuParentesi);
                     cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
-                } else if (i == 7) {
+                } else if (i == 8) {
                     count = modAttivi(menuSimboli);
                     cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
-                } else if (i == 12) {
+                } else if (i == 13) {
                     cout << get_string("LBL_CONVERTI_IN") << YELLOW << estensioneOutput << RESET << ")";
                 }
             }
@@ -227,16 +228,19 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
         }
 
         if (tasto == 'q' || tasto == 'Q') {
+            // Caso 1: Siamo nel Menu Principale su una voce che ha un sottomenu
             if (&menu == &mainMenu) {
                 int indiceSelezionato = pos - 1;
                 vector<valoriMenu>* sottomenuTarget = nullptr;
-                if (indiceSelezionato == 1) sottomenuTarget = &menuPunteggiatura;
-                else if (indiceSelezionato == 2) sottomenuTarget = &menuParentesi;
-                else if (indiceSelezionato == 6) sottomenuTarget = &menuSimboli;
+                int indiceMainDaAggiornare = -1;
+
+                if (indiceSelezionato == 2) { sottomenuTarget = &menuPunteggiatura; indiceMainDaAggiornare = 2; }
+                else if (indiceSelezionato == 3) { sottomenuTarget = &menuParentesi; indiceMainDaAggiornare = 3; }
+                else if (indiceSelezionato == 7) { sottomenuTarget = &menuSimboli; indiceMainDaAggiornare = 7; }
 
                 if (sottomenuTarget != nullptr) {
                     size_t limiteVoci = sottomenuTarget->size() - 2;
-                    bool giaTuttiAttivi = mainMenu.at(indiceSelezionato).decisione;
+                    bool giaTuttiAttivi = mainMenu.at(indiceMainDaAggiornare).decisione;
                     for (size_t i = 0; i < limiteVoci; i++) {
                         if (sottomenuTarget->at(i).testo != " " && !sottomenuTarget->at(i).decisione) {
                             giaTuttiAttivi = false;
@@ -244,10 +248,41 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                         }
                     }
                     bool nuovoStato = !giaTuttiAttivi;
-                    mainMenu.at(indiceSelezionato).decisione = nuovoStato;
+                    mainMenu.at(indiceMainDaAggiornare).decisione = nuovoStato;
                     for (size_t i = 0; i < limiteVoci; i++) {
                         if (sottomenuTarget->at(i).testo != " ") sottomenuTarget->at(i).decisione = nuovoStato;
                     }
+                    continue;
+                }
+            }
+            // Caso 2: Siamo direttamente dentro un Sottomenu
+            else if (&menu == &menuPunteggiatura || &menu == &menuParentesi || &menu == &menuSimboli) {
+                size_t limiteVoci = menu.size() - 2;
+                bool giaTuttiAttivi = true;
+                
+                // Verifica se sono già tutti attivi
+                for (size_t i = 0; i < limiteVoci; i++) {
+                    if (menu.at(i).testo != " " && !menu.at(i).decisione) {
+                        giaTuttiAttivi = false;
+                        break;
+                    }
+                }
+                
+                bool nuovoStato = !giaTuttiAttivi;
+                
+                // Modifica il sottomenu attuale (usando un puntatore o modificando direttamente il vettore attivo)
+                // Nota: poiché 'menu' è passato come const reference, dobbiamo fare il cast o gestire il puntatore al vettore corretto.
+                vector<valoriMenu>* targetCorrente = nullptr;
+                int indiceMain = -1;
+                if (&menu == &menuPunteggiatura) { targetCorrente = &menuPunteggiatura; indiceMain = 2; }
+                else if (&menu == &menuParentesi) { targetCorrente = &menuParentesi; indiceMain = 3; }
+                else if (&menu == &menuSimboli) { targetCorrente = &menuSimboli; indiceMain = 7; }
+
+                if (targetCorrente != nullptr) {
+                    for (size_t i = 0; i < limiteVoci; i++) {
+                        if (targetCorrente->at(i).testo != " ") targetCorrente->at(i).decisione = nuovoStato;
+                    }
+                    mainMenu.at(indiceMain).decisione = nuovoStato; // Aggiorna anche il pallino nel main
                     continue;
                 }
             }
@@ -312,37 +347,38 @@ void switcher(int scelta) {
 }
 
 void mutuaEsclusione(int scelta) {
-    if (scelta == 8 && mainMenu.at(7).decisione) {
+    if (scelta == 9 && mainMenu.at(8).decisione) {
+        mainMenu.at(9).decisione = false;
+    } else if (scelta == 10 && mainMenu.at(9).decisione) {
         mainMenu.at(8).decisione = false;
-    } else if (scelta == 9 && mainMenu.at(8).decisione) {
-        mainMenu.at(7).decisione = false;
-    } else if (scelta == 4 && mainMenu.at(3).decisione) {
-        mainMenu.at(4).decisione = false;
     } else if (scelta == 5 && mainMenu.at(4).decisione) {
-        mainMenu.at(3).decisione = false;
+        mainMenu.at(5).decisione = false;
+    } else if (scelta == 6 && mainMenu.at(5).decisione) {
+        mainMenu.at(4).decisione = false;
     }
 }
 
 void aggiorna_testi_menu() {
     // Aggiornamento Main Menu
     mainMenu.at(0).testo = get_string("MENU_MOSTRA");
-    mainMenu.at(1).testo = get_string("MENU_PUNTEGGIATURA");
-    mainMenu.at(2).testo = get_string("MENU_PARENTESI");
-    mainMenu.at(3).testo = get_string("MENU_SPAZI");
-    mainMenu.at(4).testo = get_string("MENU_SPAZI_RIPETUTI");
-    mainMenu.at(5).testo = get_string("MENU_NUMERI");
-    mainMenu.at(6).testo = get_string("MENU_SIMBOLI");
-    mainMenu.at(7).testo = get_string("MENU_MAIUSCOLE");
-    mainMenu.at(8).testo = get_string("MENU_MINUSCOLE");
-    mainMenu.at(9).testo = get_string("MENU_PAROLE");
-    mainMenu.at(10).testo = get_string("MENU_DEF_EXT");
-    mainMenu.at(11).testo = get_string("MENU_SOS_EXT");
-    mainMenu.at(12).testo = get_string("MENU_ESPORTA");
-    mainMenu.at(13).testo = get_string("MENU_ESGUI");
-    // Indice 14 è la riga vuota " "
-    mainMenu.at(15).testo = get_string("MENU_ABOUT");
-    mainMenu.at(16).testo = get_string("MENU_LINGUA");
-    mainMenu.at(17).testo = get_string("MENU_CHIUDI");
+    mainMenu.at(1).testo = get_string("MENU_POSIZIONE");
+    mainMenu.at(2).testo = get_string("MENU_PUNTEGGIATURA");
+    mainMenu.at(3).testo = get_string("MENU_PARENTESI");
+    mainMenu.at(4).testo = get_string("MENU_SPAZI");
+    mainMenu.at(5).testo = get_string("MENU_SPAZI_RIPETUTI");
+    mainMenu.at(6).testo = get_string("MENU_NUMERI");
+    mainMenu.at(7).testo = get_string("MENU_SIMBOLI");
+    mainMenu.at(8).testo = get_string("MENU_MAIUSCOLE");
+    mainMenu.at(9).testo = get_string("MENU_MINUSCOLE");
+    mainMenu.at(10).testo = get_string("MENU_PAROLE");
+    mainMenu.at(11).testo = get_string("MENU_DEF_EXT");
+    mainMenu.at(12).testo = get_string("MENU_SOS_EXT");
+    mainMenu.at(13).testo = get_string("MENU_ESPORTA");
+    mainMenu.at(14).testo = get_string("MENU_ESGUI");
+    // Indice 15 è la riga vuota " "
+    mainMenu.at(16).testo = get_string("MENU_ABOUT");
+    mainMenu.at(17).testo = get_string("MENU_LINGUA");
+    mainMenu.at(18).testo = get_string("MENU_CHIUDI");
 
     // Aggiornamento SubMenu (Filtri)
     subMenu.at(0).testo = get_string("SUB_TUTTO");

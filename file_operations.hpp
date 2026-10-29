@@ -24,6 +24,8 @@ extern double dimValoreEsporta;
 // --- PROTOTIPI TRASFORMAZIONE STRINGHE ---
 string to_lowercase(string str);
 string to_uppercase(string str);
+
+void cambia_path();
 void applica_rimuovi_spazi(string& nome);
 void applica_rimuovi_spazi_ripetuti(string& nome);
 void applica_rimuovi_numeri(string& nome);

@@ -6,6 +6,7 @@ static Lingua linguaAttiva = Lingua::Italiano;
 static const std::unordered_map<std::string, std::string> dizionarioIT = {
     // Menu Principale
     {"MENU_MOSTRA", "Mostra Lista Files"},
+    {"MENU_POSIZIONE", "Cambia Posizione"},
     {"MENU_PUNTEGGIATURA", "Rimuovi Punteggiatura"},
     {"MENU_PARENTESI", "Rimuovi Parentesi"},
     {"MENU_SPAZI", "Rimuovi Spazi"},
@@ -88,14 +89,24 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"BANNER_PUNTEGGIATURA", "=== CONFIGURAZIONE PUNTEGGIATURA ==="},
     {"BANNER_PARENTESI", "=== CONFIGURAZIONE PARENTESI ==="},
     {"BANNER_SIMBOLI", "=== CONFIGURAZIONE SIMBOLI ==="},
+    {"BANNER_PERCORSO","=== DEFINISCI PERCORSO ==="},
 
     // Messaggi e Avvisi
     {"AVVISO_NO_FILTRI", "[AVVISO] Nessun filtro attivo! Seleziona almeno un criterio o 'Tutto'."},
     {"PROMPT_CONTINUA", "Premere un tasto per continuare . . . "},
     {"POP_ERR", "[ERRORE]"},
     {"POP_SCC", "[SUCCESSO]"},
+    {"ERRORE_ACCESSO","[ERRORE] Impossibile accedere alla cartella (permessi negati)."},
+    {"AVVISO_NO_CARTELLA","Nessuna Cartella Trovata"},
+    {"AVVISO_MISS_DIRECTORY","Posizione Errata o Inesistente"},
+    {"ERR_NO_DIR_BACK","[ERRORE] Impossibile risalire alla cartella superiore."},
+    {"INSERISCI_PERCORSO","Inserisci il percorso desiderato: "},
 
-    // Menu Popup / Inline (file_operations.cpp)
+    // Menu Popup / Inline (menuScelta)
+    {"POPUP_AVANTI", "Avanti"},
+    {"POPUP_INDIETRO", "Indietro"},
+    {"POPUP_DEFINISCI", "Definisci"},
+
     {"POPUP_DATA_ESATTA", "Data esatta"},
     {"POPUP_FINO_DATA", "...fino a questa data (<=)"},
     {"POPUP_DA_DATA", "Da questa data in poi... (>=)"},
@@ -166,6 +177,7 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"MSG_FILE_CARTELLE", " file, "},
     {"MSG_SOLO_CARTELLE", " cartelle."},
     {"ERR_DIR","[ERRORE] Impossibile leggere la cartella: "},
+    {"POS_CURRENT","Posizione Corrente: "},
     
     {"BANNER_CONFIG_ESPORTAZIONE", "=== CONFIGURAZIONE FILTRI ESPORTAZIONE ==="},
     {"HINT_GESTISCI_CRITERI", "Gestisci i criteri e seleziona [Esegui] per procedere."},
@@ -208,6 +220,7 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
 static const std::unordered_map<std::string, std::string> dizionarioEN = {
     // Main Menu
     {"MENU_MOSTRA", "Show Files List"},
+    {"MENU_POSIZIONE", "Change Path"},
     {"MENU_PUNTEGGIATURA", "Remove Punctuation"},
     {"MENU_PARENTESI", "Remove Parentheses"},
     {"MENU_SPAZI", "Remove Spaces"},
@@ -290,14 +303,24 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"BANNER_PUNTEGGIATURA", "=== PUNCTUATION CONFIGURATION ==="},
     {"BANNER_PARENTESI", "=== PARENTHESES CONFIGURATION ==="},
     {"BANNER_SIMBOLI", "=== SYMBOLS CONFIGURATION ==="},
+    {"BANNER_PERCORSO","=== DEFINE ROUTE ==="},
 
     // Messages & Warnings
     {"AVVISO_NO_FILTRI", "[WARNING] No active filters! Select at least one criteria or 'All'."},
     {"PROMPT_CONTINUA", "Press any key to continue . . . "},
     {"POP_ERR", "[ERROR]"},
     {"POP_SCC", "[SUCCESS]"},
+    {"ERRORE_ACCESSO","[ERROR] Unable to access the folder (permission denied)."},
+    {"AVVISO_NO_CARTELLA","No Folder Found"},
+    {"AVVISO_MISS_DIRECTORY","Incorrect or Non-existent Location"},
+    {"ERR_NO_DIR_BACK","[ERROR] Unable to navigate to the parent folder."},
+    {"INSERISCI_PERCORSO","Enter the desired path: "},
 
-    // Popup / Inline Menus (file_operations.cpp)
+    // Popup / Inline Menus (menuScelta)
+    {"POPUP_AVANTI", "Next"},
+    {"POPUP_INDIETRO", "Back"},
+    {"POPUP_DEFINISCI", "Define path"},
+
     {"POPUP_DATA_ESATTA", "Specific date"},
     {"POPUP_FINO_DATA", "...up to this date (<=)"},
     {"POPUP_DA_DATA", "From this date onwards... (>=)"},
@@ -367,6 +390,8 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"MSG_TOTALE_ELEMENTI", "Total filtered items: "},
     {"MSG_FILE_CARTELLE", " files, "},
     {"MSG_SOLO_CARTELLE", " folders."},
+    {"ERR_DIR","[ERROR] Unable to read the folder: "},
+    {"POS_CURRENT","Current Location: "},
     
     {"BANNER_CONFIG_ESPORTAZIONE", "=== EXPORT FILTER CONFIGURATION ==="},
     {"HINT_GESTISCI_CRITERI", "Manage criteria and select [Execute] to proceed."},
