@@ -121,6 +121,8 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"LBL_CONVERTI_IN", "  (Converti in: "},
     {"LBL_ELEM_ATTIVO", " elemento attivo)"},
     {"LBL_ELEM_ATTIVI", " elementi attivi)"},
+    {"LBL_RIPETUTO_GUIDA", "  (Ne mantiene uno se consecutivo)"},
+    {"LBL_SPAZIO_GUIDA", "  (Sostituisce i caratteri rimossi con spazio)"},
 
     // Gestione Parole ed Estensioni (file_operations.cpp)
     {"BANNER_DEF_PAROLE", "=== DEFINISCI PAROLE DA RIMUOVERE ==="},
@@ -321,6 +323,8 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"LBL_CONVERTI_IN", "  (Convert to: "},
     {"LBL_ELEM_ATTIVO", " active element)"},
     {"LBL_ELEM_ATTIVI", " active elements)"},
+    {"LBL_RIPETUTO_GUIDA", "  (Keeps one if consecutive)"},
+    {"LBL_SPAZIO_GUIDA", "  (Replaces the removed characters with space)"},
 
     // Words and Extensions Management (file_operations.cpp)
     {"BANNER_DEF_PAROLE", "=== DEFINE WORDS TO REMOVE ==="},

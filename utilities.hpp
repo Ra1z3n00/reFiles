@@ -38,6 +38,7 @@ using namespace std;
 #define SHOW_CURSOR         "\033[?25h"
 #define SAVE_CURSOR         "\033[s"
 #define RESTORE_CURSOR      "\033[u"
+#define EXT_TXT_RGB(r,g,b)  "\033[38;2;" #r ";" #g ";" #b "m"
 
 // --- PROTOTIPI BASE ---
 void clearBuffer();

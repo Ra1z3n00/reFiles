@@ -189,6 +189,7 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                 }
             }
 
+            // Spiegazioni laterali del menu principale (quanti moduli sono attivi)
             int count = 0;
             if (&menu == &mainMenu) {
                 if (i == 2) {
@@ -202,6 +203,15 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                     cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
                 } else if (i == 12) {
                     cout << get_string("LBL_CONVERTI_IN") << YELLOW << estensioneOutput << RESET << ")";
+                }
+            }
+
+            // Spiegazioni laterali del subMenu, in particolare di "Conserva un Ripetuto" e "Sostituisci con spazio"
+            if (&menu == &menuPunteggiatura || &menu == &menuSimboli || &menu == &menuParentesi) {
+                if (i == (menu.size() - 2)) {
+                    cout << EXT_TXT_RGB(255,165,0) << get_string("LBL_RIPETUTO_GUIDA") << RESET;
+                } else if (i == (menu.size() - 3)) {
+                    cout << EXT_TXT_RGB(255,165,0) << get_string("LBL_SPAZIO_GUIDA") << RESET;
                 }
             }
 
