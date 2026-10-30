@@ -393,11 +393,18 @@ void gestisci_menu_sottostringhe_esporta() {
 // --- VISUALIZZAZIONE LISTA FILE ---
 void mostra_lista() {
     int pos = 1;
-    for (auto& item : subMenu) {
-        if (item.testo != get_string("SUB_ESEGUI") && item.testo != get_string("SUB_INDIETRO") && item.testo != " ") {
-            item.decisione = false;
+    // Imposta esplicitamente "Tutto" a true all'apertura del menu
+    subMenu.at(0).decisione = true; 
+
+    // Imposta a false tutti gli altri filtri specifici
+    for (size_t i = 1; i < subMenu.size(); i++) {
+        if (subMenu.at(i).testo != get_string("SUB_ESEGUI") && 
+            subMenu.at(i).testo != get_string("SUB_INDIETRO") && 
+            subMenu.at(i).testo != " ") {
+            subMenu.at(i).decisione = false;
         }
     }
+    
     estensioniEsportate.clear();
     sottostringheEsportate.clear();
     dataEsportate = "";
@@ -692,13 +699,18 @@ void mostra_lista() {
             if (!nomeCompleto.empty() && nomeCompleto[0] == '.') nascosto = true;
             #endif
 
-            info.statoStr = (modificabile ? "Mod." : "Blocc.") + string(nascosto ? " / Nasc." : " / Vis."); // TODO devo pensare come tradurre questo
+            info.statoStr = (modificabile ? "Mod." : "Blocc.") + string(nascosto ? " / Nasc." : " / Vis.");
             fileTrovati.push_back(info);
         }
     } catch (const fs::filesystem_error& e) {
         cout << RED << get_string("ERR_DIR") << e.what() << RESET << endl;
     }
 
+    // --- VISUALIZZAZIONE FINESTRA FISSA (15 RIGHE) CON GESTIONE FRECCE IN TEMPO REALE ---
+    size_t indiceInizio = 0;
+    const size_t righeVisibili = 20;
+
+    // Stampa l'intestazione fissa UNA SOLA VOLTA all'inizio
     system("cls");
     cout << BOLD << get_string("BANNER_LISTA_FILE") << RESET << endl;
     cout << get_string("LABEL_PERCORSO") << YELLOW << fs::current_path().string() << RESET << endl << endl;
@@ -709,33 +721,65 @@ void mostra_lista() {
          << setw(15) << get_string("COL_STATO") << endl;
     cout << string(113, '-') << endl;
 
-    if (fileTrovati.empty()) {
-        cout << YELLOW << left << setw(113) << get_string("MSG_NO_RISULTATI") << RESET << endl;
-    } else {
-        for (const auto& f : fileTrovati) {
-            int realCharCount = 0;
-            size_t idx = 0;
-            while (idx < f.nomeVisualizzato.length()) {
-                unsigned char c = f.nomeVisualizzato[idx];
-                int len = (c >= 0xC0 && c < 0xE0) ? 2 : (c >= 0xE0 && c < 0xF0) ? 3 : (c >= 0xF0) ? 4 : 1;
-                realCharCount++;
-                idx += len;
+    while (true) {
+        // Riporta il cursore alla riga 7 (subito sotto l'intestazione delle colonne) senza sfarfallio
+        cout << "\033[6H";
+
+        if (fileTrovati.empty()) {
+            cout << YELLOW << left << setw(113) << get_string("MSG_NO_RISULTATI") << RESET << endl;
+        } else {
+            size_t fine = min(indiceInizio + righeVisibili, fileTrovati.size());
+            for (size_t i = indiceInizio; i < fine; ++i) {
+                const auto& f = fileTrovati[i];
+                int realCharCount = 0;
+                size_t idx = 0;
+                while (idx < f.nomeVisualizzato.length()) {
+                    unsigned char c = f.nomeVisualizzato[idx];
+                    int len = (c >= 0xC0 && c < 0xE0) ? 2 : (c >= 0xE0 && c < 0xF0) ? 3 : (c >= 0xF0) ? 4 : 1;
+                    realCharCount++;
+                    idx += len;
+                }
+
+                int byteLength = f.nomeVisualizzato.length();
+                int utf8ExtraBytes = byteLength - realCharCount;
+                int larghezzaGuida = 60 + utf8ExtraBytes;
+
+                cout << left << setw(larghezzaGuida) << f.nomeVisualizzato << "  " 
+                     << setw(12) << f.pesoStr << "  " 
+                     << setw(22) << f.dataStr << "  " 
+                     << setw(15) << f.statoStr << "\n";
             }
 
-            int byteLength = f.nomeVisualizzato.length();
-            int utf8ExtraBytes = byteLength - realCharCount;
-            int larghezzaGuida = 60 + utf8ExtraBytes;
-
-            cout << left << setw(larghezzaGuida) << f.nomeVisualizzato << "  " 
-                 << setw(12) << f.pesoStr << "  " 
-                 << setw(22) << f.dataStr << "  " 
-                 << setw(15) << f.statoStr << endl;
+            // Pulisci eventuali righe residue in basso se la pagina ha meno di 15 elementi
+            for (size_t i = (fine - indiceInizio); i < righeVisibili; ++i) {
+                cout << string(113, ' ') << "\n";
+            }
         }
-    }
 
-    cout << string(113, '-') << endl;
-    cout << get_string("MSG_TOTALE_ELEMENTI") << countFiles << get_string("MSG_FILE_CARTELLE") << countDirs << get_string("MSG_SOLO_CARTELLE") << endl << endl;
-    PAUSE(get_string("PROMPT_CONTINUA"));
+        // Stampa il footer aggiornato sotto la griglia dei file
+        cout << string(113, '-') << endl;
+        cout << get_string("MSG_TOTALE_ELEMENTI") << countFiles << get_string("MSG_FILE_CARTELLE") << countDirs << get_string("MSG_SOLO_CARTELLE") << "                   \n";
+        cout << DIM << "[Usa le Frecce Su/Giu per scorrere | E = Esci]                 " << RESET << endl;
+
+        // Gestione della pressione dei tasti in tempo reale senza Invio
+        int tasto1 = 0;
+        #ifdef _WIN32
+        tasto1 = _getch();
+        if (tasto1 == 0 || tasto1 == 224) {
+            int tasto2 = _getch();
+            if (tasto2 == 72) { // Freccia Su
+                if (indiceInizio > 0) indiceInizio--;
+            } else if (tasto2 == 80) { // Freccia Giù
+                if (indiceInizio + righeVisibili < fileTrovati.size()) indiceInizio++;
+            }
+        } else {
+            tasto1 = tolower(tasto1);
+            if (tasto1 == 'e') {
+                break;
+            }
+        }
+        #endif
+    }
 }
 
 string formattaDimensione(uintmax_t sizeBytes) {

@@ -25,7 +25,7 @@ vector<valoriMenu> mainMenu {
 };
 
 vector<valoriMenu> subMenu {
-    {"Tutto",                       false},
+    {"Tutto",                       true},
     {"Estensioni specificate",      false},
     {"Cerca Sottostringhe",         false},
     {"Cerca Cifre",                 false},
