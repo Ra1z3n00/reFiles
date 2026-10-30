@@ -26,7 +26,6 @@ string to_uppercase(string str) {
 }
 
 void cambia_path() {
-
     int pos = 1;
     while(1) {
         system("cls");
@@ -52,7 +51,6 @@ void cambia_path() {
                         }
                     }
                 } catch (const fs::filesystem_error& e) {
-                    // Gestione di eventuali errori di permessi nella lettura della cartella
                     cout << RED << get_string("ERRORE_ACCESSO") << RESET << endl;
                     PAUSE(get_string("PROMPT_CONTINUA"));
                 }
@@ -61,14 +59,73 @@ void cambia_path() {
                     cout << YELLOW << get_string("AVVISO_NO_CARTELLA") << RESET << endl << endl;
                     PAUSE(get_string("PROMPT_CONTINUA"));
                 } else {
-                    // Costruiamo dinamicamente il menu delle sottocartelle compatibile con menuScelta
                     vector<valoriMenu> menuCartelle;
                     for (const auto& c : cartelle) {
                         menuCartelle.push_back({c, false});
                     }
-                    menuCartelle.push_back({get_string("POPUP_ANNULLA"), false}); // Opzione di sicurezza per uscire
+                    menuCartelle.push_back({get_string("POPUP_ANNULLA"), false});
 
-                    int sceltaCartella = menuScelta(1, menuCartelle);
+                    // --- SCORRIMENTO A FINESTRA FISSA (20 RIGHE) PER LE CARTELLE ---
+                    size_t indiceInizio = 0;
+                    const size_t righeVisibili = 20;
+                    int posCartella = 1;
+                    int sceltaCartella = -1;
+
+                    system("cls");
+                    cout << BOLD << get_string("POS_CURRENT") << fs::current_path().string() << RESET << endl << endl;
+                    cout << DIM << "[Usa le Frecce Su/Giu, Invio per selezionare | E = Esci]" << RESET << endl << endl;
+
+                    // Salviamo la posizione corrente del cursore per evitare sfarfallio
+                    cout << SAVE_CURSOR;
+
+                    while (true) {
+                        cout << RESTORE_CURSOR;
+
+                        size_t fine = min(indiceInizio + righeVisibili, menuCartelle.size());
+                        for (size_t i = indiceInizio; i < fine; ++i) {
+                            cout << CLEAR_LINE << "\r";
+                            bool isSelezionato = (posCartella == (int)(i + 1));
+                            cout << (isSelezionato ? "> " GREEN LAMP : "  ");
+                            cout << left << setw(60) << menuCartelle[i].testo << RESET << endl;
+                        }
+
+                        // Pulisci eventuali righe residue se la pagina ha meno elementi
+                        for (size_t i = (fine - indiceInizio); i < righeVisibili; ++i) {
+                            cout << CLEAR_LINE << "\r\n";
+                        }
+
+                        int tasto1 = 0;
+                        #ifdef _WIN32
+                        tasto1 = _getch();
+                        if (tasto1 == 0 || tasto1 == 224) {
+                            int tasto2 = _getch();
+                            if (tasto2 == 72) { // Freccia Su
+                                if (posCartella > 1) {
+                                    posCartella--;
+                                    if (posCartella - 1 < (int)indiceInizio && indiceInizio > 0) {
+                                        indiceInizio--;
+                                    }
+                                }
+                            } else if (tasto2 == 80) { // Freccia Giù
+                                if (posCartella < (int)menuCartelle.size()) {
+                                    posCartella++;
+                                    if (posCartella - 1 >= (int)(indiceInizio + righeVisibili)) {
+                                        indiceInizio++;
+                                    }
+                                }
+                            }
+                        } else {
+                            tasto1 = tolower(tasto1);
+                            if (tasto1 == 'e') {
+                                sceltaCartella = menuCartelle.size(); // Corrisponde ad "Annulla"
+                                break;
+                            } else if (tasto1 == '\r' || tasto1 == '\n') { // Invio
+                                sceltaCartella = posCartella;
+                                break;
+                            }
+                        }
+                        #endif
+                    }
 
                     // Se l'utente ha scelto una cartella valida (escludendo l'ultima voce "Annulla")
                     if (sceltaCartella > 0 && sceltaCartella <= (int)cartelle.size()) {
@@ -99,11 +156,10 @@ void cambia_path() {
                 string nuovoPath;
                 getline(cin, nuovoPath);
                 if (nuovoPath.empty()) {
-                    getline(cin, nuovoPath); // Sicurezza extra per eventuali newline rimasti nel buffer
+                    getline(cin, nuovoPath);
                 }
 
                 try {
-                    // Verifica se il percorso inserito esiste ed è effettivamente una directory
                     if (fs::exists(nuovoPath) && fs::is_directory(nuovoPath)) {
                         fs::current_path(nuovoPath);
                     } else {
@@ -404,7 +460,7 @@ void mostra_lista() {
             subMenu.at(i).decisione = false;
         }
     }
-    
+
     estensioniEsportate.clear();
     sottostringheEsportate.clear();
     dataEsportate = "";
@@ -797,6 +853,21 @@ string formattaDimensione(uintmax_t sizeBytes) {
 // --- ESPORTAZIONE LISTA FILE ---
 void esporta_lista() {
     int pos = 1;
+
+    subMenu.at(0).decisione = true; // Imposta "Tutto" a true all'apertura
+    for (size_t i = 1; i < subMenu.size(); i++) {
+        if (subMenu.at(i).testo != get_string("SUB_ESEGUI") && 
+            subMenu.at(i).testo != get_string("SUB_INDIETRO") && 
+            subMenu.at(i).testo != " ") {
+            subMenu.at(i).decisione = false;
+        }
+    }
+    estensioniEsportate.clear();
+    sottostringheEsportate.clear();
+    dataEsportate = "";
+    dimValoreEsporta = 0.0;
+    // ---------------------------------------------
+
     while (1) {
         inizioConfig:
         system("cls");
