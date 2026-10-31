@@ -7,7 +7,13 @@ namespace fs = std::filesystem;
 
 // --- ENUM PER FILTRI E CONFIGURAZIONI ---
 enum class Tempi { Ieri_Oggi = 1, Oggi = 2, Oggi_Domani = 3 };
-enum class DirezioneDim { Maggiori = 1, Minori = 2 };
+enum class DirezioneDim { Maggiori = 1, Compresi = 2, Minori = 3 };
+
+struct SelezioneFileItem {
+    string nomeCompleto;
+    bool selezionato; // true o false per la rinomina
+};
+extern vector<SelezioneFileItem> fileSelezionatiManualmente;
 
 // --- DICHIARAZIONI EXTERN DELLE VARIABILI DI CONFIGURAZIONE ---
 extern string estensioneTarget;
@@ -42,7 +48,8 @@ void applica_rimuovi_simboli(string& nome);
 void gestisci_menu_parole();
 void gestisci_menu_estensioni_esporta();
 void gestisci_menu_sottostringhe_esporta();
-void imposta_estensioni();
+void gestisci_menu_target();
+void gestisci_menu_selezione_file();
 void sostituisci_estensioni();
 
 // --- PROTOTIPI OPERAZIONI PRINCIPALI ---

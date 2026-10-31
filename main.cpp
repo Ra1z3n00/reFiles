@@ -35,6 +35,9 @@ int main() {
             case MenuMain::CAMBIA_PATH:
                 cambia_path();
                 break;
+            case MenuMain::REGOLE_TARGET:
+                gestisci_menu_target();
+                break;
             case MenuMain::RIMUOVI_PUNTEGGIATURA:
                 gestisci_menu_punteggiatura();
                 break;
@@ -59,9 +62,6 @@ int main() {
                 break;
             case MenuMain::RIMUOVI_PAROLE:
                 gestisci_menu_parole();
-                break;
-            case MenuMain::DEFINISCI_ESTENSIONI:
-                imposta_estensioni();
                 break;
             case MenuMain::SOSTITUISCI_ESTENSIONE:
                 sostituisci_estensioni();

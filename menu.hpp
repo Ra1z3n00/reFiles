@@ -10,16 +10,16 @@ struct valoriMenu {
 enum class MenuMain {
     MOSTRA_LISTA = 1,
     CAMBIA_PATH,
+    REGOLE_TARGET,
     RIMUOVI_PUNTEGGIATURA,
     RIMUOVI_PARENTESI,
     RIMUOVI_SPAZI,
     RIMUOVI_SPAZI_RIPETUTI,
     RIMUOVI_NUMERI,
     RIMUOVI_SIMBOLI,
+    RIMUOVI_PAROLE,
     SOSTITUISCI_MAIUSCOLE,
     SOSTITUISCI_MINUSCOLE,
-    RIMUOVI_PAROLE,
-    DEFINISCI_ESTENSIONI,
     SOSTITUISCI_ESTENSIONE,
     ESPORTA_LISTA,
     ESGUI_RINOMINA,
@@ -29,11 +29,40 @@ enum class MenuMain {
     CHIUDI
 };
 
+enum class SubMenu_regoleCerca {
+    TUTTO = 1,
+    DEFINISCI_ESTENSIONI,
+    CERCA_SOTTOSTRINGHE,
+    CERCA_CIFRE,
+    DATA_FILES,
+    DIMENSIONE,
+    ESEGUI,
+    RIGA_VUOTA,
+    TORNA_AL_MENU,
+};
+
+enum class SubMenu_regoleTarget {
+    TUTTO = 1,                 
+    DEFINISCI_ESTENSIONI,        
+    DEFINISCI_SOTTOSTRINGHE,     
+    CON_CIFRE,
+    DEFINISCI_CIFRE,             
+    DATA_FILES,     
+    DIMENSIONE,                  
+    INIZIA_CON,                  
+    FINISCE_CON,       
+    MENU_SELEZIONE,              
+    RIGA_VUOTA,                           
+    TORNA_AL_MENU,
+};
+
 extern vector<valoriMenu> mainMenu;
-extern vector<valoriMenu> subMenu;
+extern vector<valoriMenu> subMenu_regoleCerca;
+extern vector<valoriMenu> subMenu_regoleTarget;
 extern vector<valoriMenu> menuPunteggiatura;
 extern vector<valoriMenu> menuParentesi;
 extern vector<valoriMenu> menuSimboli;
+extern vector<string> estensioniTargetMultiple;
 extern string estensioneTarget;
 extern string estensioneOutput;
 
@@ -47,4 +76,5 @@ void gestisci_sottomenu_generico(vector<valoriMenu>& menuTarget, const string& t
 void gestisci_menu_punteggiatura();
 void gestisci_menu_parentesi();
 void gestisci_menu_simboli();
+void gestisci_menu_target();
 void aggiorna_testi_menu();

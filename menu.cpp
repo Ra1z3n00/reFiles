@@ -5,16 +5,16 @@
 vector<valoriMenu> mainMenu {
     {"Mostra Lista Files",         false}, // 1
     {"Cambia Posizione",           false}, // 2
-    {"Rimuovi Punteggiatura",      false}, // 3
-    {"Rimuovi Parentesi",          false}, // 4
-    {"Rimuovi Spazi",              false}, // 5
-    {"Rimuovi Spazi Ripetuti",     false}, // 6
-    {"Rimuovi Numeri",             false}, // 7
-    {"Rimuovi Simboli",            false}, // 8
-    {"Sostituisci con Maiuscole",  false}, // 9
-    {"Sostituisci con Minuscole",  false}, // 10
-    {"Rimuovi Parole:",            false}, // 11
-    {"Definisci estensioni",       false}, // 12
+    {"Regole Target",              false}, // 3
+    {"Rimuovi Punteggiatura",      false}, // 4
+    {"Rimuovi Parentesi",          false}, // 5
+    {"Rimuovi Spazi",              false}, // 6
+    {"Rimuovi Spazi Ripetuti",     false}, // 7
+    {"Rimuovi Numeri",             false}, // 8
+    {"Rimuovi Simboli",            false}, // 9
+    {"Rimuovi Parole",             false}, // 10
+    {"Sostituisci con Maiuscole",  false}, // 11
+    {"Sostituisci con Minuscole",  false}, // 12
     {"Sostituisci estensione",     false}, // 13
     {"Esporta lista file",         false}, // 14
     {"[ ESEGUI RINOMINA ]",        false}, // 15
@@ -24,14 +24,29 @@ vector<valoriMenu> mainMenu {
     {"Chiudi",                     false}  // 19
 };
 
-vector<valoriMenu> subMenu {
-    {"Tutto",                       true},
-    {"Estensioni specificate",      false},
+vector<valoriMenu> subMenu_regoleCerca {
+    {"Tutto",                        true},
+    {"Definisci Estensioni",        false},
     {"Cerca Sottostringhe",         false},
     {"Cerca Cifre",                 false},
-    {"Data specifica (GG/MM/AAAA)", false},
+    {"Data files (GG/MM/AAAA)",     false},
     {"Dimensione",                  false},
     {"Esegui",                      false},
+    {" ",                           false},
+    {"Torna al menu principale",    false}
+};
+
+vector<valoriMenu> subMenu_regoleTarget {
+    {"Tutto",                        true},
+    {"Definisci Estensioni",        false},
+    {"Definisci Sottostringhe",     false},
+    {"Con Cifre",                   false},
+    {"Definisci Cifre",             false},
+    {"Data files (GG/MM/AAAA)",     false},
+    {"Dimensione",                  false},
+    {"Inizia con",                  false},
+    {"Finisce con",                 false},
+    {"Menu Selezione",              false},
     {" ",                           false},
     {"Torna al menu principale",    false}
 };
@@ -170,44 +185,70 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
             cout << left << setw(larghezzaAdattata) << menu.at(i - 1).testo << RESET;
 
             if (&menu == &mainMenu) {
-                if (i == 3 || i == 4 || i == 5 || i == 6 || i == 7 || i == 8 || i == 9 || i == 10 || i == 11 || i == 13) {
+                MenuMain voce = static_cast<MenuMain>(i);
+                if (voce == MenuMain::RIMUOVI_PUNTEGGIATURA || 
+                    voce == MenuMain::RIMUOVI_PARENTESI || voce == MenuMain::RIMUOVI_SPAZI || 
+                    voce == MenuMain::RIMUOVI_SPAZI_RIPETUTI || voce == MenuMain::RIMUOVI_NUMERI || 
+                    voce == MenuMain::RIMUOVI_SIMBOLI || voce == MenuMain::RIMUOVI_PAROLE || 
+                    voce == MenuMain::SOSTITUISCI_MAIUSCOLE || voce == MenuMain::SOSTITUISCI_MINUSCOLE || 
+                    voce == MenuMain::SOSTITUISCI_ESTENSIONE) {
+                    
                     cout << " = [" << (menu.at(i - 1).decisione ? GREEN : RED) << menu.at(i - 1).decisione << RESET << "]";
                     cout << ((menu.at(i - 1).decisione) ? " " : "");
-                } else if (i == 12) {
-                    cout << get_string("LBL_TUTTI_FILE") << YELLOW << estensioneTarget << RESET << ")"; // Nota: estensioneTarget è definita in file_operations
+                } else if (voce == MenuMain::SOSTITUISCI_ESTENSIONE) {
+                    cout << get_string("LBL_TUTTI_FILE") << YELLOW << estensioneTarget << RESET << ")";
                 }
-            } 
+            }
             else if (&menu == &menuPunteggiatura || &menu == &menuParentesi || &menu == &menuSimboli) {
                 if (menu.at(i - 1).testo != " " && i != menu.size() && i != menu.size() - 1) {
                     cout << " = [" << (menu.at(i - 1).decisione ? GREEN : RED) << menu.at(i - 1).decisione << RESET << "]";
                     cout << ((menu.at(i - 1).decisione) ? " " : "");
                 }
             } 
-            else if (&menu == &subMenu) {
-                if (i >= 1 && i <= 6) {
+            else if (&menu == &subMenu_regoleCerca || &menu == &subMenu_regoleTarget) {
+                if (i >= 1 && i <= menu.size() - 2) {
                     cout << " = [" << (menu.at(i - 1).decisione ? GREEN : RED) << menu.at(i - 1).decisione << RESET << "]";
                     cout << ((menu.at(i - 1).decisione) ? " " : "");
+                }
+                
+                // Mostra l'elenco delle estensioni target a destra se definite
+                if (&menu == &subMenu_regoleTarget && i == 3 && !estensioniTargetMultiple.empty()) {
+                    cout << "  (Estensioni: ";
+                    for (size_t idx = 0; idx < estensioniTargetMultiple.size(); ++idx) {
+                        cout << YELLOW << estensioniTargetMultiple[idx] << RESET;
+                        if (idx < estensioniTargetMultiple.size() - 1) cout << " - ";
+                    }
+                    cout << ")";
                 }
             }
 
             // Spiegazioni laterali del menu principale (quanti moduli sono attivi)
-            int count = 0;
             if (&menu == &mainMenu) {
-                if (i == 3) {
-                    count = modAttivi(menuPunteggiatura);
-                    cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
-                } else if (i == 4) {
-                    count = modAttivi(menuParentesi);
-                    cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
-                } else if (i == 8) {
-                    count = modAttivi(menuSimboli);
-                    cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
-                } else if (i == 13) {
-                    cout << get_string("LBL_CONVERTI_IN") << YELLOW << estensioneOutput << RESET << ")";
+                MenuMain voce = static_cast<MenuMain>(i);
+                int count = 0;
+                
+                switch (voce) {
+                    case MenuMain::RIMUOVI_PUNTEGGIATURA:
+                        count = modAttivi(menuPunteggiatura);
+                        cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
+                        break;
+                    case MenuMain::RIMUOVI_PARENTESI:
+                        count = modAttivi(menuParentesi);
+                        cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
+                        break;
+                    case MenuMain::RIMUOVI_SIMBOLI:
+                        count = modAttivi(menuSimboli);
+                        cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
+                        break;
+                    case MenuMain::SOSTITUISCI_ESTENSIONE:
+                        cout << get_string("LBL_CONVERTI_IN") << YELLOW << estensioneOutput << RESET << ")";
+                        break;
+                    default:
+                        break;
                 }
             }
 
-            // Spiegazioni laterali del subMenu, in particolare di "Conserva un Ripetuto" e "Sostituisci con spazio"
+            // Spiegazioni laterali dei sottomenu
             if (&menu == &menuPunteggiatura || &menu == &menuSimboli || &menu == &menuParentesi) {
                 if (i == (menu.size() - 2)) {
                     cout << EXT_TXT_RGB(255,165,0) << get_string("LBL_RIPETUTO_GUIDA") << RESET;
@@ -222,7 +263,8 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
         tasto = getch();
 
         if (tasto == 'e' || tasto == 'E') {
-            if (&menu == &menuPunteggiatura || &menu == &menuParentesi || &menu == &menuSimboli || &menu == &subMenu) {
+            if (&menu == &menuPunteggiatura || &menu == &menuParentesi || &menu == &menuSimboli || 
+                &menu == &subMenu_regoleCerca || &menu == &subMenu_regoleTarget) {
                 return menu.size();
             }
         }
@@ -230,13 +272,22 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
         if (tasto == 'q' || tasto == 'Q') {
             // Caso 1: Siamo nel Menu Principale su una voce che ha un sottomenu
             if (&menu == &mainMenu) {
-                int indiceSelezionato = pos - 1;
+                MenuMain voceSelezionata = static_cast<MenuMain>(pos);
                 vector<valoriMenu>* sottomenuTarget = nullptr;
                 int indiceMainDaAggiornare = -1;
 
-                if (indiceSelezionato == 2) { sottomenuTarget = &menuPunteggiatura; indiceMainDaAggiornare = 2; }
-                else if (indiceSelezionato == 3) { sottomenuTarget = &menuParentesi; indiceMainDaAggiornare = 3; }
-                else if (indiceSelezionato == 7) { sottomenuTarget = &menuSimboli; indiceMainDaAggiornare = 7; }
+                if (voceSelezionata == MenuMain::RIMUOVI_PUNTEGGIATURA) { 
+                    sottomenuTarget = &menuPunteggiatura; 
+                    indiceMainDaAggiornare = static_cast<int>(MenuMain::RIMUOVI_PUNTEGGIATURA) - 1; 
+                }
+                else if (voceSelezionata == MenuMain::RIMUOVI_PARENTESI) { 
+                    sottomenuTarget = &menuParentesi; 
+                    indiceMainDaAggiornare = static_cast<int>(MenuMain::RIMUOVI_PARENTESI) - 1; 
+                }
+                else if (voceSelezionata == MenuMain::RIMUOVI_SIMBOLI) { 
+                    sottomenuTarget = &menuSimboli; 
+                    indiceMainDaAggiornare = static_cast<int>(MenuMain::RIMUOVI_SIMBOLI) - 1; 
+                }
 
                 if (sottomenuTarget != nullptr) {
                     size_t limiteVoci = sottomenuTarget->size() - 2;
@@ -260,7 +311,6 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                 size_t limiteVoci = menu.size() - 2;
                 bool giaTuttiAttivi = true;
                 
-                // Verifica se sono già tutti attivi
                 for (size_t i = 0; i < limiteVoci; i++) {
                     if (menu.at(i).testo != " " && !menu.at(i).decisione) {
                         giaTuttiAttivi = false;
@@ -270,19 +320,26 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                 
                 bool nuovoStato = !giaTuttiAttivi;
                 
-                // Modifica il sottomenu attuale (usando un puntatore o modificando direttamente il vettore attivo)
-                // Nota: poiché 'menu' è passato come const reference, dobbiamo fare il cast o gestire il puntatore al vettore corretto.
                 vector<valoriMenu>* targetCorrente = nullptr;
                 int indiceMain = -1;
-                if (&menu == &menuPunteggiatura) { targetCorrente = &menuPunteggiatura; indiceMain = 2; }
-                else if (&menu == &menuParentesi) { targetCorrente = &menuParentesi; indiceMain = 3; }
-                else if (&menu == &menuSimboli) { targetCorrente = &menuSimboli; indiceMain = 7; }
+                if (&menu == &menuPunteggiatura) { 
+                    targetCorrente = &menuPunteggiatura; 
+                    indiceMain = static_cast<int>(MenuMain::RIMUOVI_PUNTEGGIATURA) - 1; 
+                }
+                else if (&menu == &menuParentesi) { 
+                    targetCorrente = &menuParentesi; 
+                    indiceMain = static_cast<int>(MenuMain::RIMUOVI_PARENTESI) - 1; 
+                }
+                else if (&menu == &menuSimboli) { 
+                    targetCorrente = &menuSimboli; 
+                    indiceMain = static_cast<int>(MenuMain::RIMUOVI_SIMBOLI) - 1; 
+                }
 
                 if (targetCorrente != nullptr) {
                     for (size_t i = 0; i < limiteVoci; i++) {
                         if (targetCorrente->at(i).testo != " ") targetCorrente->at(i).decisione = nuovoStato;
                     }
-                    mainMenu.at(indiceMain).decisione = nuovoStato; // Aggiorna anche il pallino nel main
+                    mainMenu.at(indiceMain).decisione = nuovoStato;
                     continue;
                 }
             }
@@ -330,6 +387,10 @@ int menuScelta(unsigned pos, unsigned elements, ...) {
 
         tasto = getch();
 
+        if (tasto == 'e' || tasto == 'E') {
+            return elements; 
+        }
+
         if (tasto == 72 && pos != 1) {               // Tasto freccia su
             pos--;
         } else if (tasto == 80 && pos != elements) { // Tasto freccia giù
@@ -347,14 +408,19 @@ void switcher(int scelta) {
 }
 
 void mutuaEsclusione(int scelta) {
-    if (scelta == 9 && mainMenu.at(8).decisione) {
-        mainMenu.at(9).decisione = false;
-    } else if (scelta == 10 && mainMenu.at(9).decisione) {
-        mainMenu.at(8).decisione = false;
-    } else if (scelta == 5 && mainMenu.at(4).decisione) {
-        mainMenu.at(5).decisione = false;
-    } else if (scelta == 6 && mainMenu.at(5).decisione) {
-        mainMenu.at(4).decisione = false;
+    MenuMain opzione = static_cast<MenuMain>(scelta);
+
+    if (opzione == MenuMain::SOSTITUISCI_MAIUSCOLE && mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_MAIUSCOLE) - 1).decisione) {
+        mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_MINUSCOLE) - 1).decisione = false;
+    } 
+    else if (opzione == MenuMain::SOSTITUISCI_MINUSCOLE && mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_MINUSCOLE) - 1).decisione) {
+        mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_MAIUSCOLE) - 1).decisione = false;
+    } 
+    else if (opzione == MenuMain::RIMUOVI_SPAZI && mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_SPAZI) - 1).decisione) {
+        mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_SPAZI_RIPETUTI) - 1).decisione = false;
+    } 
+    else if (opzione == MenuMain::RIMUOVI_SPAZI_RIPETUTI && mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_SPAZI_RIPETUTI) - 1).decisione) {
+        mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_SPAZI) - 1).decisione = false;
     }
 }
 
@@ -362,16 +428,16 @@ void aggiorna_testi_menu() {
     // Aggiornamento Main Menu
     mainMenu.at(0).testo = get_string("MENU_MOSTRA");
     mainMenu.at(1).testo = get_string("MENU_POSIZIONE");
-    mainMenu.at(2).testo = get_string("MENU_PUNTEGGIATURA");
-    mainMenu.at(3).testo = get_string("MENU_PARENTESI");
-    mainMenu.at(4).testo = get_string("MENU_SPAZI");
-    mainMenu.at(5).testo = get_string("MENU_SPAZI_RIPETUTI");
-    mainMenu.at(6).testo = get_string("MENU_NUMERI");
-    mainMenu.at(7).testo = get_string("MENU_SIMBOLI");
-    mainMenu.at(8).testo = get_string("MENU_MAIUSCOLE");
-    mainMenu.at(9).testo = get_string("MENU_MINUSCOLE");
-    mainMenu.at(10).testo = get_string("MENU_PAROLE");
-    mainMenu.at(11).testo = get_string("MENU_DEF_EXT");
+    mainMenu.at(2).testo = get_string("MENU_TARGET");
+    mainMenu.at(3).testo = get_string("MENU_PUNTEGGIATURA");
+    mainMenu.at(4).testo = get_string("MENU_PARENTESI");
+    mainMenu.at(5).testo = get_string("MENU_SPAZI");
+    mainMenu.at(6).testo = get_string("MENU_SPAZI_RIPETUTI");
+    mainMenu.at(7).testo = get_string("MENU_NUMERI");
+    mainMenu.at(8).testo = get_string("MENU_SIMBOLI");
+    mainMenu.at(9).testo = get_string("MENU_PAROLE");
+    mainMenu.at(10).testo = get_string("MENU_MAIUSCOLE");
+    mainMenu.at(11).testo = get_string("MENU_MINUSCOLE");
     mainMenu.at(12).testo = get_string("MENU_SOS_EXT");
     mainMenu.at(13).testo = get_string("MENU_ESPORTA");
     mainMenu.at(14).testo = get_string("MENU_ESGUI");
@@ -380,16 +446,16 @@ void aggiorna_testi_menu() {
     mainMenu.at(17).testo = get_string("MENU_LINGUA");
     mainMenu.at(18).testo = get_string("MENU_CHIUDI");
 
-    // Aggiornamento SubMenu (Filtri)
-    subMenu.at(0).testo = get_string("SUB_TUTTO");
-    subMenu.at(1).testo = get_string("SUB_ESTENSIONI");
-    subMenu.at(2).testo = get_string("SUB_SOTTOSTRINGHE");
-    subMenu.at(3).testo = get_string("SUB_CIFRE");
-    subMenu.at(4).testo = get_string("SUB_DATA");
-    subMenu.at(5).testo = get_string("SUB_DIMENSIONE");
-    subMenu.at(6).testo = get_string("SUB_ESEGUI");
+    // Aggiornamento subMenu_regoleCerca (Filtri)
+    subMenu_regoleCerca.at(0).testo = get_string("SUB_TUTTO");
+    subMenu_regoleCerca.at(1).testo = get_string("SUB_ESTENSIONI");
+    subMenu_regoleCerca.at(2).testo = get_string("SUB_SOTTOSTRINGHE");
+    subMenu_regoleCerca.at(3).testo = get_string("SUB_CIFRE");
+    subMenu_regoleCerca.at(4).testo = get_string("SUB_DATA");
+    subMenu_regoleCerca.at(5).testo = get_string("SUB_DIMENSIONE");
+    subMenu_regoleCerca.at(6).testo = get_string("SUB_ESEGUI");
     // Indice 7 è la riga vuota " "
-    subMenu.at(8).testo = get_string("SUB_INDIETRO");
+    subMenu_regoleCerca.at(8).testo = get_string("SUB_INDIETRO");
 
     // Aggiornamento Menu Punteggiatura
     menuPunteggiatura.at(0).testo = get_string("PUNT_VIRGOLA");

@@ -7,6 +7,7 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     // Menu Principale
     {"MENU_MOSTRA", "Mostra Lista Files"},
     {"MENU_POSIZIONE", "Cambia Posizione"},
+    {"MENU_TARGET", "Definisci il Target"},
     {"MENU_PUNTEGGIATURA", "Rimuovi Punteggiatura"},
     {"MENU_PARENTESI", "Rimuovi Parentesi"},
     {"MENU_SPAZI", "Rimuovi Spazi"},
@@ -15,7 +16,7 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"MENU_SIMBOLI", "Rimuovi Simboli"},
     {"MENU_MAIUSCOLE", "Sostituisci con Maiuscole"},
     {"MENU_MINUSCOLE", "Sostituisci con Minuscole"},
-    {"MENU_PAROLE", "Rimuovi Parole:"},
+    {"MENU_PAROLE", "Rimuovi Parole"},
     {"MENU_DEF_EXT", "Definisci estensioni"},
     {"MENU_SOS_EXT", "Sostituisci estensione"},
     {"MENU_ESPORTA", "Esporta lista file"},
@@ -108,11 +109,12 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"POPUP_DEFINISCI", "Definisci"},
 
     {"POPUP_DATA_ESATTA", "Data esatta"},
-    {"POPUP_FINO_DATA", "...fino a questa data (<=)"},
-    {"POPUP_DA_DATA", "Da questa data in poi... (>=)"},
-    
-    {"POPUP_MAGGIORE", "Maggiore o uguale (>=)"},
-    {"POPUP_MINORE", "Minore o uguale (<=)"},
+    {"POPUP_FINO_DATA", "...fino a questa data (a <= b)"},
+    {"POPUP_DA_DATA", "Da questa data in poi... (a >= b)"},
+
+    {"POPUP_MAGGIORE", "Maggiore o uguale (a >= b)"},
+    {"POPUP_COMPRESO","Compreso tra (a > x < b)"},
+    {"POPUP_MINORE", "Minore o uguale (a <= b)"},
     
     {"POPUP_BYTE", "Byte (B)"},
     {"POPUP_KB", "Kilobyte (KB)"},
@@ -221,6 +223,7 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     // Main Menu
     {"MENU_MOSTRA", "Show Files List"},
     {"MENU_POSIZIONE", "Change Path"},
+    {"MENU_TARGET", "Define the Target"},
     {"MENU_PUNTEGGIATURA", "Remove Punctuation"},
     {"MENU_PARENTESI", "Remove Parentheses"},
     {"MENU_SPAZI", "Remove Spaces"},
@@ -229,7 +232,7 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"MENU_SIMBOLI", "Remove Symbols"},
     {"MENU_MAIUSCOLE", "Replace with Uppercase"},
     {"MENU_MINUSCOLE", "Replace with Lowercase"},
-    {"MENU_PAROLE", "Remove Words:"},
+    {"MENU_PAROLE", "Remove Words"},
     {"MENU_DEF_EXT", "Define extensions"},
     {"MENU_SOS_EXT", "Replace extension"},
     {"MENU_ESPORTA", "Export files list"},
@@ -326,6 +329,7 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"POPUP_DA_DATA", "From this date onwards... (>=)"},
     
     {"POPUP_MAGGIORE", "Greater than or equal (>=)"},
+    {"POPUP_COMPRESO","Between (a > x < b)"},
     {"POPUP_MINORE", "Less than or equal (<=)"},
     
     {"POPUP_BYTE", "Byte (B)"},
