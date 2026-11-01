@@ -131,7 +131,7 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
 
     // Etichette dinamiche menuScelta
     {"LBL_TUTTI_FILE", " =          (Tutti i file: "},
-    {"LBL_CONVERTI_IN", "  (Converti in: "},
+    {"LBL_CONVERTI_IN", " (Converti in: "},
     {"LBL_ELEM_ATTIVO", " elemento attivo)"},
     {"LBL_ELEM_ATTIVI", " elementi attivi)"},
     {"LBL_RIPETUTO_GUIDA", "  (Ne mantiene uno se consecutivo)"},
@@ -347,7 +347,7 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
 
     // Dynamic labels menuScelta
     {"LBL_TUTTI_FILE", " =          (All files: "},
-    {"LBL_CONVERTI_IN", "  (Convert to: "},
+    {"LBL_CONVERTI_IN", " (Convert to: "},
     {"LBL_ELEM_ATTIVO", " active element)"},
     {"LBL_ELEM_ATTIVI", " active elements)"},
     {"LBL_RIPETUTO_GUIDA", "  (Keeps one if consecutive)"},

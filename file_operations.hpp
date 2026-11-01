@@ -9,10 +9,6 @@ namespace fs = std::filesystem;
 enum class Tempi { Ieri_Oggi = 1, Oggi = 2, Oggi_Domani = 3 };
 enum class DirezioneDim { Maggiori = 1, Compresi = 2, Minori = 3 };
 
-struct SelezioneFileItem {
-    string nomeCompleto;
-    bool selezionato; // true o false per la rinomina
-};
 extern vector<SelezioneFileItem> fileSelezionatiManualmente;
 
 // --- DICHIARAZIONI EXTERN DELLE VARIABILI DI CONFIGURAZIONE ---
@@ -57,3 +53,5 @@ void mostra_lista();
 void esporta_lista();
 void esegui_rinomina();
 void aboutMe();
+
+int conta_file_target();

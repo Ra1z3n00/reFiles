@@ -56,6 +56,11 @@ enum class SubMenu_regoleTarget {
     TORNA_AL_MENU,
 };
 
+struct SelezioneFileItem {
+    string nomeCompleto;
+    bool selezionato;
+};
+
 extern vector<valoriMenu> mainMenu;
 extern vector<valoriMenu> subMenu_regoleCerca;
 extern vector<valoriMenu> subMenu_regoleTarget;
@@ -65,6 +70,7 @@ extern vector<valoriMenu> menuSimboli;
 extern vector<string> estensioniTargetMultiple;
 extern string estensioneTarget;
 extern string estensioneOutput;
+extern vector<SelezioneFileItem> fileSelezionatiManualmente;
 
 // Prototipi
 int menuScelta(unsigned pos, unsigned elements, ...);

@@ -3,9 +3,7 @@
 
 
 // --- DEFINIZIONE DELLE VARIABILI DI CONFIGURAZIONE ---
-
-string estensioneTarget = "txt";
-string estensioneOutput = "txt";
+string estensioneOutput = "Non Impostata";
 vector<string> paroleDaRimuovere;
 vector<string> sottostringheEsportate;
 vector<string> estensioniEsportate;
@@ -27,7 +25,6 @@ vector<string> finisceConTarget;
 
 vector<SelezioneFileItem> fileSelezionatiManualmente;
 
-// --- TRASFORMAZIONI DI STRINGA ---
 string to_lowercase(string str) {
     transform(str.begin(), str.end(), str.begin(), [](unsigned char c){ return tolower(c); });
     return str;
@@ -366,16 +363,27 @@ void applica_rimuovi_simboli(string& nome) {
 
 void sostituisci_estensioni() {
     system("cls");
-    cout << BOLD << get_string("BANNER_DEF_OUTPUT") << RESET << endl << endl;
-    cout << get_string("MSG_ESTENSIONE_ATTUALE") << YELLOW << estensioneOutput << RESET << endl;
-    cout << get_string("PROMPT_NUOVA_ESTENSIONE");
-    cin >> estensioneOutput;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << BOLD << RED << "ATTENZIONE: SOSTITUZIONE ESTENSIONE" << RESET << endl << endl;
+    cout << YELLOW << "Questa operazione modifichera' l'estensione di tutti i file target selezionati." << RESET << endl;
+    cout << "Estensione di output attuale: " << YELLOW << estensioneOutput << RESET << endl << endl;
+    cout << "Inserisci la nuova estensione (es. txt, pdf, jpg) o lascia vuoto per disattivare:" << endl << "> ";
     
-    mainMenu.at(12).decisione = (to_lowercase(estensioneOutput) != to_lowercase(estensioneTarget));
+    string nuovaExt;
+    getline(cin, nuovaExt);
+
+    if (!nuovaExt.empty()) {
+        if (nuovaExt[0] == '.') nuovaExt.erase(0, 1);
+        estensioneOutput = to_lowercase(nuovaExt);
+        mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_ESTENSIONE) - 1).decisione = true;
+        cout << GREEN << "\nEstensione di output aggiornata con successo a '." << estensioneOutput << "'." << RESET << endl;
+    } else {
+        estensioneOutput = "Non Impostata";
+        mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_ESTENSIONE) - 1).decisione = false;
+        cout << YELLOW << "\nSostituzione estensione disattivata (valore reimpostato a 'Non Impostata')." << RESET << endl;
+    }
+    PAUSE("Premi un tasto per continuare...");
 }
 
-// --- GESTIONE PAROLE ED ESTENSIONI ---
 void gestisci_menu_parole() {
     system("cls");
     cout << BOLD << get_string("BANNER_DEF_PAROLE") << RESET << endl << endl;
@@ -395,7 +403,7 @@ void gestisci_menu_parole() {
         paroleDaRimuovere.push_back(parola);
     }
 
-    mainMenu.at(10).decisione = !paroleDaRimuovere.empty();
+    mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_PAROLE) - 1).decisione = !paroleDaRimuovere.empty();
 }
 
 void gestisci_menu_estensioni_esporta() {
@@ -448,7 +456,6 @@ void gestisci_menu_sottostringhe_esporta() {
 }
 
 void gestisci_menu_estensioni_target() {
-
     system("cls");
     cout << BOLD << "DEFINISCI ESTENSIONI TARGET" << RESET << endl << endl;
     if (!estensioniTargetMultiple.empty()) {
@@ -472,11 +479,10 @@ void gestisci_menu_estensioni_target() {
     }
 
     if (nuoveEstensioni.empty()) {
-        subMenu_regoleTarget.at(2).decisione = false;
+        subMenu_regoleTarget.at(1).decisione = false; // CORRETTO (Indice 1)
         return;
     }
 
-    // Verifica se esistono file con queste estensioni nella cartella corrente
     vector<string> estensioniValide;
     for (const auto& e : nuoveEstensioni) {
         bool trovata = false;
@@ -502,11 +508,11 @@ void gestisci_menu_estensioni_target() {
 
     if (!estensioniValide.empty()) {
         estensioniTargetMultiple = estensioniValide;
-        subMenu_regoleTarget.at(2).decisione = true;
+        subMenu_regoleTarget.at(1).decisione = true; // CORRETTO (Indice 1)
         subMenu_regoleTarget.at(0).decisione = false;
     } else {
         cout << RED << "Nessuna delle estensioni inserite e' presente nella cartella." << RESET << endl;
-        subMenu_regoleTarget.at(2).decisione = false;
+        subMenu_regoleTarget.at(1).decisione = false; // CORRETTO (Indice 1)
         PAUSE("Premi un tasto per continuare...");
     }
 }
@@ -530,7 +536,7 @@ void gestisci_menu_sottostringhe_target() {
         sottostringheTarget.push_back(sottos);
     }
 
-    subMenu_regoleTarget.at(3).decisione = !sottostringheTarget.empty();
+    subMenu_regoleTarget.at(2).decisione = !sottostringheTarget.empty(); // CORRETTO (Indice 2)
     if (!sottostringheTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
 }
 
@@ -553,7 +559,7 @@ void gestisci_menu_cifre_target() {
         cifreTarget.push_back(cifra);
     }
 
-    subMenu_regoleTarget.at(5).decisione = !cifreTarget.empty();
+    subMenu_regoleTarget.at(4).decisione = !cifreTarget.empty(); // CORRETTO (Indice 4)
     if (!cifreTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
 }
 
@@ -576,7 +582,7 @@ void gestisci_menu_inizia_con() {
         iniziaConTarget.push_back(pref);
     }
 
-    subMenu_regoleTarget.at(8).decisione = !iniziaConTarget.empty();
+    subMenu_regoleTarget.at(7).decisione = !iniziaConTarget.empty(); // CORRETTO (Indice 7)
     if (!iniziaConTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
 }
 
@@ -599,15 +605,17 @@ void gestisci_menu_finisce_con() {
         finisceConTarget.push_back(suff);
     }
 
-    subMenu_regoleTarget.at(9).decisione = !finisceConTarget.empty();
+    subMenu_regoleTarget.at(8).decisione = !finisceConTarget.empty(); // CORRETTO (Indice 8)
     if (!finisceConTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
 }
 
 void gestisci_menu_selezione_file() {
     fs::path percorso = fs::current_path();
-    fileSelezionatiManualmente.clear();
 
-    // 1. Popola la lista dei file filtrati in base ai moduli precedenti
+    vector<SelezioneFileItem> nuoviFileTrovati;
+    // Se "Tutto" è attivo, i nuovi file di default partono da true
+    bool statoDefaultNuovi = subMenu_regoleTarget.at(0).decisione;
+
     try {
         for (const auto& entry : fs::directory_iterator(percorso)) {
             if (!entry.is_regular_file()) continue;
@@ -619,9 +627,10 @@ void gestisci_menu_selezione_file() {
 
             bool incluso = true;
 
-            // Se "Tutto" non è attivo, applichiamo i filtri target precedenti
-            if (!subMenu_regoleTarget.at(0).decisione) {
-                // Estensioni multiple
+            // Applicazione dei filtri di subMenu_regoleTarget
+            if (!subMenu_regoleTarget.at(0).decisione) { // Se "Tutto" non è attivo
+                
+                // 1. Definisci Estensioni (Indice 1)
                 if (subMenu_regoleTarget.at(1).decisione) {
                     bool matchExt = false;
                     for (const auto& e : estensioniTargetMultiple) {
@@ -629,29 +638,41 @@ void gestisci_menu_selezione_file() {
                     }
                     if (!matchExt) incluso = false;
                 }
-                // Sottostringhe
+
+                // 2. Definisci Sottostringhe (Indice 2)
                 if (subMenu_regoleTarget.at(2).decisione && incluso) {
                     bool matchSub = false;
                     string nomeLower = to_lowercase(nomeCompleto);
                     for (const auto& s : sottostringheTarget) {
-                        if (nomeLower.find(to_lowercase(s)) != string::npos) { matchSub = true; break; }
+                        if (nomeLower.find(to_lowercase(s)) != string::npos) {
+                            matchSub = true;
+                            break;
+                        }
                     }
                     if (!matchSub) incluso = false;
                 }
-                // Con Cifre
+
+                // 3. Con Cifre (Indice 3)
                 if (subMenu_regoleTarget.at(3).decisione && incluso) {
-                    bool haCifre = any_of(nomeCompleto.begin(), nomeCompleto.end(), [](unsigned char c){ return isdigit(c); });
+                    bool haCifre = any_of(nomeCompleto.begin(), nomeCompleto.end(), [](unsigned char c){
+                        return isdigit(c);
+                    });
                     if (!haCifre) incluso = false;
                 }
-                // Definisci Cifre
+
+                // 4. Definisci Cifre (Indice 4)
                 if (subMenu_regoleTarget.at(4).decisione && incluso) {
                     bool matchCifre = false;
                     for (const auto& cif : cifreTarget) {
-                        if (nomeCompleto.find(cif) != string::npos) { matchCifre = true; break; }
+                        if (nomeCompleto.find(cif) != string::npos) {
+                            matchCifre = true;
+                            break;
+                        }
                     }
                     if (!matchCifre) incluso = false;
                 }
-                // Data files
+
+                // 5. Data files (Indice 5)
                 if (subMenu_regoleTarget.at(5).decisione && incluso) {
                     try {
                         auto ftime = entry.last_write_time();
@@ -670,31 +691,45 @@ void gestisci_menu_selezione_file() {
                             int a = stoi(dataTarget.substr(6, 4));
 
                             struct tm tmTarget = {};
-                            tmTarget.tm_mday = g; tmTarget.tm_mon = m - 1; tmTarget.tm_year = a - 1900;
+                            tmTarget.tm_mday = g;
+                            tmTarget.tm_mon = m - 1;
+                            tmTarget.tm_year = a - 1900;
+                            tmTarget.tm_hour = 0; tmTarget.tm_min = 0; tmTarget.tm_sec = 0;
                             time_t tTarget = mktime(&tmTarget);
 
                             if (dataModalitaTarget == Tempi::Ieri_Oggi && tFile > tTarget) incluso = false;
                             else if (dataModalitaTarget == Tempi::Oggi && tFile != tTarget) incluso = false;
                             else if (dataModalitaTarget == Tempi::Oggi_Domani && tFile < tTarget) incluso = false;
-                        } else { incluso = false; }
-                    } catch (...) { incluso = false; }
+                        } else {
+                            incluso = false;
+                        }
+                    } catch (...) {
+                        incluso = false;
+                    }
                 }
-                // Dimensione
+
+                // 6. Dimensione (Indice 6)
                 if (subMenu_regoleTarget.at(6).decisione && incluso) {
                     uintmax_t sizeBytes = fs::file_size(entry);
                     if (dimTipoTarget == DirezioneDim::Maggiori && sizeBytes < dimValoreTarget) incluso = false;
                     else if (dimTipoTarget == DirezioneDim::Minori && sizeBytes > dimValoreTarget) incluso = false;
                 }
-                // Inizia con
+
+                // 7. Inizia con (Indice 7)
                 if (subMenu_regoleTarget.at(7).decisione && incluso) {
                     bool matchInizia = false;
                     string nomeLower = to_lowercase(nomeSenzaExt);
                     for (const auto& pref : iniziaConTarget) {
-                        if (nomeLower.rfind(to_lowercase(pref), 0) == 0) { matchInizia = true; break; }
+                        string prefLower = to_lowercase(pref);
+                        if (nomeLower.rfind(prefLower, 0) == 0) {
+                            matchInizia = true;
+                            break;
+                        }
                     }
                     if (!matchInizia) incluso = false;
                 }
-                // Finisce con
+
+                // 8. Finisce con (Indice 8)
                 if (subMenu_regoleTarget.at(8).decisione && incluso) {
                     bool matchFinisce = false;
                     string nomeLower = to_lowercase(nomeSenzaExt);
@@ -702,7 +737,8 @@ void gestisci_menu_selezione_file() {
                         string suffLower = to_lowercase(suff);
                         if (nomeLower.length() >= suffLower.length() &&
                             nomeLower.compare(nomeLower.length() - suffLower.length(), suffLower.length(), suffLower) == 0) {
-                            matchFinisce = true; break;
+                            matchFinisce = true;
+                            break;
                         }
                     }
                     if (!matchFinisce) incluso = false;
@@ -710,20 +746,32 @@ void gestisci_menu_selezione_file() {
             }
 
             if (incluso) {
-                // Di default, i file filtrati partono come selezionati (true)
-                fileSelezionatiManualmente.push_back({nomeCompleto, true});
+                // Manteniamo lo stato scelto dall'utente se il file era già presente nella lista
+                bool trovatoPrecedente = false;
+                bool statoPrecedente = statoDefaultNuovi;
+
+                for (const auto& vecchioItem : fileSelezionatiManualmente) {
+                    if (vecchioItem.nomeCompleto == nomeCompleto) {
+                        trovatoPrecedente = true;
+                        statoPrecedente = vecchioItem.selezionato;
+                        break;
+                    }
+                }
+
+                nuoviFileTrovati.push_back({nomeCompleto, statoPrecedente});
             }
         }
     } catch (...) {}
 
+    fileSelezionatiManualmente = nuoviFileTrovati;
+
     if (fileSelezionatiManualmente.empty()) {
         system("cls");
         cout << YELLOW << "Nessun file trovato con i filtri attuali." << RESET << endl << endl;
-        PAUSE("Premi un tasto per continuare...");
+        PAUSE("Premi un tasto per continuar...");
         return;
     }
 
-    // Calcolo dinamico della larghezza massima dei nomi file (gestione UTF-8 simile a maxStringUTF8)
     int maxLenNome = 20;
     for (const auto& item : fileSelezionatiManualmente) {
         int realChars = 0;
@@ -734,19 +782,16 @@ void gestisci_menu_selezione_file() {
             realChars++;
             idxStr += len;
         }
-        if (realChars > maxLenNome) {
-            maxLenNome = realChars;
-        }
+        if (realChars > maxLenNome) maxLenNome = realChars;
     }
 
-    // 2. Interfaccia di selezione a finestra fissa (20 righe)
     size_t indiceInizio = 0;
     const size_t righeVisibili = 20;
     int posFile = 1;
 
     system("cls");
     cout << BOLD << "MENU SELEZIONE FILE MANUALI" << RESET << endl;
-    cout << DIM << "Usa le Frecce Su/Giu per scorrere, INVIO per attivare/disattivare (TRUE/FALSE), E = Esci" << RESET << endl << endl;
+    cout << DIM << "Usa le Frecce Su/Giu per scorrere, INVIO per attivare/disattivare, Q = Tutti On/Off, E = Esci" << RESET << endl << endl;
     
     cout << left << setw(maxLenNome + 4) << "Nome File" << "     " << setw(15) << "Stato" << endl;
     cout << string(maxLenNome + 21, '-') << endl;
@@ -762,7 +807,6 @@ void gestisci_menu_selezione_file() {
             bool isSelezionatoCorsore = (posFile == (int)(i + 1));
             cout << (isSelezionatoCorsore ? "> " GREEN LAMP : "  ");
             
-            // Calcolo degli extra bytes UTF-8 per mantenere l'allineamento corretto con setw
             int byteLen = fileSelezionatiManualmente[i].nomeCompleto.length();
             int realChars = 0;
             size_t idx = 0;
@@ -775,17 +819,11 @@ void gestisci_menu_selezione_file() {
             int utf8ExtraBytes = byteLen - realChars;
             int larghezzaAdattata = maxLenNome + utf8ExtraBytes;
 
-            // 1. Diciamo a C++ di riempire lo spazio vuoto con '_' anziché con gli spazi
             char carattere_stampato = '.';
             cout << left << setfill(carattere_stampato);
-
-            // 2. Stampiamo il nome del file allungato fino alla dimensione massima
             cout << setw(larghezzaAdattata + 4) << fileSelezionatiManualmente[i].nomeCompleto;
-
-            // 3. Riportiamo il riempimento a spazio normale per non rovinare le altre stampe
             cout << setfill(' ');
 
-            // 4. Stampiamo lo stato del file
             if (fileSelezionatiManualmente[i].selezionato) {
                 cout << " = " << GREEN << "TRUE" << RESET;
             } else {
@@ -793,13 +831,12 @@ void gestisci_menu_selezione_file() {
             }
             cout << endl;
         }
-
         
         for (size_t i = (fine - indiceInizio); i < righeVisibili; ++i) {
             cout << CLEAR_LINE << "\r\n";
         }
 
-        cout << string(maxLenNome + 21, '-') << endl; // ho messo questo
+        cout << string(maxLenNome + 21, '-') << endl;
 
         int tasto1 = 0;
         #ifdef _WIN32
@@ -820,17 +857,43 @@ void gestisci_menu_selezione_file() {
         } else {
             tasto1 = tolower(tasto1);
             if (tasto1 == 'e') {
-                break; // Esce e salva le selezioni
-            } else if (tasto1 == '\r' || tasto1 == '\n') { // Invio: inverte lo stato TRUE/FALSE del file corrente
+                break; 
+            } else if (tasto1 == 'q') { // Tasto Q: Toggle globale di tutti i file
+                if (!fileSelezionatiManualmente.empty()) {
+                    bool tuttiAttivi = true;
+                    for (const auto& item : fileSelezionatiManualmente) {
+                        if (!item.selezionato) { tuttiAttivi = false; break; }
+                    }
+                    bool nuovoStato = !tuttiAttivi; 
+                    for (auto& item : fileSelezionatiManualmente) {
+                        item.selezionato = nuovoStato;
+                    }
+                    if (!nuovoStato) {
+                        subMenu_regoleTarget.at(0).decisione = false;
+                    } else {
+                        // Se tutti i file tornano a true, si può sincronizzare con "Tutto"
+                        bool filtriAttivi = false;
+                        for (size_t i = 1; i <= 8; i++) {
+                            if (subMenu_regoleTarget.at(i).decisione) { filtriAttivi = true; break; }
+                        }
+                        if (!filtriAttivi) subMenu_regoleTarget.at(0).decisione = true;
+                    }
+                }
+            } else if (tasto1 == '\r' || tasto1 == '\n') { // Invio: inverte il singolo file
                 if (!fileSelezionatiManualmente.empty()) {
                     fileSelezionatiManualmente[posFile - 1].selezionato = !fileSelezionatiManualmente[posFile - 1].selezionato;
+                    
+                    // Se disattiviamo anche un solo file, "Tutto" perde di significato e va a false
+                    if (!fileSelezionatiManualmente[posFile - 1].selezionato) {
+                        subMenu_regoleTarget.at(0).decisione = false;
+                    }
                 }
             }
         }
         #endif
     }
 
-    // Attiva la regola del menu selezione nel sottomenu target se ci sono file attivi
+    // Aggiorniamo la spunta della voce "Menu Selezione" nel sottomenu regole target
     bool almenoUnoSelezionato = false;
     for (const auto& f : fileSelezionatiManualmente) {
         if (f.selezionato) { almenoUnoSelezionato = true; break; }
@@ -838,12 +901,14 @@ void gestisci_menu_selezione_file() {
     subMenu_regoleTarget.at(static_cast<int>(SubMenu_regoleTarget::MENU_SELEZIONE) - 1).decisione = almenoUnoSelezionato;
 }
 
-// --- GESTIONE MENU REGOLE TARGET ---
 void gestisci_menu_target() {
     int pos = 1;
     if (modAttivi(subMenu_regoleTarget) == 0) {
         subMenu_regoleTarget.at(static_cast<int>(SubMenu_regoleTarget::TUTTO) - 1).decisione = true;
     }
+
+    // Assicuriamoci che "Menu Selezione" sia sempre rigorosamente a true
+    subMenu_regoleTarget.at(static_cast<int>(SubMenu_regoleTarget::MENU_SELEZIONE) - 1).decisione = true;
 
     while (1) {
         system("cls");
@@ -862,9 +927,27 @@ void gestisci_menu_target() {
         switch (sceltaEnum) {
             case SubMenu_regoleTarget::TUTTO: {
                 bool statoCorrente = subMenu_regoleTarget.at(0).decisione;
-                subMenu_regoleTarget.at(0).decisione = !statoCorrente;
-                if (!statoCorrente) { 
-                    for (size_t i = 1; i < subMenu_regoleTarget.size() - 2; i++) {
+                bool nuovoStatoTutto = !statoCorrente;
+                subMenu_regoleTarget.at(0).decisione = nuovoStatoTutto;
+                
+                if (nuovoStatoTutto) {
+                    for (size_t i = 1; i < subMenu_regoleTarget.size() - 3; i++) {
+                        subMenu_regoleTarget.at(i).decisione = false;
+                    }
+                    estensioniTargetMultiple.clear();
+                    sottostringheTarget.clear();
+                    cifreTarget.clear();
+                    iniziaConTarget.clear();
+                    finisceConTarget.clear();
+                    dataTarget = "";
+                    dimValoreTarget = 0.0;
+                    
+                    // Quando si attiva "Tutto", tutti i file in Menu Selezione tornano a true
+                    for (auto& item : fileSelezionatiManualmente) {
+                        item.selezionato = true;
+                    }
+                } else { 
+                    for (size_t i = 1; i < subMenu_regoleTarget.size() - 3; i++) {
                         subMenu_regoleTarget.at(i).decisione = false;
                     }
                     estensioniTargetMultiple.clear();
@@ -882,16 +965,23 @@ void gestisci_menu_target() {
                 break;
             case SubMenu_regoleTarget::DEFINISCI_ESTENSIONI:
                 gestisci_menu_estensioni_target();
+                // Se attivato, portiamo tutti i file a true come richiesto
+                for (auto& item : fileSelezionatiManualmente) item.selezionato = true;
                 break;
             case SubMenu_regoleTarget::DEFINISCI_SOTTOSTRINGHE:
                 gestisci_menu_sottostringhe_target();
+                for (auto& item : fileSelezionatiManualmente) item.selezionato = true;
                 break;
             case SubMenu_regoleTarget::CON_CIFRE:
                 subMenu_regoleTarget.at(sceltaMenu - 1).decisione = !subMenu_regoleTarget.at(sceltaMenu - 1).decisione;
-                if (subMenu_regoleTarget.at(sceltaMenu - 1).decisione) subMenu_regoleTarget.at(0).decisione = false;
+                if (subMenu_regoleTarget.at(sceltaMenu - 1).decisione) {
+                    subMenu_regoleTarget.at(0).decisione = false;
+                    for (auto& item : fileSelezionatiManualmente) item.selezionato = true;
+                }
                 break;
             case SubMenu_regoleTarget::DEFINISCI_CIFRE:
                 gestisci_menu_cifre_target();
+                for (auto& item : fileSelezionatiManualmente) item.selezionato = true;
                 break;
             case SubMenu_regoleTarget::DATA_FILES: {
                 system("cls");
@@ -913,6 +1003,7 @@ void gestisci_menu_target() {
                         subMenu_regoleTarget.at(sceltaMenu - 1).decisione = false;
                         dataTarget = "";
                     } else {
+                        for (auto& item : fileSelezionatiManualmente) item.selezionato = true;
                         cout << "\n" << get_string("PROMPT_SCELGI_CONFRONTO") << endl;
                         dataModalitaTarget = static_cast<Tempi>(menuScelta(1, 3, 
                             get_string("POPUP_DATA_ESATTA").c_str(), 
@@ -931,6 +1022,7 @@ void gestisci_menu_target() {
                 subMenu_regoleTarget.at(idxDim).decisione = !subMenu_regoleTarget.at(idxDim).decisione;
                 if (subMenu_regoleTarget.at(idxDim).decisione) {
                     subMenu_regoleTarget.at(0).decisione = false;
+                    for (auto& item : fileSelezionatiManualmente) item.selezionato = true;
                     cout << BOLD << get_string("BANNER_DEF_DIM") << RESET << endl;
                     cout << get_string("PROMPT_SCELGI_CONFRONTO") << endl;
                     
@@ -967,7 +1059,6 @@ void gestisci_menu_target() {
 
                     if (dimTipoTarget == DirezioneDim::Compresi) {
                         dimValoreTarget = dimMin * moltiplicatore;
-                        // Nota: se necessario puoi gestire un'eventuale variabile globale dimValoreMaxTarget = dimMax * moltiplicatore;
                     } else {
                         dimValoreTarget *= moltiplicatore;
                     }
@@ -983,13 +1074,35 @@ void gestisci_menu_target() {
             }
             case SubMenu_regoleTarget::INIZIA_CON:
                 gestisci_menu_inizia_con();
+                for (auto& item : fileSelezionatiManualmente) item.selezionato = true;
                 break;
             case SubMenu_regoleTarget::FINISCE_CON:
                 gestisci_menu_finisce_con();
+                for (auto& item : fileSelezionatiManualmente) item.selezionato = true;
                 break;
             default:
                 break;
         }
+
+        // CONTROLLO AUTOMATICO: se tutti i filtri (da 1 a 8) sono false, "Tutto" torna a true
+        bool tuttiFiltriFalse = true;
+        for (size_t i = 1; i <= 8; i++) {
+            if (subMenu_regoleTarget.at(i).decisione) {
+                tuttiFiltriFalse = false;
+                break;
+            }
+        }
+
+        if (tuttiFiltriFalse) {
+            subMenu_regoleTarget.at(0).decisione = true;
+            // QUESTO DEVE RIMANERE DISATTIVATO
+            // for (auto& item : fileSelezionatiManualmente) {
+            //     item.selezionato = true;
+            // }
+        }
+        
+        // "Menu Selezione" rimane sempre rigorosamente a true
+        subMenu_regoleTarget.at(static_cast<int>(SubMenu_regoleTarget::MENU_SELEZIONE) - 1).decisione = true;
     }
 
     bool attivoAlmenoUno = false;
@@ -1002,7 +1115,6 @@ void gestisci_menu_target() {
     mainMenu.at(2).decisione = attivoAlmenoUno;
 }
 
-// --- VISUALIZZAZIONE LISTA FILE ---
 void mostra_lista() {
     int pos = 1;
     subMenu_regoleCerca.at(0).decisione = true; 
@@ -1398,7 +1510,6 @@ string formattaDimensione(uintmax_t sizeBytes) {
     }
 }
 
-// --- ESPORTAZIONE LISTA FILE ---
 void esporta_lista() {
     int pos = 1;
 
@@ -1722,7 +1833,6 @@ void esporta_lista() {
     PAUSE(get_string("PROMPT_CONTINUA"));
 }
 
-// --- RINOMINA BATCH ---
 void esegui_rinomina() {
     if (modAttivi(mainMenu) == 0) {
         cout << endl <<   "  ================================================================  " << endl;
@@ -1893,15 +2003,15 @@ void esegui_rinomina() {
         string nome_originale = nomeSenzaExt;
         string nuovo_nome = nome_originale;
 
-        if (mainMenu.at(1).decisione) applica_rimuovi_punteggiatura(nuovo_nome);
-        if (mainMenu.at(2).decisione) applica_rimuovi_parentesi(nuovo_nome);
-        if (mainMenu.at(3).decisione) applica_rimuovi_spazi(nuovo_nome);
-        if (mainMenu.at(4).decisione) applica_rimuovi_spazi_ripetuti(nuovo_nome);
-        if (mainMenu.at(5).decisione) applica_rimuovi_numeri(nuovo_nome);
-        if (mainMenu.at(6).decisione) applica_rimuovi_simboli(nuovo_nome);    
-        if (mainMenu.at(7).decisione) applica_maiuscole(nuovo_nome);           
-        if (mainMenu.at(8).decisione) applica_minuscole(nuovo_nome);           
-        if (mainMenu.at(9).decisione && !paroleDaRimuovere.empty()) applica_rimuovi_parole(nuovo_nome);
+        if (mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_PUNTEGGIATURA) - 1).decisione) applica_rimuovi_punteggiatura(nuovo_nome);
+        if (mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_PARENTESI) - 1).decisione) applica_rimuovi_parentesi(nuovo_nome);
+        if (mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_SPAZI) - 1).decisione) applica_rimuovi_spazi(nuovo_nome);
+        if (mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_SPAZI_RIPETUTI) - 1).decisione) applica_rimuovi_spazi_ripetuti(nuovo_nome);
+        if (mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_NUMERI) - 1).decisione) applica_rimuovi_numeri(nuovo_nome);
+        if (mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_SIMBOLI) - 1).decisione) applica_rimuovi_simboli(nuovo_nome);    
+        if (mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_MAIUSCOLE) - 1).decisione) applica_maiuscole(nuovo_nome);           
+        if (mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_MINUSCOLE) - 1).decisione) applica_minuscole(nuovo_nome);           
+        if (mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_PAROLE) - 1).decisione && !paroleDaRimuovere.empty()) applica_rimuovi_parole(nuovo_nome);
 
         if (mainMenu.at(4).decisione) {
             size_t doppioSpazio = nuovo_nome.find("  ");
@@ -1914,7 +2024,7 @@ void esegui_rinomina() {
         if (!nuovo_nome.empty() && nuovo_nome.back() == ' ') nuovo_nome.pop_back();
 
         string nuova_estensione;
-        if (mainMenu.at(11).decisione) { 
+        if (mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_ESTENSIONE) - 1).decisione) { 
             nuova_estensione = "." + to_lowercase(estensioneOutput);
         } else {
             nuova_estensione = entry.path().extension().string();
@@ -2000,7 +2110,6 @@ void esegui_rinomina() {
     PAUSE(get_string("PROMPT_CONTINUA"));
 }
 
-// --- INFORMATIONS ---
 void aboutMe() {
     system("cls");
 
@@ -2019,7 +2128,7 @@ void aboutMe() {
     cout << string(60, '=') << endl << endl;
 
     cout << BOLD << "  " << get_string("SECTION_INFO") << RESET << endl;
-    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.1.2" << RESET << endl;
+    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.2" << RESET << endl;
     cout << "  " << get_string("INFO_SVILUPPATORE") << YELLOW << "Raizen" << RESET << endl;
     cout << "  " << get_string("INFO_LICENZA") << DIM << "MIT Open Source" << RESET << endl << endl;
 
@@ -2033,4 +2142,156 @@ void aboutMe() {
 
     cout << endl << string(60, '-') << endl;
     PAUSE(get_string("PROMPT_ABOUT_EXIT"));
+}
+
+int conta_file_target() {
+    int count = 0;
+    fs::path percorso = fs::current_path();
+    try {
+        for (const auto& entry : fs::directory_iterator(percorso)) {
+            if (!entry.is_regular_file()) continue;
+
+            string nomeCompleto = entry.path().filename().string();
+            string nomeSenzaExt = entry.path().stem().string();
+            string estensioneFile = to_lowercase(entry.path().extension().string());
+            if (!estensioneFile.empty() && estensioneFile[0] == '.') estensioneFile.erase(0, 1);
+
+            bool incluso = true;
+
+            // Applicazione filtri di subMenu_regoleTarget
+            if (!subMenu_regoleTarget.at(0).decisione) { // Se "Tutto" non è attivo
+                
+                // 1. Estensioni multiple
+                if (subMenu_regoleTarget.at(1).decisione) {
+                    bool matchExt = false;
+                    for (const auto& e : estensioniTargetMultiple) {
+                        if (estensioneFile == e) { matchExt = true; break; }
+                    }
+                    if (!matchExt) incluso = false;
+                }
+
+                // 2. Sottostringhe
+                if (subMenu_regoleTarget.at(2).decisione && incluso) {
+                    bool matchSub = false;
+                    string nomeLower = to_lowercase(nomeCompleto);
+                    for (const auto& s : sottostringheTarget) {
+                        if (nomeLower.find(to_lowercase(s)) != string::npos) {
+                            matchSub = true;
+                            break;
+                        }
+                    }
+                    if (!matchSub) incluso = false;
+                }
+
+                // 3. Con Cifre
+                if (subMenu_regoleTarget.at(3).decisione && incluso) {
+                    bool haCifre = any_of(nomeCompleto.begin(), nomeCompleto.end(), [](unsigned char c){
+                        return isdigit(c);
+                    });
+                    if (!haCifre) incluso = false;
+                }
+
+                // 4. Definisci Cifre
+                if (subMenu_regoleTarget.at(4).decisione && incluso) {
+                    bool matchCifre = false;
+                    for (const auto& cif : cifreTarget) {
+                        if (nomeCompleto.find(cif) != string::npos) {
+                            matchCifre = true;
+                            break;
+                        }
+                    }
+                    if (!matchCifre) incluso = false;
+                }
+
+                // 5. Data files
+                if (subMenu_regoleTarget.at(5).decisione && incluso) {
+                    try {
+                        auto ftime = entry.last_write_time();
+                        auto sct = chrono::time_point_cast<chrono::system_clock::duration>(
+                            ftime - fs::file_time_type::clock::now() + chrono::system_clock::now()
+                        );
+                        time_t cftime = chrono::system_clock::to_time_t(sct);
+                        struct tm* timeinfo = localtime(&cftime);
+                        if (timeinfo) {
+                            struct tm tmFile = *timeinfo;
+                            tmFile.tm_hour = 0; tmFile.tm_min = 0; tmFile.tm_sec = 0;
+                            time_t tFile = mktime(&tmFile);
+
+                            int g = stoi(dataTarget.substr(0, 2));
+                            int m = stoi(dataTarget.substr(3, 2));
+                            int a = stoi(dataTarget.substr(6, 4));
+
+                            struct tm tmTarget = {};
+                            tmTarget.tm_mday = g;
+                            tmTarget.tm_mon = m - 1;
+                            tmTarget.tm_year = a - 1900;
+                            tmTarget.tm_hour = 0; tmTarget.tm_min = 0; tmTarget.tm_sec = 0;
+                            time_t tTarget = mktime(&tmTarget);
+
+                            if (dataModalitaTarget == Tempi::Ieri_Oggi && tFile > tTarget) incluso = false;
+                            else if (dataModalitaTarget == Tempi::Oggi && tFile != tTarget) incluso = false;
+                            else if (dataModalitaTarget == Tempi::Oggi_Domani && tFile < tTarget) incluso = false;
+                        } else {
+                            incluso = false;
+                        }
+                    } catch (...) {
+                        incluso = false;
+                    }
+                }
+
+                // 6. Dimensione
+                if (subMenu_regoleTarget.at(6).decisione && incluso) {
+                    uintmax_t sizeBytes = fs::file_size(entry);
+                    if (dimTipoTarget == DirezioneDim::Maggiori && sizeBytes < dimValoreTarget) incluso = false;
+                    else if (dimTipoTarget == DirezioneDim::Minori && sizeBytes > dimValoreTarget) incluso = false;
+                }
+
+                // 7. Inizia con
+                if (subMenu_regoleTarget.at(7).decisione && incluso) {
+                    bool matchInizia = false;
+                    string nomeLower = to_lowercase(nomeSenzaExt);
+                    for (const auto& pref : iniziaConTarget) {
+                        string prefLower = to_lowercase(pref);
+                        if (nomeLower.rfind(prefLower, 0) == 0) {
+                            matchInizia = true;
+                            break;
+                        }
+                    }
+                    if (!matchInizia) incluso = false;
+                }
+
+                // 8. Finisce con
+                if (subMenu_regoleTarget.at(8).decisione && incluso) {
+                    bool matchFinisce = false;
+                    string nomeLower = to_lowercase(nomeSenzaExt);
+                    for (const auto& suff : finisceConTarget) {
+                        string suffLower = to_lowercase(suff);
+                        if (nomeLower.length() >= suffLower.length() &&
+                            nomeLower.compare(nomeLower.length() - suffLower.length(), suffLower.length(), suffLower) == 0) {
+                            matchFinisce = true;
+                            break;
+                        }
+                    }
+                    if (!matchFinisce) incluso = false;
+                }
+            }
+
+            // Controllo Menu Selezione manuale
+            if (incluso && subMenu_regoleTarget.at(9).decisione) {
+                bool trovatoInSelezione = false;
+                bool selezionato = true;
+                for (const auto& itemSel : fileSelezionatiManualmente) {
+                    if (itemSel.nomeCompleto == nomeCompleto) {
+                        trovatoInSelezione = true;
+                        selezionato = itemSel.selezionato;
+                        break;
+                    }
+                }
+                if (trovatoInSelezione && !selezionato) incluso = false;
+            }
+
+            if (incluso) count++;
+        }
+    } catch (...) {}
+    return count;
 }

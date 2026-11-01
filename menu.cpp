@@ -1,5 +1,8 @@
 #include "menu.hpp"
 #include "localization.hpp"
+#include "file_operations.hpp"
+
+namespace fs = std::filesystem;
 
 // --- DEFINIZIONE DEI VETTORI DI MENU ---
 vector<valoriMenu> mainMenu {
@@ -46,7 +49,7 @@ vector<valoriMenu> subMenu_regoleTarget {
     {"Dimensione",                  false},
     {"Inizia con",                  false},
     {"Finisce con",                 false},
-    {"Menu Selezione",              false},
+    {"Menu Selezione",               true},
     {" ",                           false},
     {"Torna al menu principale",    false}
 };
@@ -145,15 +148,15 @@ void gestisci_sottomenu_generico(vector<valoriMenu>& menuTarget, const string& t
 
 // --- SOTTOMENU SPECIFICI SEMPLIFICATI ---
 void gestisci_menu_punteggiatura() {
-    gestisci_sottomenu_generico(menuPunteggiatura, get_string("BANNER_PUNTEGGIATURA"), 2);
+    gestisci_sottomenu_generico(menuPunteggiatura, get_string("BANNER_PUNTEGGIATURA"), static_cast<int>(MenuMain::RIMUOVI_PUNTEGGIATURA) - 1);
 }
 
 void gestisci_menu_parentesi() {
-    gestisci_sottomenu_generico(menuParentesi, get_string("BANNER_PARENTESI"), 3);
+    gestisci_sottomenu_generico(menuParentesi, get_string("BANNER_PARENTESI"), static_cast<int>(MenuMain::RIMUOVI_PARENTESI) - 1);
 }
 
 void gestisci_menu_simboli() {
-    gestisci_sottomenu_generico(menuSimboli, get_string("BANNER_SIMBOLI"), 7);
+    gestisci_sottomenu_generico(menuSimboli, get_string("BANNER_SIMBOLI"), static_cast<int>(MenuMain::RIMUOVI_SIMBOLI) - 1);
 }
 
 // --- FUNZIONE MENU INTERATTIVO PER VECTOR ---
@@ -196,7 +199,7 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                     cout << " = [" << (menu.at(i - 1).decisione ? GREEN : RED) << menu.at(i - 1).decisione << RESET << "]";
                     cout << ((menu.at(i - 1).decisione) ? " " : "");
                 } else if (voce == MenuMain::SOSTITUISCI_ESTENSIONE) {
-                    cout << get_string("LBL_TUTTI_FILE") << YELLOW << estensioneTarget << RESET << ")";
+                    cout << " =" << get_string("LBL_CONVERTI_IN") << YELLOW << estensioneOutput << RESET << ")";
                 }
             }
             else if (&menu == &menuPunteggiatura || &menu == &menuParentesi || &menu == &menuSimboli) {
@@ -206,13 +209,16 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                 }
             } 
             else if (&menu == &subMenu_regoleCerca || &menu == &subMenu_regoleTarget) {
-                if (i >= 1 && i <= menu.size() - 2) {
+                // Per subMenu_regoleTarget escludiamo gli ultimi 3 elementi (Menu Selezione, riga vuota e Torna al menu)
+                size_t limiteStato = (&menu == &subMenu_regoleTarget) ? menu.size() - 3 : menu.size() - 2;
+
+                if (i >= 1 && i <= limiteStato) {
                     cout << " = [" << (menu.at(i - 1).decisione ? GREEN : RED) << menu.at(i - 1).decisione << RESET << "]";
                     cout << ((menu.at(i - 1).decisione) ? " " : "");
                 }
                 
                 // Mostra l'elenco delle estensioni target a destra se definite
-                if (&menu == &subMenu_regoleTarget && i == 3 && !estensioniTargetMultiple.empty()) {
+                if (&menu == &subMenu_regoleTarget && i == 2 && !estensioniTargetMultiple.empty()) {
                     cout << "  (Estensioni: ";
                     for (size_t idx = 0; idx < estensioniTargetMultiple.size(); ++idx) {
                         cout << YELLOW << estensioniTargetMultiple[idx] << RESET;
@@ -222,26 +228,31 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                 }
             }
 
-            // Spiegazioni laterali del menu principale (quanti moduli sono attivi)
+            // Spiegazioni laterali del menu principale
             if (&menu == &mainMenu) {
                 MenuMain voce = static_cast<MenuMain>(i);
                 int count = 0;
                 
                 switch (voce) {
+                    case MenuMain::REGOLE_TARGET: {
+                        int nFiles = conta_file_target();
+                        cout << "           = (" << YELLOW << nFiles << RESET << ((nFiles == 1) ? " File Selezionato" : " File Selezionati") << ")";
+                        break;
+                    }
                     case MenuMain::RIMUOVI_PUNTEGGIATURA:
                         count = modAttivi(menuPunteggiatura);
-                        cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
+                        cout << " = (" << YELLOW << count << RESET << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
                         break;
                     case MenuMain::RIMUOVI_PARENTESI:
                         count = modAttivi(menuParentesi);
-                        cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
+                        cout << " = (" << YELLOW << count << RESET << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
                         break;
                     case MenuMain::RIMUOVI_SIMBOLI:
                         count = modAttivi(menuSimboli);
-                        cout << "  (" << count << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
+                        cout << " = (" << YELLOW << count << RESET << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
                         break;
                     case MenuMain::SOSTITUISCI_ESTENSIONE:
-                        cout << get_string("LBL_CONVERTI_IN") << YELLOW << estensioneOutput << RESET << ")";
+                        cout << " =" << get_string("LBL_CONVERTI_IN") << YELLOW << estensioneOutput << RESET << ")";
                         break;
                     default:
                         break;
@@ -269,44 +280,50 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
             }
         }
 
+        // Il tasto Q è attivo ESCLUSIVAMENTE nei sottomenu Punteggiatura, Parentesi e Simboli
         if (tasto == 'q' || tasto == 'Q') {
-            // Caso 1: Siamo nel Menu Principale su una voce che ha un sottomenu
             if (&menu == &mainMenu) {
                 MenuMain voceSelezionata = static_cast<MenuMain>(pos);
-                vector<valoriMenu>* sottomenuTarget = nullptr;
-                int indiceMainDaAggiornare = -1;
+                
+                // La Q nel mainMenu funziona ESCLUSIVAMENTE per Punteggiatura, Parentesi e Simboli
+                if (voceSelezionata == MenuMain::RIMUOVI_PUNTEGGIATURA || 
+                    voceSelezionata == MenuMain::RIMUOVI_PARENTESI || 
+                    voceSelezionata == MenuMain::RIMUOVI_SIMBOLI) {
+                    
+                    int idx = pos - 1;
+                    vector<valoriMenu>* targetCorrente = nullptr;
+                    if (voceSelezionata == MenuMain::RIMUOVI_PUNTEGGIATURA) targetCorrente = &menuPunteggiatura;
+                    else if (voceSelezionata == MenuMain::RIMUOVI_PARENTESI) targetCorrente = &menuParentesi;
+                    else if (voceSelezionata == MenuMain::RIMUOVI_SIMBOLI) targetCorrente = &menuSimboli;
 
-                if (voceSelezionata == MenuMain::RIMUOVI_PUNTEGGIATURA) { 
-                    sottomenuTarget = &menuPunteggiatura; 
-                    indiceMainDaAggiornare = static_cast<int>(MenuMain::RIMUOVI_PUNTEGGIATURA) - 1; 
-                }
-                else if (voceSelezionata == MenuMain::RIMUOVI_PARENTESI) { 
-                    sottomenuTarget = &menuParentesi; 
-                    indiceMainDaAggiornare = static_cast<int>(MenuMain::RIMUOVI_PARENTESI) - 1; 
-                }
-                else if (voceSelezionata == MenuMain::RIMUOVI_SIMBOLI) { 
-                    sottomenuTarget = &menuSimboli; 
-                    indiceMainDaAggiornare = static_cast<int>(MenuMain::RIMUOVI_SIMBOLI) - 1; 
-                }
-
-                if (sottomenuTarget != nullptr) {
-                    size_t limiteVoci = sottomenuTarget->size() - 2;
-                    bool giaTuttiAttivi = mainMenu.at(indiceMainDaAggiornare).decisione;
-                    for (size_t i = 0; i < limiteVoci; i++) {
-                        if (sottomenuTarget->at(i).testo != " " && !sottomenuTarget->at(i).decisione) {
-                            giaTuttiAttivi = false;
-                            break;
+                    if (targetCorrente != nullptr) {
+                        size_t limiteVoci = targetCorrente->size() - 2; // Esclude riga vuota e "Torna al menu"
+                        bool giaTuttiAttivi = true;
+                        
+                        for (size_t i = 0; i < limiteVoci; i++) {
+                            if (targetCorrente->at(i).testo != " " && !targetCorrente->at(i).decisione) {
+                                giaTuttiAttivi = false;
+                                break;
+                            }
                         }
+                        
+                        bool nuovoStato = !giaTuttiAttivi;
+                        for (size_t i = 0; i < limiteVoci; i++) {
+                            if (targetCorrente->at(i).testo != " ") {
+                                targetCorrente->at(i).decisione = nuovoStato;
+                            }
+                        }
+                        mainMenu.at(idx).decisione = nuovoStato;
                     }
-                    bool nuovoStato = !giaTuttiAttivi;
-                    mainMenu.at(indiceMainDaAggiornare).decisione = nuovoStato;
-                    for (size_t i = 0; i < limiteVoci; i++) {
-                        if (sottomenuTarget->at(i).testo != " ") sottomenuTarget->at(i).decisione = nuovoStato;
-                    }
+                } 
+                else if (voceSelezionata == MenuMain::SOSTITUISCI_ESTENSIONE) {
+                    // Attiva o disattiva direttamente con Q
+                    mainMenu.at(pos - 1).decisione = !mainMenu.at(pos - 1).decisione;
                     continue;
                 }
+                // Per tutte le altre voci del mainMenu, la Q viene ignorata completamente
+                continue;
             }
-            // Caso 2: Siamo direttamente dentro un Sottomenu
             else if (&menu == &menuPunteggiatura || &menu == &menuParentesi || &menu == &menuSimboli) {
                 size_t limiteVoci = menu.size() - 2;
                 bool giaTuttiAttivi = true;
