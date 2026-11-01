@@ -209,8 +209,8 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                 }
             } 
             else if (&menu == &subMenu_regoleCerca || &menu == &subMenu_regoleTarget) {
-                // Per subMenu_regoleTarget escludiamo gli ultimi 3 elementi (Menu Selezione, riga vuota e Torna al menu)
-                size_t limiteStato = (&menu == &subMenu_regoleTarget) ? menu.size() - 3 : menu.size() - 2;
+                // escludiamo gli ultimi 3 elementi (Menu Selezione/Esegui, riga vuota e Torna al menu)
+                size_t limiteStato =  menu.size() - 3;
 
                 if (i >= 1 && i <= limiteStato) {
                     cout << " = [" << (menu.at(i - 1).decisione ? GREEN : RED) << menu.at(i - 1).decisione << RESET << "]";
@@ -236,7 +236,7 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                 switch (voce) {
                     case MenuMain::REGOLE_TARGET: {
                         int nFiles = conta_file_target();
-                        cout << "           = (" << YELLOW << nFiles << RESET << ((nFiles == 1) ? " File Selezionato" : " File Selezionati") << ")";
+                        cout << "           = (" << YELLOW << nFiles << RESET << ((nFiles == 1) ? get_string("LBL_FILE_SELEZIONATO") : get_string("LBL_FILE_SELEZIONATI")) << ")";
                         break;
                     }
                     case MenuMain::RIMUOVI_PUNTEGGIATURA:
@@ -474,6 +474,19 @@ void aggiorna_testi_menu() {
     // Indice 7 è la riga vuota " "
     subMenu_regoleCerca.at(8).testo = get_string("SUB_INDIETRO");
 
+    subMenu_regoleTarget.at(0).testo = get_string("SUB_TUTTO");
+    subMenu_regoleTarget.at(1).testo = get_string("SUB_ESTENSIONI");
+    subMenu_regoleTarget.at(2).testo = get_string("SUB_STRINGHE");
+    subMenu_regoleTarget.at(3).testo = get_string("SUB_CON_CIFRE");
+    subMenu_regoleTarget.at(4).testo = get_string("SUB_DEF_CIFRE");
+    subMenu_regoleTarget.at(5).testo = get_string("SUB_DATA_FILES");
+    subMenu_regoleTarget.at(6).testo = get_string("SUB_DIMENSIONE");
+    subMenu_regoleTarget.at(7).testo = get_string("SUB_INIZIA_CON");
+    subMenu_regoleTarget.at(8).testo = get_string("SUB_FINISCE_CON");
+    subMenu_regoleTarget.at(9).testo = get_string("SUB_M_SELEZIONE");
+    // Indice 10 è la riga vuota " "
+    subMenu_regoleTarget.at(11).testo = get_string("SUB_INDIETRO");
+
     // Aggiornamento Menu Punteggiatura
     menuPunteggiatura.at(0).testo = get_string("PUNT_VIRGOLA");
     menuPunteggiatura.at(1).testo = get_string("PUNT_PUNTO_VIRGOLA");
@@ -532,5 +545,13 @@ void aggiorna_testi_menu() {
     menuSimboli.at(23).testo = get_string("OP_SOSTITUISCI_SPAZIO");
     // Indice 24 è " "
     menuSimboli.at(25).testo = get_string("SUB_INDIETRO");
+
+
+
+    // Se l'estensione di output è attualmente sullo stato "non impostata", 
+    // aggiorniamo la stringa con la traduzione della lingua corrente appena selezionata:
+    if (estensioneOutput == "Non Impostata" || estensioneOutput == "Not Set" || estensioneOutput == get_string("EXT_SET_NAME")) {
+        estensioneOutput = get_string("EXT_SET_NAME");
+    }
 }
 

@@ -3,7 +3,7 @@
 
 
 // --- DEFINIZIONE DELLE VARIABILI DI CONFIGURAZIONE ---
-string estensioneOutput = "Non Impostata";
+string estensioneOutput = get_string("EXT_SET_NAME");
 vector<string> paroleDaRimuovere;
 vector<string> sottostringheEsportate;
 vector<string> estensioniEsportate;
@@ -83,7 +83,7 @@ void cambia_path() {
 
                     system("cls");
                     cout << BOLD << get_string("POS_CURRENT") << fs::current_path().string() << RESET << endl << endl;
-                    cout << DIM << "[Usa le Frecce Su/Giu, Invio per selezionare | E = Esci]" << RESET << endl << endl;
+                    cout << DIM << get_string("LAB_CAMBIA_PATH") << RESET << endl << endl;
 
                     // Salviamo la posizione corrente del cursore per evitare sfarfallio
                     cout << SAVE_CURSOR;
@@ -363,10 +363,10 @@ void applica_rimuovi_simboli(string& nome) {
 
 void sostituisci_estensioni() {
     system("cls");
-    cout << BOLD << RED << "ATTENZIONE: SOSTITUZIONE ESTENSIONE" << RESET << endl << endl;
-    cout << YELLOW << "Questa operazione modifichera' l'estensione di tutti i file target selezionati." << RESET << endl;
-    cout << "Estensione di output attuale: " << YELLOW << estensioneOutput << RESET << endl << endl;
-    cout << "Inserisci la nuova estensione (es. txt, pdf, jpg) o lascia vuoto per disattivare:" << endl << "> ";
+    cout << BOLD << RED << get_string("BANNER_SOS_EST") << RESET << endl << endl;
+    cout << YELLOW << get_string("MSG_INFO_SOS_EXT") << RESET << endl;
+    cout << get_string("MSG_EST_OUTPUT_ATTUALE") << YELLOW << estensioneOutput << RESET << endl << endl;
+    cout << get_string("PROMPT_INSERISCI_NUOVA_EXT") << endl << "> ";
     
     string nuovaExt;
     getline(cin, nuovaExt);
@@ -375,13 +375,13 @@ void sostituisci_estensioni() {
         if (nuovaExt[0] == '.') nuovaExt.erase(0, 1);
         estensioneOutput = to_lowercase(nuovaExt);
         mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_ESTENSIONE) - 1).decisione = true;
-        cout << GREEN << "\nEstensione di output aggiornata con successo a '." << estensioneOutput << "'." << RESET << endl;
+        cout << GREEN << "\n" << get_string("MSG_EST_AGGIORNATA") << estensioneOutput << "'." << RESET << endl;
     } else {
-        estensioneOutput = "Non Impostata";
+        estensioneOutput = get_string("EXT_SET_NAME");
         mainMenu.at(static_cast<int>(MenuMain::SOSTITUISCI_ESTENSIONE) - 1).decisione = false;
-        cout << YELLOW << "\nSostituzione estensione disattivata (valore reimpostato a 'Non Impostata')." << RESET << endl;
+        cout << YELLOW << "\n" << get_string("MSG_SOS_EST_DISATTIVATA") << RESET << endl;
     }
-    PAUSE("Premi un tasto per continuare...");
+    PAUSE(get_string("PROMPT_CONTINUA"));
 }
 
 void gestisci_menu_parole() {
@@ -457,16 +457,16 @@ void gestisci_menu_sottostringhe_esporta() {
 
 void gestisci_menu_estensioni_target() {
     system("cls");
-    cout << BOLD << "DEFINISCI ESTENSIONI TARGET" << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_DEF_EXT_TARGET") << RESET << endl << endl;
     if (!estensioniTargetMultiple.empty()) {
-        cout << "Estensioni attuali: ";
+        cout << get_string("MSG_EXT_TARGET_ATTUALI");
         for (const auto& e : estensioniTargetMultiple) cout << "[" << YELLOW << e << RESET << "] ";
         cout << endl << endl;
     } else {
-        cout << "Nessuna estensione specifica definita." << endl << endl;
+        cout << get_string("MSG_NO_EXT_TARGET") << endl << endl;
     }
 
-    cout << "Inserisci le estensioni separate da spazio (es. txt pdf doc):" << endl << "> ";
+    cout << get_string("PROMPT_INSERISCI_EXT_TARGET") << endl << "> ";
     string linea, ext;
     getline(cin, linea);
     cout << endl;
@@ -502,7 +502,7 @@ void gestisci_menu_estensioni_target() {
         if (trovata) {
             estensioniValide.push_back(e);
         } else {
-            cout << endl << YELLOW << "Attenzione: L'estensione '" << e << "' non e' presente in nessun file nella cartella corrente." << RESET << endl;
+            cout << endl << YELLOW << get_string("AVVISO_EXT_ASSENTE") << e << get_string("AVVISO_EXT_ASSENTE_2") << RESET << endl;
         }
     }
 
@@ -511,22 +511,22 @@ void gestisci_menu_estensioni_target() {
         subMenu_regoleTarget.at(1).decisione = true; // CORRETTO (Indice 1)
         subMenu_regoleTarget.at(0).decisione = false;
     } else {
-        cout << RED << "Nessuna delle estensioni inserite e' presente nella cartella." << RESET << endl;
+        cout << RED << get_string("AVVISO_NESSUNA_EXT_PRESENTE") << RESET << endl;
         subMenu_regoleTarget.at(1).decisione = false; // CORRETTO (Indice 1)
-        PAUSE("Premi un tasto per continuare...");
+        PAUSE(get_string("PROMPT_CONTINUA"));
     }
 }
 
 void gestisci_menu_sottostringhe_target() {
     system("cls");
-    cout << BOLD << "DEFINISCI SOTTOSTRINGHE TARGET" << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_DEF_SOTTO_TARGET") << RESET << endl << endl;
     if (!sottostringheTarget.empty()) {
-        cout << "Sottostringhe attuali: ";
+        cout << get_string("MSG_SOTTO_TARGET_ATTUALI");
         for (const auto& s : sottostringheTarget) cout << "[" << YELLOW << s << RESET << "] ";
         cout << endl << endl;
     }
 
-    cout << "Inserisci le sottostringhe separate da spazio:" << endl << "> ";
+    cout << get_string("PROMPT_INSERISCI_SOTTO_TARGET") << endl << "> ";
     string linea, sottos;
     getline(cin, linea);
 
@@ -542,14 +542,14 @@ void gestisci_menu_sottostringhe_target() {
 
 void gestisci_menu_cifre_target() {
     system("cls");
-    cout << BOLD << "DEFINISCI CIFRE TARGET" << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_DEF_CIFRE_TARGET") << RESET << endl << endl;
     if (!cifreTarget.empty()) {
-        cout << "Cifre attuali: ";
+        cout << get_string("MSG_CIFRE_TARGET_ATTUALI");
         for (const auto& c : cifreTarget) cout << "[" << YELLOW << c << RESET << "] ";
         cout << endl << endl;
     }
 
-    cout << "Inserisci le cifre o i numeri da cercare separati da spazio:" << endl << "> ";
+    cout << get_string("PROMPT_INSERISCI_CIFRE_TARGET") << endl << "> ";
     string linea, cifra;
     getline(cin, linea);
 
@@ -565,14 +565,14 @@ void gestisci_menu_cifre_target() {
 
 void gestisci_menu_inizia_con() {
     system("cls");
-    cout << BOLD << "INIZIA CON..." << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_INIZIA_CON") << RESET << endl << endl;
     if (!iniziaConTarget.empty()) {
-        cout << "Prefissi attuali: ";
+        cout << get_string("MSG_PREFISSI_ATTUALI");
         for (const auto& s : iniziaConTarget) cout << "[" << YELLOW << s << RESET << "] ";
         cout << endl << endl;
     }
 
-    cout << "Inserisci i prefissi separati da spazio:" << endl << "> ";
+    cout << get_string("PROMPT_INSERISCI_PREFISSI") << endl << "> ";
     string linea, pref;
     getline(cin, linea);
 
@@ -588,14 +588,14 @@ void gestisci_menu_inizia_con() {
 
 void gestisci_menu_finisce_con() {
     system("cls");
-    cout << BOLD << "FINISCE CON..." << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_FINISCE_CON") << RESET << endl << endl;
     if (!finisceConTarget.empty()) {
-        cout << "Suffissi attuali: ";
+        cout << get_string("MSG_SUFFISSI_ATTUALI");
         for (const auto& s : finisceConTarget) cout << "[" << YELLOW << s << RESET << "] ";
         cout << endl << endl;
     }
 
-    cout << "Inserisci i suffissi separati da spazio:" << endl << "> ";
+    cout << get_string("PROMPT_INSERISCI_SUFFISSI") << endl << "> ";
     string linea, suff;
     getline(cin, linea);
 
@@ -767,8 +767,8 @@ void gestisci_menu_selezione_file() {
 
     if (fileSelezionatiManualmente.empty()) {
         system("cls");
-        cout << YELLOW << "Nessun file trovato con i filtri attuali." << RESET << endl << endl;
-        PAUSE("Premi un tasto per continuar...");
+        cout << YELLOW << get_string("AVVISO_NO_FILE_FILTRI") << RESET << endl << endl;
+        PAUSE(get_string("PROMPT_CONTINUA"));
         return;
     }
 
@@ -790,10 +790,10 @@ void gestisci_menu_selezione_file() {
     int posFile = 1;
 
     system("cls");
-    cout << BOLD << "MENU SELEZIONE FILE MANUALI" << RESET << endl;
-    cout << DIM << "Usa le Frecce Su/Giu per scorrere, INVIO per attivare/disattivare, Q = Tutti On/Off, E = Esci" << RESET << endl << endl;
+    cout << BOLD << get_string("BANNER_SELEZIONE_MANUALE") << RESET << endl;
+    cout << DIM << get_string("HINT_SELEZIONE_MANUALE") << RESET << endl << endl;
     
-    cout << left << setw(maxLenNome + 4) << "Nome File" << "     " << setw(15) << "Stato" << endl;
+    cout << left << setw(maxLenNome + 4) << get_string("COL_NOME_FILE") << "     " << setw(15) << get_string("COL_STATO_FILE") << endl;
     cout << string(maxLenNome + 21, '-') << endl;
 
     cout << SAVE_CURSOR;
@@ -912,8 +912,8 @@ void gestisci_menu_target() {
 
     while (1) {
         system("cls");
-        cout << BOLD << "CONFIGURAZIONE REGOLE TARGET" << RESET << endl << endl;
-        cout << DIM << "Seleziona i criteri per filtrare i file da rinominare:" << RESET << endl << endl;
+        cout << BOLD << get_string("BANNER_CONFIG_REGOLE_TARGET") << RESET << endl << endl;
+        cout << DIM << get_string("HINT_CRITERI_TARGET") << RESET << endl << endl;
         
         int sceltaMenu = menuScelta(pos, subMenu_regoleTarget);
         pos = sceltaMenu;
@@ -1034,9 +1034,9 @@ void gestisci_menu_target() {
                     
                     double dimMin = 0.0, dimMax = 0.0;
                     if (dimTipoTarget == DirezioneDim::Compresi) {
-                        cout << "\nInserisci il valore MINIMO: " << endl << "> ";
+                        cout << "\n" << get_string("PROMPT_VALORE_MINIMO") << endl << "> ";
                         cin >> dimMin;
-                        cout << "Inserisci il valore MASSIMO: " << endl << "> ";
+                        cout << get_string("PROMPT_VALORE_MASSIMO") << endl << "> ";
                         cin >> dimMax;
                     } else {
                         cout << "\n" << get_string("PROMPT_VALORE_NUMERICO") << endl << "> ";
@@ -1476,7 +1476,7 @@ void mostra_lista() {
 
         cout << string(113, '-') << endl;
         cout << get_string("MSG_TOTALE_ELEMENTI") << countFiles << get_string("MSG_FILE_CARTELLE") << countDirs << get_string("MSG_SOLO_CARTELLE") << "                   \n";
-        cout << DIM << "[Usa le Frecce Su/Giu per scorrere | E = Esci]                 " << RESET << endl;
+        cout << DIM << get_string("LAB_CAMBIA_PATH") << "                 " << RESET << endl;
 
         int tasto1 = 0;
         #ifdef _WIN32

@@ -27,13 +27,21 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
 
     // Sottomenu Comuni e Filtri
     {"SUB_TUTTO", "Tutto"},
-    {"SUB_ESTENSIONI", "Estensioni specificate"},
+    {"SUB_ESTENSIONI", "Estensioni Specifiche"},
     {"SUB_SOTTOSTRINGHE", "Cerca Sottostringhe"},
     {"SUB_CIFRE", "Cerca Cifre"},
     {"SUB_DATA", "Data specifica (GG/MM/AAAA)"},
     {"SUB_DIMENSIONE", "Dimensione"},
     {"SUB_ESEGUI", "Esegui"},
     {"SUB_INDIETRO", "Torna al menu principale"},
+    {"SUB_STRINGHE","Definisci Sottostringhe"},
+    {"SUB_CON_CIFRE","Con Cifre"},
+    {"SUB_DEF_CIFRE","Definisci Cifre"},
+    {"SUB_DATA_FILES","Data files (GG/MM/AAAA)"},
+    {"SUB_INIZIA_CON","Inizia con"},
+    {"SUB_FINISCE_CON","Finisce con"},
+    {"SUB_M_SELEZIONE","Menu Selezione"},
+    
 
     // Opzioni Comuni Sottomenu Rimozione
     {"OP_CONSERVA_RIPETUTO", "Conserva un Ripetuto"},
@@ -102,6 +110,7 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"AVVISO_MISS_DIRECTORY","Posizione Errata o Inesistente"},
     {"ERR_NO_DIR_BACK","[ERRORE] Impossibile risalire alla cartella superiore."},
     {"INSERISCI_PERCORSO","Inserisci il percorso desiderato: "},
+    {"LAB_CAMBIA_PATH","[Usa le Frecce Su/Giu, Invio per selezionare | E = Esci]"},
 
     // Menu Popup / Inline (menuScelta)
     {"POPUP_AVANTI", "Avanti"},
@@ -216,7 +225,56 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"GUIDA_4", "• [E]                    Esci dal SottoMenu"},
     {"GUIDA_5", "• [Esegui Rinomina]      Applica tutte le regole TRUE in sequenza"},
     {"GUIDA_6", "• [Esporta lista Files]  Salva in TXT, CSV o JSON i file attuali"},
-    {"PROMPT_ABOUT_EXIT", "Premi INVIO per tornare al menu principale..."}
+    {"PROMPT_ABOUT_EXIT", "Premi INVIO per tornare al menu principale..."},
+
+    // Sostituzione Estensione
+    {"BANNER_SOS_EST", "=== ATTENZIONE: SOSTITUZIONE ESTENSIONE ==="},
+    {"MSG_INFO_SOS_EXT", "Questa operazione modifichera' l'estensione di tutti i file target selezionati."},
+    {"MSG_EST_OUTPUT_ATTUALE", "Estensione di output attuale: "},
+    {"PROMPT_INSERISCI_NUOVA_EXT", "Inserisci la nuova estensione (es. txt, pdf, jpg) o lascia vuoto per disattivare:"},
+    {"MSG_EST_AGGIORNATA", "Estensione di output aggiornata con successo a '."},
+    {"MSG_SOS_EST_DISATTIVATA", "Sostituzione estensione disattivata (valore reimpostato a 'Non Impostata')."},
+    {"EXT_SET_NAME","Non Impostata"},
+
+    // Estensioni Target
+    {"BANNER_DEF_EXT_TARGET", "=== DEFINISCI ESTENSIONI TARGET ==="},
+    {"MSG_EXT_TARGET_ATTUALI", "Estensioni attuali: "},
+    {"MSG_NO_EXT_TARGET", "Nessuna estensione specifica definita."},
+    {"PROMPT_INSERISCI_EXT_TARGET", "Inserisci le estensioni separate da spazio (es. txt pdf doc):"},
+    {"AVVISO_EXT_ASSENTE", "Attenzione: L'estensione '"},
+    {"AVVISO_EXT_ASSENTE_2", "' non e' presente in nessun file nella cartella corrente."},
+    {"AVVISO_NESSUNA_EXT_PRESENTE", "Nessuna delle estensioni inserite e' presente nella cartella."},
+
+    // Sottostringhe Target
+    {"BANNER_DEF_SOTTO_TARGET", "=== DEFINISCI SOTTOSTRINGHE TARGET ==="},
+    {"MSG_SOTTO_TARGET_ATTUALI", "Sottostringhe attuali: "},
+    {"PROMPT_INSERISCI_SOTTO_TARGET", "Inserisci le sottostringhe separate da spazio:"},
+
+    // Cifre Target
+    {"BANNER_DEF_CIFRE_TARGET", "=== DEFINISCI CIFRE TARGET ==="},
+    {"MSG_CIFRE_TARGET_ATTUALI", "Cifre attuali: "},
+    {"PROMPT_INSERISCI_CIFRE_TARGET", "Inserisci le cifre o i numeri da cercare separati da spazio:"},
+
+    // Inizia con / Finisce con
+    {"BANNER_INIZIA_CON", "=== INIZIA CON... ==="},
+    {"MSG_PREFISSI_ATTUALI", "Prefissi attuali: "},
+    {"PROMPT_INSERISCI_PREFISSI", "Inserisci i prefissi separati da spazio:"},
+    {"BANNER_FINISCE_CON", "=== FINISCE CON... ==="},
+    {"MSG_SUFFISSI_ATTUALI", "Suffissi attuali: "},
+    {"PROMPT_INSERISCI_SUFFISSI", "Inserisci i suffissi separati da spazio:"},
+
+    // Selezione File Manuale & Target Menu
+    {"AVVISO_NO_FILE_FILTRI", "Nessun file trovato con i filtri attuali."},
+    {"BANNER_SELEZIONE_MANUALE", "=== MENU SELEZIONE FILE MANUALI ==="},
+    {"HINT_SELEZIONE_MANUALE", "Usa le Frecce Su/Giu per scorrere, INVIO per attivare/disattivare, Q = Tutti On/Off, E = Esci"},
+    {"COL_NOME_FILE", "Nome File"},
+    {"COL_STATO_FILE", "Stato"},
+    {"BANNER_CONFIG_REGOLE_TARGET", "=== CONFIGURAZIONE REGOLE TARGET ==="},
+    {"HINT_CRITERI_TARGET", "Seleziona i criteri per filtrare i file da rinominare:"},
+    {"PROMPT_VALORE_MINIMO", "Inserisci il valore MINIMO: "},
+    {"PROMPT_VALORE_MASSIMO", "Inserisci il valore MASSIMO: "},
+    {"LBL_FILE_SELEZIONATO", " File Selezionato"},
+    {"LBL_FILE_SELEZIONATI", " File Selezionati"},
 };
 
 static const std::unordered_map<std::string, std::string> dizionarioEN = {
@@ -250,6 +308,13 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"SUB_DIMENSIONE", "Size"},
     {"SUB_ESEGUI", "Execute"},
     {"SUB_INDIETRO", "Back to main menu"},
+    {"SUB_STRINGHE","Define Substrings"},
+    {"SUB_CON_CIFRE","With Digits"},
+    {"SUB_DEF_CIFRE","Define Digits"},
+    {"SUB_DATA_FILES","Data files (DD/MM/YYYY)"},
+    {"SUB_INIZIA_CON","Starts with"},
+    {"SUB_FINISCE_CON","Ends with"},
+    {"SUB_M_SELEZIONE","Selection Menu"},
 
     // Common Removal Submenu Options
     {"OP_CONSERVA_RIPETUTO", "Keep One Repeated"},
@@ -318,6 +383,7 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"AVVISO_MISS_DIRECTORY","Incorrect or Non-existent Location"},
     {"ERR_NO_DIR_BACK","[ERROR] Unable to navigate to the parent folder."},
     {"INSERISCI_PERCORSO","Enter the desired path: "},
+    {"LAB_CAMBIA_PATH","[Use Up/Down Arrows, Enter to select | E = Exit]"},
 
     // Popup / Inline Menus (menuScelta)
     {"POPUP_AVANTI", "Next"},
@@ -432,7 +498,56 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"GUIDA_4", "• [E]                   Exit SubMenu"},
     {"GUIDA_5", "• [Execute Rename]      Apply all TRUE rules in sequence"},
     {"GUIDA_6", "• [Export Files List]   Save current files to TXT, CSV, or JSON"},
-    {"PROMPT_ABOUT_EXIT", "Press ENTER to return to main menu..."}
+    {"PROMPT_ABOUT_EXIT", "Press ENTER to return to main menu..."},
+
+    // Extension Replacement
+    {"BANNER_SOS_EST", "=== WARNING: EXTENSION REPLACEMENT ==="},
+    {"MSG_INFO_SOS_EXT", "This operation will modify the extension of all selected target files."},
+    {"MSG_EST_OUTPUT_ATTUALE", "Current output extension: "},
+    {"PROMPT_INSERISCI_NUOVA_EXT", "Enter new extension (e.g., txt, pdf, jpg) or leave empty to disable:"},
+    {"MSG_EST_AGGIORNATA", "Output extension successfully updated to '."},
+    {"MSG_SOS_EST_DISATTIVATA", "Extension replacement disabled (reset to 'Not Set')."},
+    {"EXT_SET_NAME","Not Set"},
+
+    // Target Extensions
+    {"BANNER_DEF_EXT_TARGET", "=== DEFINE TARGET EXTENSIONS ==="},
+    {"MSG_EXT_TARGET_ATTUALI", "Current extensions: "},
+    {"MSG_NO_EXT_TARGET", "No specific extension defined."},
+    {"PROMPT_INSERISCI_EXT_TARGET", "Enter extensions separated by space (e.g., txt pdf doc):"},
+    {"AVVISO_EXT_ASSENTE", "Warning: Extension '"},
+    {"AVVISO_EXT_ASSENTE_2", "' is not present in any file in the current folder."},
+    {"AVVISO_NESSUNA_EXT_PRESENTE", "None of the entered extensions are present in the folder."},
+
+    // Target Substrings
+    {"BANNER_DEF_SOTTO_TARGET", "=== DEFINE TARGET SUBSTRINGS ==="},
+    {"MSG_SOTTO_TARGET_ATTUALI", "Current substrings: "},
+    {"PROMPT_INSERISCI_SOTTO_TARGET", "Enter substrings separated by space:"},
+
+    // Target Digits
+    {"BANNER_DEF_CIFRE_TARGET", "=== DEFINE TARGET DIGITS ==="},
+    {"MSG_CIFRE_TARGET_ATTUALI", "Current digits: "},
+    {"PROMPT_INSERISCI_CIFRE_TARGET", "Enter digits or numbers to search separated by space:"},
+
+    // Starts with / Ends with
+    {"BANNER_INIZIA_CON", "=== STARTS WITH... ==="},
+    {"MSG_PREFISSI_ATTUALI", "Current prefixes: "},
+    {"PROMPT_INSERISCI_PREFISSI", "Enter prefixes separated by space:"},
+    {"BANNER_FINISCE_CON", "=== ENDS WITH... ==="},
+    {"MSG_SUFFISSI_ATTUALI", "Current suffixes: "},
+    {"PROMPT_INSERISCI_SUFFISSI", "Enter suffixes separated by space:"},
+
+    // Manual File Selection & Target Menu
+    {"AVVISO_NO_FILE_FILTRI", "No files found with current filters."},
+    {"BANNER_SELEZIONE_MANUALE", "=== MANUAL FILE SELECTION MENU ==="},
+    {"HINT_SELEZIONE_MANUALE", "Use Arrow Up/Down to scroll, ENTER to toggle, Q = All On/Off, E = Exit"},
+    {"COL_NOME_FILE", "File Name"},
+    {"COL_STATO_FILE", "Status"},
+    {"BANNER_CONFIG_REGOLE_TARGET", "=== TARGET RULES CONFIGURATION ==="},
+    {"HINT_CRITERI_TARGET", "Select criteria to filter files to rename:"},
+    {"PROMPT_VALORE_MINIMO", "Enter MINIMUM value: "},
+    {"PROMPT_VALORE_MASSIMO", "Enter MAXIMUM value: "},
+    {"LBL_FILE_SELEZIONATO", " Selected File"},
+    {"LBL_FILE_SELEZIONATI", " Selected Files"},
 };
 
 void imposta_lingua(Lingua lang) {
