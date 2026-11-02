@@ -8,7 +8,7 @@ Grazie a un'interfaccia terminale interattiva e a una struttura modulare complet
 
 ## 🚀 Caratteristiche Principali
 
-* **Interfaccia CLI Interattiva**: Navigazione fluida tramite tasti direzionali (`SU` / `GIÙ`), scorrimento a finestra fissa per cartelle e elenchi numerosi, e supporto completo ai colori ANSI.
+* **Interfaccia CLI Interattiva**: Navigazione fluida tramite tasti direzionali (`SU` / `GIÙ`), scorrimento a finestra fissa per cartelle ed elenchi numerosi, e supporto completo ai colori ANSI.
 * **Internazionalizzazione (i18n)**: Supporto multilingua nativo (Italiano e Inglese) selezionabile direttamente dal menu principale con aggiornamento dinamico delle etichette e delle opzioni.
 * **Selezione Target Flessibile**:
   * Filtro per estensioni multiple, sottostringhe, presenza di cifre, prefissi (*Inizia con*) e suffissi (*Finisce con*).
@@ -16,7 +16,9 @@ Grazie a un'interfaccia terminale interattiva e a una struttura modulare complet
   * Filtro per dimensione (maggiore, minore o intervalli compresi in B, KB, MB, GB).
   * **Menu di Selezione Manuale**: Elenco interattivo con supporto per attivare/disattivare singoli file o invertire lo stato di tutti gli elementi in tempo reale.
 * **Rinomina Batch in Sicurezza (Safe-Run)**: Anteprima dettagliata a schermo con tabella comparativa (*Nome Originale -> Nuovo Nome*) prima di applicare le modifiche effettive.
-* **Esportazione Intelligente (TXT, CSV, JSON)**:
+* **Esportazione Multi-Formato Intelligente (TXT, CSV, JSON)**:
+  * Generazione simultanea o selettiva di uno o più formati di file nella cartella corrente tramite vector di configurazione dedicato (`menu_formatoFile`).
+  * Configurazione personalizzabile dei campi da includere nell'export (Nome, Estensione, Dimensione, Anno) tramite `menu_infoEsporta`.
   * Formattazione dinamica delle dimensioni dei file.
   * Estrazione automatica dell'anno (tramite regex) per separare l'anno di produzione dai titoli di file multimediali e documenti.
 
@@ -31,10 +33,10 @@ Il codice sorgente è organizzato nei seguenti file per garantire massima manute
 | `main.cpp` | Entry point del programma con il ciclo principale dell'interfaccia terminale. |
 | `utilities.hpp` | Macro dei colori ANSI, inclusioni di sistema, definizioni cross-platform e funzioni di supporto UTF-8. |
 | `utilities.cpp` | Implementazione delle funzioni console, gestione input, pausamento e buffer. |
-| `menu.hpp` | Strutture dati (`valoriMenu`, `SelezioneFileItem`), enumerazioni dei menu (`MenuMain`, `SubMenu_regoleTarget`, ecc.) e prototipi. |
+| `menu.hpp` | Strutture dati (`valoriMenu`, `SelezioneFileItem`), enumerazioni dei menu (`MenuMain`, `SubMenu_regoleTarget`, `menu_formatoFile`, `menu_infoEsporta`) e prototipi. |
 | `menu.cpp` | Definizione dei vettori di menu, aggiornamento dinamico dei testi in base alla lingua e rendering dell'interfaccia. |
 | `file_operations.hpp` | Prototipi delle operazioni sui file, trasformazioni stringhe, filtri e rinomina. |
-| `file_operations.cpp` | Logic core per la manipolazione delle stringhe, gestione delle cartelle, filtri target, rinomina batch ed esportazione. |
+| `file_operations.cpp` | Logic core per la manipolazione delle stringhe, gestione delle cartelle, filtri target, rinomina batch ed esportazione multi-formato. |
 | `localization.hpp` | Prototipi per il sistema di localizzazione e selettore lingua. |
 | `localization.cpp` | Dizionari di traduzione per Italiano (`dizionarioIT`) e Inglese (`dizionarioEN`). |
 
@@ -78,14 +80,19 @@ g++ main.cpp menu.cpp file_operations.cpp utilities.cpp localization.cpp -o reFi
 
 ---
 
-## 📊 Esempio di Esportazione
+## 📊 Esempio di Esportazione Multi-Formato
 
-Dato un file denominato `Silent Hill (2006).mp4` (dimensione: 1.5 GB):
+Dato un file denominato `Silent Hill (2006).mp4` (dimensione: 1.5 GB), l'esportazione simultanea produrrà i seguenti file:
+
+### TXT (`lista_esportata.txt`)
+```text
+Silent Hill .mp4 (1.5 GB) [2006]
+```
 
 ### CSV (`lista_esportata.csv`)
 ```csv
-NomeFile,Estensione,Anno,Dimensione
-"Silent Hill",mp4,"2006",1.5 GB
+NomeFile,Estensione,Dimensione,Anno
+"Silent Hill","mp4","1.5 GB","2006"
 ```
 
 ### JSON (`lista_esportata.json`)
@@ -94,8 +101,8 @@ NomeFile,Estensione,Anno,Dimensione
   {
     "nome": "Silent Hill",
     "estensione": "mp4",
-    "anno": "2006",
-    "dimensione": "1.5 GB"
+    "dimensione": "1.5 GB",
+    "anno": "2006"
   }
 ]
 ```

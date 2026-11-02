@@ -67,6 +67,8 @@ extern vector<valoriMenu> subMenu_regoleTarget;
 extern vector<valoriMenu> menuPunteggiatura;
 extern vector<valoriMenu> menuParentesi;
 extern vector<valoriMenu> menuSimboli;
+extern vector<valoriMenu> menu_infoEsporta;
+extern vector<valoriMenu> menu_formatoFile;
 extern vector<string> estensioniTargetMultiple;
 extern string estensioneTarget;
 extern string estensioneOutput;

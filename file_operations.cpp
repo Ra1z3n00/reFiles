@@ -793,7 +793,7 @@ void gestisci_menu_selezione_file() {
     cout << BOLD << get_string("BANNER_SELEZIONE_MANUALE") << RESET << endl;
     cout << DIM << get_string("HINT_SELEZIONE_MANUALE") << RESET << endl << endl;
     
-    cout << left << setw(maxLenNome + 4) << get_string("COL_NOME_FILE") << "     " << setw(15) << get_string("COL_STATO_FILE") << endl;
+    cout << left << setw(maxLenNome + 4) << get_string("COL_NOME_FILE") << "     " << setw(15) << get_string("COL_STATO") << endl;
     cout << string(maxLenNome + 21, '-') << endl;
 
     cout << SAVE_CURSOR;
@@ -1449,7 +1449,7 @@ void mostra_lista() {
     cout << get_string("LABEL_PERCORSO") << YELLOW << fs::current_path().string() << RESET << endl << endl;
 
     cout << left << setw(60) << get_string("COL_NOME") << "  " 
-         << setw(12) << get_string("COL_PESO") << "  " 
+         << setw(12) << get_string("COL_DIM") << "  " 
          << setw(22) << get_string("COL_ULTIMA_MOD") << "  " 
          << setw(15) << get_string("COL_STATO") << endl;
     cout << string(113, '-') << endl;
@@ -1576,8 +1576,8 @@ void esporta_lista() {
                     }
                     clearBuffer();
                     
-                    if (dataEsportate.empty() || to_lowercase(dataEsportate) == "basta" || 
-                        dataEsportate.length() != 10 || dataEsportate[2] != '/' || dataEsportate[5] != '/' || !find) {
+                    if (dataEsportate.empty() || dataEsportate.length() != 10 || 
+                        dataEsportate[2] != '/' || dataEsportate[5] != '/' || !find) {
                         subMenu_regoleCerca.at(4).decisione = false;
                     } else {
                         cout << "\n" << get_string("PROMPT_SCELGI_CONFRONTO") << endl;
@@ -1607,9 +1607,9 @@ void esporta_lista() {
                     
                     double dimMin = 0.0, dimMax = 0.0;
                     if (dimTipoEsporta == DirezioneDim::Compresi) {
-                        cout << "\nInserisci il valore MINIMO: " << endl << "> ";
+                        cout << "\n" << get_string("PROMPT_VALORE_MINIMO") << endl << "> ";
                         cin >> dimMin;
-                        cout << "Inserisci il valore MASSIMO: " << endl << "> ";
+                        cout << get_string("PROMPT_VALORE_MASSIMO") << endl << "> ";
                         cin >> dimMax;
                     } else {
                         cout << "\n" << get_string("PROMPT_VALORE_NUMERICO") << endl << "> ";
@@ -1660,17 +1660,166 @@ void esporta_lista() {
     }
     fineConfigEsporta:
 
-    cout << "\n" << get_string("PROMPT_COME_ESPORTARE") << endl;
-    int sceltaFormato = menuScelta(1, 4, 
-        get_string("POPUP_TXT").c_str(), 
-        get_string("POPUP_CSV").c_str(), 
-        get_string("POPUP_JSON").c_str(), 
-        get_string("POPUP_ANNULLA").c_str()
-    );
+    // --- GESTIONE MENU CAMPI CON menu_infoEsporta ---
+    int posCampi = 1;
+    while (true) {
+        system("cls");
+        cout << BOLD << get_string("BANNER_INFO_ESPORTA") << RESET << endl << endl;
+        cout << DIM << get_string("PROMPT_SELECT_INFO") << RESET << endl << endl;
 
-    if (sceltaFormato == 4) goto inizioConfig;
+        int maxLen = maxStringUTF8(menu_infoEsporta);
+        cout << SAVE_CURSOR;
 
-    vector<string> righeTemporanee;
+        do {
+            cout << RESTORE_CURSOR;
+            for (size_t i = 1; i <= menu_infoEsporta.size(); i++) {
+                cout << CLEAR_LINE << "\r";
+                cout << ((posCampi == (int)i) ? "> " GREEN LAMP : "  ");
+
+                const auto& voce = menu_infoEsporta[i - 1];
+                if (voce.testo.empty()) {
+                    cout << endl;
+                    continue;
+                }
+
+                cout << left << setw(maxLen) << voce.testo << RESET;
+
+                if (i >= 1 && i <= 4) {
+                    cout << " = [" << (voce.decisione ? GREEN : RED) << (voce.decisione ? "True" : "False") << RESET << "]";
+                }
+                cout << endl;
+            }
+
+            char tasto = getch();
+            if (tasto == 'e' || tasto == 'E') {
+                posCampi = menu_infoEsporta.size(); 
+                break;
+            }
+            if (tasto == 72 && posCampi > 1) {
+                posCampi--;
+                if (posCampi > 1 && menu_infoEsporta[posCampi - 1].testo.empty()) posCampi--;
+            } else if (tasto == 80 && posCampi < (int)menu_infoEsporta.size()) {
+                posCampi++;
+                if (posCampi < (int)menu_infoEsporta.size() && menu_infoEsporta[posCampi - 1].testo.empty()) posCampi++;
+            }
+
+            if (tasto == '\r' || tasto == '\n') {
+                break;
+            }
+        } while (true);
+
+        if (posCampi == (int)menu_infoEsporta.size()) { 
+            goto inizioConfig;
+        }
+
+        if (posCampi == 5) {
+            bool almenoUnCampo = false;
+            for (size_t i = 0; i < 4; ++i) {
+                if (menu_infoEsporta[i].decisione) {
+                    almenoUnCampo = true;
+                    break;
+                }
+            }
+            if (!almenoUnCampo) {
+                cout << YELLOW << "\n" << get_string("HINT_SELECT_ONE_INFO") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
+                continue;
+            }
+            break; 
+        }
+
+        if (posCampi >= 1 && posCampi <= 4) {
+            menu_infoEsporta[posCampi - 1].decisione = !menu_infoEsporta[posCampi - 1].decisione;
+            continue;
+        }
+    }
+
+    bool espNome  = menu_infoEsporta[0].decisione;
+    bool espExt   = menu_infoEsporta[1].decisione;
+    bool espDim   = menu_infoEsporta[2].decisione;
+    bool espAnno  = menu_infoEsporta[3].decisione;
+
+    // --- SELEZIONE FORMATO OUTPUT MULTIPLO CON menu_formatoFile ---
+    int posFormato = 1;
+    while (true) {
+        system("cls");
+        cout << BOLD << get_string("BANNER_FORMATI_EXP") << RESET << endl << endl;
+        cout << DIM << get_string("MSG_SELECT_AND_EXPORT") << RESET << endl << endl;
+
+        int maxLenF = maxStringUTF8(menu_formatoFile);
+        cout << SAVE_CURSOR;
+
+        do {
+            cout << RESTORE_CURSOR;
+            for (size_t i = 1; i <= menu_formatoFile.size(); i++) {
+                cout << CLEAR_LINE << "\r";
+                cout << ((posFormato == (int)i) ? "> " GREEN LAMP : "  ");
+
+                const auto& voce = menu_formatoFile[i - 1];
+                if (voce.testo.empty()) {
+                    cout << endl;
+                    continue;
+                }
+
+                cout << left << setw(maxLenF) << voce.testo << RESET;
+
+                if (i >= 1 && i <= 3) {
+                    cout << " = [" << (voce.decisione ? GREEN : RED) << (voce.decisione ? "True" : "False") << RESET << "]";
+                }
+                cout << endl;
+            }
+
+            char tasto = getch();
+            if (tasto == 'e' || tasto == 'E') {
+                posFormato = menu_formatoFile.size(); 
+                break;
+            }
+            if (tasto == 72 && posFormato > 1) {
+                posFormato--;
+                if (posFormato > 1 && menu_formatoFile[posFormato - 1].testo.empty()) posFormato--;
+            } else if (tasto == 80 && posFormato < (int)menu_formatoFile.size()) {
+                posFormato++;
+                if (posFormato < (int)menu_formatoFile.size() && menu_formatoFile[posFormato - 1].testo.empty()) posFormato++;
+            }
+
+            if (tasto == '\r' || tasto == '\n') {
+                break;
+            }
+        } while (true);
+
+        if (posFormato == (int)menu_formatoFile.size()) {
+            goto inizioConfig;
+        }
+
+        if (posFormato == 4) {
+            bool almenoUnFormato = false;
+            for (size_t i = 0; i < 3; ++i) {
+                if (menu_formatoFile[i].decisione) {
+                    almenoUnFormato = true;
+                    break;
+                }
+            }
+            if (!almenoUnFormato) {
+                cout << YELLOW << "\n" << get_string("HINT_SELECT_ONE_FORMAT") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
+                continue;
+            }
+            break; 
+        }
+
+        if (posFormato >= 1 && posFormato <= 3) {
+            menu_formatoFile[posFormato - 1].decisione = !menu_formatoFile[posFormato - 1].decisione;
+            continue;
+        }
+    }
+
+    bool esportaTxt  = menu_formatoFile[0].decisione;
+    bool esportaCsv  = menu_formatoFile[1].decisione;
+    bool esportaJson = menu_formatoFile[2].decisione;
+
+    vector<string> righeTxt;
+    vector<string> righeCsv;
+    vector<string> righeJson;
     int countScelti = 0;
     bool primoJson = true;
 
@@ -1778,20 +1927,55 @@ void esporta_lista() {
             while (!nomePulito.empty() && nomePulito.back() == ' ') nomePulito.pop_back();
         }
 
-        string rigaFormattata = "";
-        if (sceltaFormato == 1) { 
-            rigaFormattata = nomePulito + (annoStr.empty() ? "" : " (" + annoStr + ")");
-        } 
-        else if (sceltaFormato == 2) { 
-            rigaFormattata = "\"" + nomePulito + "\"," + estensione + ",\"" + annoStr + "\"," + dimensioneDinamica;
-        } 
-        else if (sceltaFormato == 3) { 
-            if (!primoJson) rigaFormattata += ",\n";
-            rigaFormattata += "  {\n    \"nome\": \"" + nomePulito + "\",\n    \"estensione\": \"" + estensione + "\",\n    \"anno\": \"" + annoStr + "\",\n    \"dimensione\": \"" + dimensioneDinamica + "\"\n  }";
+        string valoreAnnoEsportato = annoStr.empty() ? get_string("DISPONIBILE") : annoStr;
+
+        if (esportaTxt) {
+            string rigaTxt = "";
+            vector<string> partiTxt;
+            if (espNome) partiTxt.push_back(nomePulito);
+            if (espExt)  partiTxt.push_back("." + estensione);
+            if (espDim)  partiTxt.push_back("(" + dimensioneDinamica + ")");
+            if (espAnno) partiTxt.push_back("[" + valoreAnnoEsportato + "]");
+
+            for (size_t i = 0; i < partiTxt.size(); ++i) {
+                rigaTxt += partiTxt[i] + (i + 1 < partiTxt.size() ? " " : "");
+            }
+            righeTxt.push_back(rigaTxt);
+        }
+
+        if (esportaCsv) {
+            string rigaCsv = "";
+            vector<string> partiCsv;
+            if (espNome) partiCsv.push_back("\"" + nomePulito + "\"");
+            if (espExt)  partiCsv.push_back("\"" + estensione + "\"");
+            if (espDim)  partiCsv.push_back("\"" + dimensioneDinamica + "\"");
+            if (espAnno) partiCsv.push_back("\"" + valoreAnnoEsportato + "\"");
+
+            for (size_t i = 0; i < partiCsv.size(); ++i) {
+                rigaCsv += partiCsv[i] + (i + 1 < partiCsv.size() ? "," : "");
+            }
+            righeCsv.push_back(rigaCsv);
+        }
+
+        if (esportaJson) {
+            string rigaJson = "";
+            if (!primoJson) rigaJson += ",\n";
+            rigaJson += "  {\n";
+            
+            vector<string> elementiJson;
+            if (espNome) elementiJson.push_back("    \"" + get_string("COL_NOME") + "\": \"" + nomePulito + "\"");
+            if (espExt)  elementiJson.push_back("    \"" + get_string("COL_ESTENSIONE") + "\": \"" + estensione + "\"");
+            if (espDim)  elementiJson.push_back("    \"" + get_string("COL_DIM") + "\": \"" + dimensioneDinamica + "\"");
+            if (espAnno) elementiJson.push_back("    \"" + get_string("COL_ANNO") + "\": \"" + valoreAnnoEsportato + "\"");
+
+            for (size_t i = 0; i < elementiJson.size(); ++i) {
+                rigaJson += elementiJson[i] + (i + 1 < elementiJson.size() ? ",\n" : "\n");
+            }
+            rigaJson += "  }";
+            righeJson.push_back(rigaJson);
             primoJson = false;
         }
 
-        righeTemporanee.push_back(rigaFormattata);
         countScelti++;
     }
 
@@ -1801,33 +1985,45 @@ void esporta_lista() {
         goto inizioConfig;
     }
 
-    string nome_file_base = "lista_esportata.txt";
-    if (sceltaFormato == 2) nome_file_base = "lista_esportata.csv";
-    else if (sceltaFormato == 3) nome_file_base = "lista_esportata.json";
-
-    fs::path percorsoCompletoFile = fs::current_path() / nome_file_base;
-
-    ofstream file(percorsoCompletoFile, ios::trunc);
-    if (!file.is_open()) {
-        cout << endl << RED << get_string("ERR_MAKE_FILE") << RESET << endl;
-        PAUSE(get_string("PROMPT_CONTINUA"));
-        return;
+    if (esportaTxt && !righeTxt.empty()) {
+        fs::path pTxt = fs::current_path() / (get_string("FILE_NAME_EXP") + ".txt");
+        ofstream fTxt(pTxt, ios::trunc);
+        if (fTxt.is_open()) {
+            for (const auto& r : righeTxt) fTxt << r << "\n";
+            fTxt.close();
+        }
     }
 
-    if (sceltaFormato == 2) {
-        file << "NomeFile,Estensione,Anno,Dimensione\n";
-    } else if (sceltaFormato == 3) {
-        file << "[\n";
+    if (esportaCsv && !righeCsv.empty()) {
+        fs::path pCsv = fs::current_path() / (get_string("FILE_NAME_EXP") + ".csv");
+        ofstream fCsv(pCsv, ios::trunc);
+        if (fCsv.is_open()) {
+            vector<string> headersCsv;
+            if (espNome) headersCsv.push_back(get_string("COL_NOME_FILE"));
+            if (espExt)  headersCsv.push_back(get_string("COL_ESTENSIONE"));
+            if (espDim)  headersCsv.push_back(get_string("COL_DIM"));
+            if (espAnno) headersCsv.push_back(get_string("COL_ANNO"));
+
+            for (size_t i = 0; i < headersCsv.size(); ++i) {
+                fCsv << headersCsv[i] << (i + 1 < headersCsv.size() ? "," : "\n");
+            }
+            for (const auto& r : righeCsv) fCsv << r << "\n";
+            fCsv.close();
+        }
     }
 
-    for (const auto& riga : righeTemporanee) file << riga << "\n";
+    if (esportaJson && !righeJson.empty()) {
+        fs::path pJson = fs::current_path() / (get_string("FILE_NAME_EXP") + ".json");
+        ofstream fJson(pJson, ios::trunc);
+        if (fJson.is_open()) {
+            fJson << "[\n";
+            for (const auto& r : righeJson) fJson << r;
+            fJson << "\n]\n";
+            fJson.close();
+        }
+    }
 
-    if (sceltaFormato == 3) file << "]\n";
-
-    file.close();
-
-    cout << endl << GREEN << get_string("POP_SCC") << RESET << get_string("MSG_SUCCESSO_ESPORTAZIONE") << endl;
-    cout << get_string("MSG_FILE_SALVATO") << YELLOW << percorsoCompletoFile.string() << RESET << endl;
+    cout << endl << GREEN << get_string("POP_SCC") << RESET << " " << get_string("MSG_SUCCESSO_ESPORTAZIONE") << endl;
     cout << get_string("MSG_ELEMENTI_ESPORTATI") << BOLD << countScelti << RESET << endl << endl;
     
     PAUSE(get_string("PROMPT_CONTINUA"));
@@ -2128,7 +2324,7 @@ void aboutMe() {
     cout << string(60, '=') << endl << endl;
 
     cout << BOLD << "  " << get_string("SECTION_INFO") << RESET << endl;
-    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.2" << RESET << endl;
+    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.2.2" << RESET << endl;
     cout << "  " << get_string("INFO_SVILUPPATORE") << YELLOW << "Raizen" << RESET << endl;
     cout << "  " << get_string("INFO_LICENZA") << DIM << "MIT Open Source" << RESET << endl << endl;
 

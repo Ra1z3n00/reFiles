@@ -42,6 +42,20 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"SUB_FINISCE_CON","Finisce con"},
     {"SUB_M_SELEZIONE","Menu Selezione"},
     
+    // menu infoEsporta
+    {"SUB_MENU_INFO_EXP_NOME","Nome"},
+    {"SUB_MENU_INFO_EXP_EXT","Estensione"},
+    {"SUB_MENU_INFO_EXP_DIM","Dimensione"},
+    {"SUB_MENU_INFO_EXP_YEAR","Anno (Se Disponibile)"},
+    {"SUB_MENU_INFO_EXP_EXE","Esegui"},
+    {"SUB_MENU_INFO_EXP_BACK","Torna Indietro"},
+    
+    // menu formatoFile
+    {"SUB_MENU_FORM_FILE_TXT","TXT (Testo semplice)"},
+    {"SUB_MENU_FORM_FILE_CSV","CSV (Valori separati da virgola)"},
+    {"SUB_MENU_FORM_FILE_JSON","JSON (Formato strutturato)"},
+    {"SUB_MENU_FORM_FILE_EXE","[Esporta]"},
+    {"SUB_MENU_FORM_FILE_BACK","Torna Indietro"},
 
     // Opzioni Comuni Sottomenu Rimozione
     {"OP_CONSERVA_RIPETUTO", "Conserva un Ripetuto"},
@@ -162,6 +176,13 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"MSG_EXT_ATTUALI", "Estensioni attualmente in lista: "},
     {"MSG_NO_EXT", "Nessuna estensione impostata (verranno considerate tutte)."},
     {"PROMPT_INSERISCI_EST", "Inserisci le estensioni separate da spazio (oppure premi Invio per resettare):"},
+    {"PROMPT_SELECT_INFO","Seleziona le informazioni che desideri includere nel file:"},
+    {"HINT_SELECT_ONE_INFO","Seleziona almeno un'informazione da esportare!"},
+    {"MSG_SELECT_AND_EXPORT","Seleziona uno o piu formati desiderati e premi [Esporta]:"},
+    {"BANNER_INFO_ESPORTA","=== SELEZIONE INFORMAZIONI DA ESPORTARE ==="},
+    {"BANNER_FORMATI_EXP","=== SELEZIONA I FORMATI DI ESPORTAZIONE ==="},
+    {"HINT_SELECT_ONE_FORMAT","Seleziona almeno un formato di file!"},
+    {"DISPONIBILE","NoN Disponibile"},
     
     {"BANNER_DEF_SOTTO_ESP", "=== DEFINISCI SOTTOSTRINGHE DA ESPORTARE ==="},
     {"MSG_SOTTO_ATTUALI", "Sottostringhe attualmente in lista: "},
@@ -180,9 +201,11 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"BANNER_LISTA_FILE", "=== LISTA FILE E CARTELLA CORRENTE ==="},
     {"LABEL_PERCORSO", "Percorso: "},
     {"COL_NOME", "Nome"},
-    {"COL_PESO", "Peso"},
+    {"COL_DIM", "Dimensione"},
     {"COL_ULTIMA_MOD", "Ultima Modifica"},
     {"COL_STATO", "Stato"},
+    {"COL_ESTENSIONE","Estensione"},
+    {"COL_ANNO","Anno"},
     {"MSG_NO_RISULTATI", "  Nessun Risultato trovato con i criteri selezionati."},
     {"MSG_TOTALE_ELEMENTI", "Totale elementi filtrati: "},
     {"MSG_FILE_CARTELLE", " file, "},
@@ -211,6 +234,8 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"BANNER_ESECUZIONE_RINOMINA", "=== ESECUZIONE RINOMINA IN CORSO... ==="},
     {"MSG_OPERAZIONE_COMPLETATA", "Operazione completata. File rinominati: "},
     {"MSG_ERRORI", ", Errori: "},
+
+    {"FILE_NAME_EXP","lista_esportata"},
     
     // About Me
     {"TITLE_ABOUT", "RE(set)_FILES BATCH TOOL"},
@@ -268,7 +293,6 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"BANNER_SELEZIONE_MANUALE", "=== MENU SELEZIONE FILE MANUALI ==="},
     {"HINT_SELEZIONE_MANUALE", "Usa le Frecce Su/Giu per scorrere, INVIO per attivare/disattivare, Q = Tutti On/Off, E = Esci"},
     {"COL_NOME_FILE", "Nome File"},
-    {"COL_STATO_FILE", "Stato"},
     {"BANNER_CONFIG_REGOLE_TARGET", "=== CONFIGURAZIONE REGOLE TARGET ==="},
     {"HINT_CRITERI_TARGET", "Seleziona i criteri per filtrare i file da rinominare:"},
     {"PROMPT_VALORE_MINIMO", "Inserisci il valore MINIMO: "},
@@ -315,6 +339,21 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"SUB_INIZIA_CON","Starts with"},
     {"SUB_FINISCE_CON","Ends with"},
     {"SUB_M_SELEZIONE","Selection Menu"},
+
+    // menu_infoEsporta
+    {"SUB_MENU_INFO_EXP_NOME","Name"},
+    {"SUB_MENU_INFO_EXP_EXT","Extension"},
+    {"SUB_MENU_INFO_EXP_DIM","Size"},
+    {"SUB_MENU_INFO_EXP_YEAR","Year (if Available)"},
+    {"SUB_MENU_INFO_EXP_EXE","Execute"},
+    {"SUB_MENU_INFO_EXP_BACK","Go Back"},
+    
+    // menu_formatoFile
+    {"SUB_MENU_FORM_FILE_TXT","TXT (Plain text)"},
+    {"SUB_MENU_FORM_FILE_CSV","CSV (Comma-separated values)"},
+    {"SUB_MENU_FORM_FILE_JSON","JSON (Structured format)"},
+    {"SUB_MENU_FORM_FILE_EXE","[Export]"},
+    {"SUB_MENU_FORM_FILE_BACK","Go Back"},
 
     // Common Removal Submenu Options
     {"OP_CONSERVA_RIPETUTO", "Keep One Repeated"},
@@ -435,6 +474,13 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"MSG_EXT_ATTUALI", "Extensions currently in list: "},
     {"MSG_NO_EXT", "No extensions set (all will be considered)."},
     {"PROMPT_INSERISCI_EST", "Enter extensions separated by space (or press Enter to reset):"},
+    {"PROMPT_SELECT_INFO","Select the information you wish to include in the file:"},
+    {"HINT_SELECT_ONE","Select at least one piece of information to export!"},
+    {"MSG_SELECT_AND_EXPORT","Select one or more desired formats and press [Export]:"},
+    {"BANNER_INFO_ESPORTA","=== SELECTION OF INFORMATION TO EXPORT ==="},
+    {"BANNER_FORMATI_EXP","=== SELECT EXPORT FORMATS ==="},
+    {"HINT_SELECT_ONE_FORMAT","Select at least one file format!"},
+    {"DISPONIBILE","Not Available"},
     
     {"BANNER_DEF_SOTTO_ESP", "=== DEFINE SUBSTRINGS TO EXPORT ==="},
     {"MSG_SOTTO_ATTUALI", "Substrings currently in list: "},
@@ -453,9 +499,11 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"BANNER_LISTA_FILE", "=== FILES LIST AND CURRENT FOLDER ==="},
     {"LABEL_PERCORSO", "Path: "},
     {"COL_NOME", "Name"},
-    {"COL_PESO", "Size"},
+    {"COL_DIM", "Size"},
     {"COL_ULTIMA_MOD", "Last Modified"},
     {"COL_STATO", "Status"},
+    {"COL_ESTENSIONE","Extension"},
+    {"COL_ANNO","Year"},
     {"MSG_NO_RISULTATI", "  No results found matching the selected criteria."},
     {"MSG_TOTALE_ELEMENTI", "Total filtered items: "},
     {"MSG_FILE_CARTELLE", " files, "},
@@ -484,6 +532,8 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"BANNER_ESECUZIONE_RINOMINA", "=== EXECUTING RENAME... ==="},
     {"MSG_OPERAZIONE_COMPLETATA", "Operation completed. Renamed files: "},
     {"MSG_ERRORI", ", Errors: "},
+
+    {"FILE_NAME_EXP","exported_list"},
     
     // About Me
     {"TITLE_ABOUT", "RE(set)_FILES BATCH TOOL"},
@@ -541,7 +591,6 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"BANNER_SELEZIONE_MANUALE", "=== MANUAL FILE SELECTION MENU ==="},
     {"HINT_SELEZIONE_MANUALE", "Use Arrow Up/Down to scroll, ENTER to toggle, Q = All On/Off, E = Exit"},
     {"COL_NOME_FILE", "File Name"},
-    {"COL_STATO_FILE", "Status"},
     {"BANNER_CONFIG_REGOLE_TARGET", "=== TARGET RULES CONFIGURATION ==="},
     {"HINT_CRITERI_TARGET", "Select criteria to filter files to rename:"},
     {"PROMPT_VALORE_MINIMO", "Enter MINIMUM value: "},

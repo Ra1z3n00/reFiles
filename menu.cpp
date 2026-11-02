@@ -116,7 +116,25 @@ vector<valoriMenu> menuSimboli {
     {"Torna al menu principale",      false}
 };
 
-// --- FUNZIONI DI UTILITÀ PER I MENU ---
+vector<valoriMenu> menu_infoEsporta {
+    {"Nome",                    false},
+    {"Estensione",              false},
+    {"Dimensione",              false},
+    {"Anno (Se Disponibile)",   false},
+    {"Esegui",                  false},
+    {"",                        false},
+    {"Torna Indietro",          false},
+};
+
+vector<valoriMenu> menu_formatoFile {
+    {"TXT (Testo semplice)",                false},
+    {"CSV (Valori separati da virgola)",    false},
+    {"JSON (Formato strutturato)",          false},
+    {"[Esporta]",                           false},
+    {"",                                    false},
+    {"Torna Indietro",                      false},
+};
+
 int modAttivi(const vector<valoriMenu>& menu) {
     int attivi = 0;
     for (const auto& i : menu) {
@@ -125,7 +143,6 @@ int modAttivi(const vector<valoriMenu>& menu) {
     return attivi;
 }
 
-// Funzione generica unificata per gestire i sottomenu (Punteggiatura, Parentesi, Simboli)
 void gestisci_sottomenu_generico(vector<valoriMenu>& menuTarget, const string& titoloBanner, int indiceMainMenu) {
     int pos = 1;
     while (1) {
@@ -146,7 +163,6 @@ void gestisci_sottomenu_generico(vector<valoriMenu>& menuTarget, const string& t
     mainMenu.at(indiceMainMenu).decisione = (cont > 0);
 }
 
-// --- SOTTOMENU SPECIFICI SEMPLIFICATI ---
 void gestisci_menu_punteggiatura() {
     gestisci_sottomenu_generico(menuPunteggiatura, get_string("BANNER_PUNTEGGIATURA"), static_cast<int>(MenuMain::RIMUOVI_PUNTEGGIATURA) - 1);
 }
@@ -159,7 +175,6 @@ void gestisci_menu_simboli() {
     gestisci_sottomenu_generico(menuSimboli, get_string("BANNER_SIMBOLI"), static_cast<int>(MenuMain::RIMUOVI_SIMBOLI) - 1);
 }
 
-// --- FUNZIONE MENU INTERATTIVO PER VECTOR ---
 int menuScelta(int pos, const vector<valoriMenu>& menu) {
     char tasto;
     cout << SAVE_CURSOR;
@@ -376,7 +391,6 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
     return pos;
 }
 
-// Gestisce un menu per stringhe
 int menuScelta(unsigned pos, unsigned elements, ...) {
 
     char tasto;
@@ -474,6 +488,7 @@ void aggiorna_testi_menu() {
     // Indice 7 è la riga vuota " "
     subMenu_regoleCerca.at(8).testo = get_string("SUB_INDIETRO");
 
+    // Aggiornamento subMenu_regoleTarget
     subMenu_regoleTarget.at(0).testo = get_string("SUB_TUTTO");
     subMenu_regoleTarget.at(1).testo = get_string("SUB_ESTENSIONI");
     subMenu_regoleTarget.at(2).testo = get_string("SUB_STRINGHE");
@@ -486,6 +501,23 @@ void aggiorna_testi_menu() {
     subMenu_regoleTarget.at(9).testo = get_string("SUB_M_SELEZIONE");
     // Indice 10 è la riga vuota " "
     subMenu_regoleTarget.at(11).testo = get_string("SUB_INDIETRO");
+
+    // Aggiornamento menu_infoEsporta
+    menu_infoEsporta.at(0).testo = get_string("SUB_MENU_INFO_EXP_NOME"); // Nome
+    menu_infoEsporta.at(1).testo = get_string("SUB_MENU_INFO_EXP_EXT");  // Estensione
+    menu_infoEsporta.at(2).testo = get_string("SUB_MENU_INFO_EXP_DIM");  // Dimensione
+    menu_infoEsporta.at(3).testo = get_string("SUB_MENU_INFO_EXP_YEAR"); // Anno (Se Disponibile)
+    menu_infoEsporta.at(4).testo = get_string("SUB_MENU_INFO_EXP_EXE");  // Esegui
+    // Indice 5 è la riga vuota " "
+    menu_infoEsporta.at(6).testo = get_string("SUB_MENU_INFO_EXP_BACK"); // Torna Indietro
+
+    // Aggiornamento menu_formatoFile 
+    menu_formatoFile.at(0).testo = get_string("SUB_MENU_FORM_FILE_TXT");  // TXT (Testo semplice)
+    menu_formatoFile.at(1).testo = get_string("SUB_MENU_FORM_FILE_CSV");  // CSV (Valori separati da virgola)
+    menu_formatoFile.at(2).testo = get_string("SUB_MENU_FORM_FILE_JSON"); // JSON (Formato strutturato)
+    menu_formatoFile.at(3).testo = get_string("SUB_MENU_FORM_FILE_EXE");  // [Esporta]
+    // Indice 4 è la riga vuota " "
+    menu_formatoFile.at(5).testo = get_string("SUB_MENU_FORM_FILE_BACK"); // Torna Indietro
 
     // Aggiornamento Menu Punteggiatura
     menuPunteggiatura.at(0).testo = get_string("PUNT_VIRGOLA");
@@ -501,7 +533,7 @@ void aggiorna_testi_menu() {
     menuPunteggiatura.at(10).testo = get_string("PUNT_VIRGOLETTE");
     menuPunteggiatura.at(11).testo = get_string("OP_CONSERVA_RIPETUTO");
     menuPunteggiatura.at(12).testo = get_string("OP_SOSTITUISCI_SPAZIO");
-    // Indice 13 è " "
+    // Indice 13 è la riga vuota " "
     menuPunteggiatura.at(14).testo = get_string("SUB_INDIETRO");
 
     // Aggiornamento Menu Parentesi
