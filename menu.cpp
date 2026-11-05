@@ -234,7 +234,7 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                 
                 // Mostra l'elenco delle estensioni target a destra se definite
                 if (&menu == &subMenu_regoleTarget && i == 2 && !estensioniTargetMultiple.empty()) {
-                    cout << "  (Estensioni: ";
+                    cout << "  (" << get_string("EXT_SRC");
                     for (size_t idx = 0; idx < estensioniTargetMultiple.size(); ++idx) {
                         cout << YELLOW << estensioniTargetMultiple[idx] << RESET;
                         if (idx < estensioniTargetMultiple.size() - 1) cout << " - ";
@@ -250,7 +250,6 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                 
                 switch (voce) {
                     case MenuMain::REGOLE_TARGET: {
-                        int nFiles = conta_file_target();
                         cout << "           = (" << YELLOW << nFiles << RESET << ((nFiles == 1) ? get_string("LBL_FILE_SELEZIONATO") : get_string("LBL_FILE_SELEZIONATI")) << ")";
                         break;
                     }

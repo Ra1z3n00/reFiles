@@ -152,6 +152,8 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"POPUP_SI_APPLICA", "Sì, applica le modifiche"},
     {"POPUP_NO_ANNULLA", "No, annulla e torna al menu"},
 
+    {"EXT_SRC","Estensioni cercate: "},
+
     // Etichette dinamiche menuScelta
     {"LBL_TUTTI_FILE", " =          (Tutti i file: "},
     {"LBL_CONVERTI_IN", " (Converti in: "},
@@ -169,7 +171,7 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     
     {"BANNER_DEF_TARGET", "=== DEFINISCI ESTENSIONE TARGET ==="},
     {"MSG_ESTENSIONE_ATTUALE", "Estensione attuale: "},
-    {"PROMPT_NUOVA_ESTENSIONE", "Inserisci la nuova estensione (senza punto, es: mp3, pdf, txt, cpp): "},
+    {"PROMPT_NUOVA_ESTENSIONE", "Inserisci la nuova estensione: "},
     
     {"BANNER_DEF_OUTPUT", "=== DEFINISCI ESTENSIONE OUTPUT ==="},
 
@@ -209,7 +211,7 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"POPUP_PAROLA_ATT","Parola Attuale: "},
     {"POPUP_INS_VALORE","Inserisci il nuovo valore: "},
     {"MGS_SCC_EDIT_PAROLA","Parola modificata con successo!"},
-    {"MSG_EDIT_ANNULLATA","Modifica annullata (nessun testo inserito)."},
+    {"MSG_EDIT_ANNULLATA","Modifica annullata."},
     {"BANNER_SELECT_PAROLA_REMOVE","Seleziona la parola che vuoi rimuovere:"},
     {"MSG_ALL_WORDS_REMOVED","Tutte le parole sono state rimosse."},
     {"WORD","Parola"},
@@ -286,6 +288,17 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"AVVISO_EXT_ASSENTE", "Attenzione: L'estensione '"},
     {"AVVISO_EXT_ASSENTE_2", "' non e' presente in nessun file nella cartella corrente."},
     {"AVVISO_NESSUNA_EXT_PRESENTE", "Nessuna delle estensioni inserite e' presente nella cartella."},
+
+    {"POPUP_ADD_NEW_EXT","Aggiungi nuova estensione"},
+    {"POPUP_EDIT_EXT","Modifica un'estensione"},
+    {"POPUP_REMOVE_EXT","Rimuovi un'estensione a scelta"},
+    {"POPUP_REMOVE_ALL_EXT","Rimuovi tutte le estensioni"},
+
+    {"SELECT_EXT_TO_EDIT","Seleziona l'estensione che vuoi modificare:"},
+    {"MSG_EDIT_EXT_SCC","Estensione modificata con successo"},
+    {"MSG_SELECT_EXT_REMOVE","Seleziona l'estensione che vuoi rimuovere:"},
+    {"MSG_ALL_EXT_REMOVED","Tutte le estensioni sono state rimosse."},
+    {"MSG_EXT","Estensione"},
 
     // Sottostringhe Target
     {"BANNER_DEF_SOTTO_TARGET", "=== DEFINISCI SOTTOSTRINGHE TARGET ==="},
@@ -467,6 +480,8 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"POPUP_SI_APPLICA", "Yes, apply changes"},
     {"POPUP_NO_ANNULLA", "No, cancel and return to menu"},
 
+    {"EXT_SRC","Extensions searched: "},
+
     // Dynamic labels menuScelta
     {"LBL_TUTTI_FILE", " =          (All files: "},
     {"LBL_CONVERTI_IN", " (Convert to: "},
@@ -484,7 +499,7 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     
     {"BANNER_DEF_TARGET", "=== DEFINE TARGET EXTENSION ==="},
     {"MSG_ESTENSIONE_ATTUALE", "Current extension: "},
-    {"PROMPT_NUOVA_ESTENSIONE", "Enter the new extension (without dot, e.g., mp3, pdf, txt, cpp): "},
+    {"PROMPT_NUOVA_ESTENSIONE", "Enter the new extension: "},
     
     {"BANNER_DEF_OUTPUT", "=== DEFINE OUTPUT EXTENSION ==="},
 
@@ -601,6 +616,17 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"AVVISO_EXT_ASSENTE", "Warning: Extension '"},
     {"AVVISO_EXT_ASSENTE_2", "' is not present in any file in the current folder."},
     {"AVVISO_NESSUNA_EXT_PRESENTE", "None of the entered extensions are present in the folder."},
+
+    {"POPUP_ADD_NEW_EXT","Add new extention"},
+    {"POPUP_EDIT_EXT","Edit an extention"},
+    {"POPUP_REMOVE_EXT","Remove a specific extention"},
+    {"POPUP_REMOVE_ALL_EXT","Remove all extentions"},
+
+    {"SELECT_EXT_TO_EDIT","Seleziona l'estensione che vuoi modificare:"},
+    {"MSG_EDIT_EXT_SCC","Estensione modificata con successo"},
+    {"MSG_SELECT_EXT_REMOVE","Seleziona l'estensione che vuoi rimuovere:"},
+    {"MSG_ALL_EXT_REMOVED","Tutte le estensioni sono state rimosse."},
+    {"MSG_EXT","Estensione"},
 
     // Target Substrings
     {"BANNER_DEF_SOTTO_TARGET", "=== DEFINE TARGET SUBSTRINGS ==="},

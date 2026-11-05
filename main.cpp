@@ -6,6 +6,7 @@
 // Comando di compilazione aggiornato:
 // g++ main.cpp menu.cpp file_operations.cpp utilities.cpp localization.cpp -o reFiles -std=c++20
 
+int nFiles = 0;
 
 int main() {
     
@@ -18,6 +19,7 @@ int main() {
     int pos = 1;
     cout << HIDE_CURSOR;
     cout << boolalpha;
+    nFiles = conta_file_target();
 
     // Inizializza i testi della lingua predefinita all'avvio
     aggiorna_testi_menu();
@@ -34,9 +36,11 @@ int main() {
                 break;
             case MenuMain::CAMBIA_PATH:
                 cambia_path();
+                nFiles = conta_file_target();
                 break;
             case MenuMain::REGOLE_TARGET:
                 gestisci_menu_target();
+                nFiles = conta_file_target();
                 break;
             case MenuMain::RIMUOVI_PUNTEGGIATURA:
                 gestisci_menu_punteggiatura();

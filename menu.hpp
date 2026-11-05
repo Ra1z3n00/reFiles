@@ -61,6 +61,7 @@ struct SelezioneFileItem {
     bool selezionato;
 };
 
+extern int nFiles;
 extern vector<valoriMenu> mainMenu;
 extern vector<valoriMenu> subMenu_regoleCerca;
 extern vector<valoriMenu> subMenu_regoleTarget;

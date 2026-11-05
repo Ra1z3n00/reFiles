@@ -392,7 +392,7 @@ void gestisci_menu_parole() {
         if (!paroleDaRimuovere.empty()) {
             cout << get_string("MSG_PAROLE_LISTA");
             for (size_t i = 0; i < paroleDaRimuovere.size(); ++i) {
-                cout << "[" << YELLOW << paroleDaRimuovere[i] << RESET << ":" << DIM << i + 1 << RESET << "] ";
+                cout << "[" << YELLOW << paroleDaRimuovere[i] << RESET << "] ";
             }
             cout << endl << endl;
 
@@ -550,64 +550,136 @@ void gestisci_menu_sottostringhe_esporta() {
 }
 
 void gestisci_menu_estensioni_target() {
-    system("cls");
-    cout << BOLD << get_string("BANNER_DEF_EXT_TARGET") << RESET << endl << endl;
-    if (!estensioniTargetMultiple.empty()) {
-        cout << get_string("MSG_EXT_TARGET_ATTUALI");
-        for (const auto& e : estensioniTargetMultiple) cout << "[" << YELLOW << e << RESET << "] ";
-        cout << endl << endl;
-    } else {
-        cout << get_string("MSG_NO_EXT_TARGET") << endl << endl;
-    }
+    while (true) {
+        system("cls");
+        cout << BOLD << get_string("BANNER_DEF_EXT_TARGET") << RESET << endl << endl;
 
-    cout << get_string("PROMPT_INSERISCI_EXT_TARGET") << endl << "> ";
-    string linea, ext;
-    getline(cin, linea);
-    cout << endl;
+        if (!estensioniTargetMultiple.empty()) {
+            cout << get_string("MSG_EXT_TARGET_ATTUALI");
+            for (const auto& e : estensioniTargetMultiple) cout << "[" << YELLOW << e << RESET << "] ";
+            cout << endl << endl;
 
-    stringstream ss(linea);
-    vector<string> nuoveEstensioni;
-    while (ss >> ext) {
-        if (!ext.empty() && ext[0] == '.') ext.erase(0, 1);
-        nuoveEstensioni.push_back(to_lowercase(ext));
-    }
+            // Menu interattivo con le opzioni avanzate
+            int sceltaOpzione = menuScelta(1, 5, 
+                get_string("POPUP_ADD_NEW_EXT").c_str(), 
+                get_string("POPUP_EDIT_EXT").c_str(),
+                get_string("POPUP_REMOVE_EXT").c_str(), 
+                get_string("POPUP_REMOVE_ALL_EXT").c_str(), 
+                get_string("SUB_INDIETRO").c_str()
+            );
 
-    if (nuoveEstensioni.empty()) {
-        subMenu_regoleTarget.at(1).decisione = false; // CORRETTO (Indice 1)
-        return;
-    }
+            cout << endl;
 
-    vector<string> estensioniValide;
-    for (const auto& e : nuoveEstensioni) {
-        bool trovata = false;
-        string targetExt = "." + e;
-        try {
-            for (const auto& entry : fs::directory_iterator(fs::current_path())) {
-                if (entry.is_regular_file()) {
-                    string fileExt = to_lowercase(entry.path().extension().string());
-                    if (fileExt == targetExt) {
-                        trovata = true;
-                        break;
+            if (sceltaOpzione == 1) { // Aggiungi nuova estensione
+                cout << get_string("PROMPT_INSERISCI_EXT_TARGET") << endl << "> ";
+                string linea, ext;
+                getline(cin, linea);
+                cout << endl;
+
+                stringstream ss(linea);
+                while (ss >> ext) {
+                    if (!ext.empty() && ext[0] == '.') ext.erase(0, 1);
+                    ext = to_lowercase(ext);
+                    
+                    if (!ext.empty()) {
+                        // Inserimento diretto (evita duplicati)
+                        if (find(estensioniTargetMultiple.begin(), estensioniTargetMultiple.end(), ext) == estensioniTargetMultiple.end()) {
+                            estensioniTargetMultiple.push_back(ext);
+                        }
                     }
                 }
-            }
-        } catch (...) {}
+            } 
+            else if (sceltaOpzione == 2) { // Modifica un'estensione esistente
+                vector<valoriMenu> menuModificaExt;
+                for (const auto& e : estensioniTargetMultiple) {
+                    menuModificaExt.push_back({e, false});
+                }
+                menuModificaExt.push_back({get_string("POPUP_ANNULLA"), false});
 
-        if (trovata) {
-            estensioniValide.push_back(e);
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_EXT_TARGET") << RESET << endl << endl;
+                cout << get_string("SELECT_EXT_TO_EDIT") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuModificaExt);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)estensioniTargetMultiple.size()) {
+                    cout << endl << get_string("MSG_ESTENSIONE_ATTUALE") << YELLOW << estensioniTargetMultiple[indiceScelto - 1] << RESET << endl;
+                    cout << get_string("PROMPT_NUOVA_ESTENSIONE") << endl << "> ";
+                    
+                    string nuovaExt;
+                    getline(cin, nuovaExt);
+
+                    if (!nuovaExt.empty()) {
+                        if (nuovaExt[0] == '.') nuovaExt.erase(0, 1);
+                        estensioniTargetMultiple[indiceScelto - 1] = to_lowercase(nuovaExt);
+                        cout << GREEN << endl << get_string("MSG_EDIT_EXT_SCC") << RESET << endl;
+                    } else {
+                        cout << YELLOW << endl << get_string("MSG_EDIT_ANNULLATA") << RESET << endl;
+                    }
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 3) { // Rimuovi un'estensione a scelta
+                vector<valoriMenu> menuRimuoviExt;
+                for (const auto& e : estensioniTargetMultiple) {
+                    menuRimuoviExt.push_back({e, false});
+                }
+                menuRimuoviExt.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_EXT_TARGET") << RESET << endl << endl;
+                cout << get_string("MSG_SELECT_EXT_REMOVE") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuRimuoviExt);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)estensioniTargetMultiple.size()) {
+                    string extRimossa = estensioniTargetMultiple[indiceScelto - 1];
+                    estensioniTargetMultiple.erase(estensioniTargetMultiple.begin() + (indiceScelto - 1));
+                    
+                    cout << endl << GREEN << get_string("MSG_EXT") << " [" << YELLOW << extRimossa << GREEN << "] " << get_string("SUCC_REMOVED") << RESET << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 4) { // Rimuovi tutte le estensioni
+                estensioniTargetMultiple.clear();
+                cout << GREEN << get_string("MSG_ALL_EXT_REMOVED") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
+                break;
+            } 
+            else if (sceltaOpzione == 5) { // Torna indietro
+                break;
+            }
         } else {
-            cout << endl << YELLOW << get_string("AVVISO_EXT_ASSENTE") << e << get_string("AVVISO_EXT_ASSENTE_2") << RESET << endl;
+            // Comportamento standard all'inserimento iniziale (se il vettore è vuoto)
+            cout << get_string("MSG_NO_EXT_TARGET") << endl << endl;
+            cout << get_string("PROMPT_INSERISCI_EXT_TARGET") << endl << "> ";
+            string linea, ext;
+            getline(cin, linea);
+
+            stringstream ss(linea);
+            estensioniTargetMultiple.clear();
+            while (ss >> ext) {
+                if (!ext.empty() && ext[0] == '.') ext.erase(0, 1);
+                ext = to_lowercase(ext);
+                if (!ext.empty()) {
+                    estensioniTargetMultiple.push_back(ext);
+                }
+            }
+
+            break;
+        }
+
+        // Sincronizzazione automatica degli stati del sottomenu
+        subMenu_regoleTarget.at(1).decisione = !estensioniTargetMultiple.empty();
+        if (!estensioniTargetMultiple.empty()) {
+            subMenu_regoleTarget.at(0).decisione = false;
         }
     }
 
-    if (!estensioniValide.empty()) {
-        estensioniTargetMultiple = estensioniValide;
-        subMenu_regoleTarget.at(1).decisione = true; // CORRETTO (Indice 1)
+    // Aggiornamento finale per sicurezza alla chiusura della funzione
+    subMenu_regoleTarget.at(1).decisione = !estensioniTargetMultiple.empty();
+    if (!estensioniTargetMultiple.empty()) {
         subMenu_regoleTarget.at(0).decisione = false;
-    } else {
-        cout << RED << get_string("AVVISO_NESSUNA_EXT_PRESENTE") << RESET << endl;
-        subMenu_regoleTarget.at(1).decisione = false; // CORRETTO (Indice 1)
-        PAUSE(get_string("PROMPT_CONTINUA"));
     }
 }
 
@@ -1057,7 +1129,7 @@ void gestisci_menu_target() {
                 break;
             case SubMenu_regoleTarget::DEFINISCI_ESTENSIONI:
                 gestisci_menu_estensioni_target();
-                // Se attivato, portiamo tutti i file a true come richiesto
+                // Se attivato, portiamo tutti i file a true
                 for (auto& item : fileSelezionatiManualmente) item.selezionato = true;
                 break;
             case SubMenu_regoleTarget::DEFINISCI_SOTTOSTRINGHE:
