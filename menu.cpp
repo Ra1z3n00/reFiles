@@ -188,7 +188,7 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
 
             cout << ((pos == (int)i) ? "> " GREEN LAMP : "  ");
 
-            int byteLen = menu.at(i - 1).testo.length();
+            size_t byteLen = menu.at(i - 1).testo.length();
             int realChars = 0;
             size_t idx = 0;
             while (idx < byteLen) {
@@ -265,6 +265,10 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                     case MenuMain::RIMUOVI_SIMBOLI:
                         count = modAttivi(menuSimboli);
                         cout << " = (" << YELLOW << count << RESET << ((count == 1) ? get_string("LBL_ELEM_ATTIVO") : get_string("LBL_ELEM_ATTIVI"));
+                        break;
+                    case MenuMain::RIMUOVI_PAROLE:
+                        count = paroleDaRimuovere.size();
+                        cout << " = (" << YELLOW << count << RESET << ((count == 1) ? get_string("LBL_PAROLA_INSERITA") : get_string("LBL_PAROLE_INSERITE"));
                         break;
                     case MenuMain::SOSTITUISCI_ESTENSIONE:
                         cout << " =" << get_string("LBL_CONVERTI_IN") << YELLOW << estensioneOutput << RESET << ")";

@@ -385,22 +385,116 @@ void sostituisci_estensioni() {
 }
 
 void gestisci_menu_parole() {
-    system("cls");
-    cout << BOLD << get_string("BANNER_DEF_PAROLE") << RESET << endl << endl;
-    if (!paroleDaRimuovere.empty()) {
-        cout << get_string("MSG_PAROLE_LISTA");
-        for (const auto& p : paroleDaRimuovere) cout << "[" << YELLOW << p << RESET << "] ";
-        cout << endl << endl;
-    }
+    while (true) {
+        system("cls");
+        cout << BOLD << get_string("BANNER_DEF_PAROLE") << RESET << endl << endl;
+        
+        if (!paroleDaRimuovere.empty()) {
+            cout << get_string("MSG_PAROLE_LISTA");
+            for (size_t i = 0; i < paroleDaRimuovere.size(); ++i) {
+                cout << "[" << YELLOW << paroleDaRimuovere[i] << RESET << ":" << DIM << i + 1 << RESET << "] ";
+            }
+            cout << endl << endl;
 
-    cout << get_string("PROMPT_INSERISCI_PAROLE") << endl << "> ";
-    string linea, parola;
-    getline(cin, linea);
+            // Menu delle opzioni quando ci sono parole salvate
+            cout << get_string("PROMPT_SCEGLI_CONFRONTO") << endl << endl; // O un prompt generico di scelta
+            int sceltaOpzione = menuScelta(1, 5, 
+                get_string("POPUP_ADD_PAROLA").c_str(),
+                get_string("POPUP_EDIT_PAROLA").c_str(),
+                get_string("POPUP_CANC_PAROLA").c_str(),
+                get_string("POPUP_ERASE_ALL_PAROLE").c_str(),
+                get_string("SUB_INDIETRO").c_str()
+            );
 
-    stringstream ss(linea);
-    paroleDaRimuovere.clear();
-    while (ss >> parola) {
-        paroleDaRimuovere.push_back(parola);
+            cout << endl;
+
+            if (sceltaOpzione == 1) { // Aggiungi nuova parola
+                cout << endl << get_string("PROMPT_INSERISCI_PAROLE") << endl << "> ";
+                string linea, parola;
+                getline(cin, linea);
+                stringstream ss(linea);
+                while (ss >> parola) {
+                    paroleDaRimuovere.push_back(parola);
+                }
+            } 
+            else if (sceltaOpzione == 2) { // Modifica una parola
+                // 1. Creiamo un menu dinamico con la lista delle parole attuali
+                vector<valoriMenu> menuModificaParola;
+                for (const auto& p : paroleDaRimuovere) {
+                    menuModificaParola.push_back({p, false});
+                }
+                menuModificaParola.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_PAROLE") << RESET << endl << endl;
+                cout << get_string("MSG_SELEZIONA_PAROLE_MODIFICA") << endl << endl;
+
+                // 2. Usiamo menuScelta con le frecce direzionali
+                int indiceScelto = menuScelta(1, menuModificaParola);
+
+                // 3. Se l'utente non ha scelto "Annulla" (ultima voce)
+                if (indiceScelto > 0 && indiceScelto <= (int)paroleDaRimuovere.size()) {
+                    cout << endl << get_string("POPUP_PAROLA_ATT") << YELLOW << paroleDaRimuovere[indiceScelto - 1] << RESET << endl;
+                    cout << get_string("POPUP_INS_VALORE") << endl << "> ";
+                    
+                    string nuovoValore;
+                    getline(cin, nuovoValore);
+
+                    if (!nuovoValore.empty()) {
+                        paroleDaRimuovere[indiceScelto - 1] = nuovoValore;
+                        cout << GREEN << endl << get_string("MGS_SCC_EDIT_PAROLA") << RESET << endl;
+                    } else {
+                        cout << YELLOW << endl << get_string("MSG_EDIT_ANNULLATA") << RESET << endl;
+                    }
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 3) { // Rimuovi una parola a scelta
+                vector<valoriMenu> menuRimuovi;
+                for (const auto& p : paroleDaRimuovere) {
+                    menuRimuovi.push_back({p, false});
+                }
+                menuRimuovi.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_PAROLE") << RESET << endl << endl;
+                cout << get_string("BANNER_SELECT_PAROLA_REMOVE") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuRimuovi);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)paroleDaRimuovere.size()) {
+                    string parolaRimossa = paroleDaRimuovere[indiceScelto - 1];
+                    paroleDaRimuovere.erase(paroleDaRimuovere.begin() + (indiceScelto - 1));
+                    
+                    cout << endl << GREEN << get_string("WORD") << " [" << YELLOW << parolaRimossa << GREEN << "] " << get_string("SUCC_REMOVED") << RESET << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 4) { // Rimuovi tutte le parole
+                paroleDaRimuovere.clear();
+                cout << GREEN << get_string("MSG_ALL_WORDS_REMOVED") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
+                break;
+            } 
+            else if (sceltaOpzione == 5) { // Torna indietro
+                break;
+            }
+        } else {
+            // Se il vettore è vuoto, comportamento standard di inserimento
+            cout << get_string("PROMPT_INSERISCI_PAROLE") << endl << "> ";
+            string linea, parola;
+            getline(cin, linea);
+
+            stringstream ss(linea);
+            paroleDaRimuovere.clear();
+            while (ss >> parola) {
+                paroleDaRimuovere.push_back(parola);
+            }
+            break;
+        }
+
+        // Aggiorna lo stato nel menu principale
+        mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_PAROLE) - 1).decisione = !paroleDaRimuovere.empty();
     }
 
     mainMenu.at(static_cast<int>(MenuMain::RIMUOVI_PAROLE) - 1).decisione = !paroleDaRimuovere.empty();
@@ -747,12 +841,10 @@ void gestisci_menu_selezione_file() {
 
             if (incluso) {
                 // Manteniamo lo stato scelto dall'utente se il file era già presente nella lista
-                bool trovatoPrecedente = false;
                 bool statoPrecedente = statoDefaultNuovi;
 
                 for (const auto& vecchioItem : fileSelezionatiManualmente) {
                     if (vecchioItem.nomeCompleto == nomeCompleto) {
-                        trovatoPrecedente = true;
                         statoPrecedente = vecchioItem.selezionato;
                         break;
                     }
@@ -807,7 +899,7 @@ void gestisci_menu_selezione_file() {
             bool isSelezionatoCorsore = (posFile == (int)(i + 1));
             cout << (isSelezionatoCorsore ? "> " GREEN LAMP : "  ");
             
-            int byteLen = fileSelezionatiManualmente[i].nomeCompleto.length();
+            size_t byteLen = fileSelezionatiManualmente[i].nomeCompleto.length();
             int realChars = 0;
             size_t idx = 0;
             while (idx < byteLen) {
@@ -1662,6 +1754,7 @@ void esporta_lista() {
 
     // --- GESTIONE MENU CAMPI CON menu_infoEsporta ---
     int posCampi = 1;
+    inizioCampi:
     while (true) {
         system("cls");
         cout << BOLD << get_string("BANNER_INFO_ESPORTA") << RESET << endl << endl;
@@ -1788,7 +1881,7 @@ void esporta_lista() {
         } while (true);
 
         if (posFormato == (int)menu_formatoFile.size()) {
-            goto inizioConfig;
+            goto inizioCampi;
         }
 
         if (posFormato == 4) {
@@ -2290,7 +2383,7 @@ void esegui_rinomina() {
     for (const auto& item : listaModifiche) {
         try {
             fs::rename(item.vecchioPercorso, item.nuovoPercorso);
-            cout << GREEN << "[OK] " << RESET << item.vecchioNomeCompleto << " -> " << GREEN << item.nuovoNomeCompleto << RESET << endl;
+            cout << GREEN << "[OK] " << RESET << item.vecchioNomeCompleto << endl << BLUE << "[RISULTATO]: " << RESET << GREEN << item.nuovoNomeCompleto << RESET << endl;
             successi++;
         } catch (const fs::filesystem_error& e) {
             cout << RED << get_string("POP_ERR") << RESET << item.vecchioNomeCompleto << endl;
@@ -2324,7 +2417,7 @@ void aboutMe() {
     cout << string(60, '=') << endl << endl;
 
     cout << BOLD << "  " << get_string("SECTION_INFO") << RESET << endl;
-    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.2.2" << RESET << endl;
+    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.2.3" << RESET << endl;
     cout << "  " << get_string("INFO_SVILUPPATORE") << YELLOW << "Raizen" << RESET << endl;
     cout << "  " << get_string("INFO_LICENZA") << DIM << "MIT Open Source" << RESET << endl << endl;
 
