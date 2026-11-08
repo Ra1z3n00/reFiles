@@ -6,6 +6,7 @@
 // Comando di compilazione aggiornato:
 // g++ main.cpp menu.cpp file_operations.cpp utilities.cpp localization.cpp -o reFiles -std=c++20
 
+
 int nFiles = 0;
 
 int main() {

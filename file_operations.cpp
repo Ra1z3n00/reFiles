@@ -501,51 +501,235 @@ void gestisci_menu_parole() {
 }
 
 void gestisci_menu_estensioni_esporta() {
-    system("cls");
-    cout << BOLD << get_string("BANNER_DEF_EXT_ESP") << RESET << endl << endl;
-    if (!estensioniEsportate.empty()) {
-        cout << get_string("MSG_EXT_ATTUALI");
-        for (const auto& e : estensioniEsportate) cout << "[" << YELLOW << e << RESET << "] ";
-        cout << endl << endl;
-    } else {
-        cout << get_string("MSG_NO_EXT") << endl << endl;
+    while (true) {
+        system("cls");
+        cout << BOLD << get_string("BANNER_DEF_EXT_ESP") << RESET << endl << endl;
+        
+        if (!estensioniEsportate.empty()) {
+            cout << get_string("MSG_EXT_ATTUALI");
+            for (const auto& e : estensioniEsportate) {
+                cout << "[" << YELLOW << e << RESET << "] ";
+            }
+            cout << endl << endl;
+
+            int sceltaOpzione = menuScelta(1, 5, 
+                get_string("POPUP_ADD_NEW_EXT").c_str(), 
+                get_string("POPUP_EDIT_EXT").c_str(),
+                get_string("POPUP_REMOVE_EXT").c_str(), 
+                get_string("POPUP_REMOVE_ALL_EXT").c_str(), 
+                get_string("SUB_INDIETRO").c_str()
+            );
+
+            cout << endl;
+
+            if (sceltaOpzione == 1) { // Aggiungi nuova estensione
+                cout << get_string("PROMPT_INSERISCI_EST") << endl << "> ";
+                string linea, ext;
+                getline(cin, linea);
+                stringstream ss(linea);
+                while (ss >> ext) {
+                    if (!ext.empty() && ext[0] == '.') ext.erase(0, 1);
+                    ext = to_lowercase(ext);
+                    if (!ext.empty()) {
+                        if (find(estensioniEsportate.begin(), estensioniEsportate.end(), ext) == estensioniEsportate.end()) {
+                            estensioniEsportate.push_back(ext);
+                        }
+                    }
+                }
+            } 
+            else if (sceltaOpzione == 2) { // Modifica un'estensione esistente
+                vector<valoriMenu> menuModificaExt;
+                for (const auto& e : estensioniEsportate) {
+                    menuModificaExt.push_back({e, false});
+                }
+                menuModificaExt.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_EXT_ESP") << RESET << endl << endl;
+                cout << get_string("SELECT_EXT_TO_EDIT") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuModificaExt);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)estensioniEsportate.size()) {
+                    cout << endl << get_string("MSG_ESTENSIONE_ATTUALE") << YELLOW << estensioniEsportate[indiceScelto - 1] << RESET << endl;
+                    cout << get_string("PROMPT_NUOVA_ESTENSIONE") << endl << "> ";
+                    
+                    string nuovaExt;
+                    getline(cin, nuovaExt);
+
+                    if (!nuovaExt.empty()) {
+                        if (nuovaExt[0] == '.') nuovaExt.erase(0, 1);
+                        estensioniEsportate[indiceScelto - 1] = to_lowercase(nuovaExt);
+                        cout << GREEN << endl << get_string("MSG_EDIT_EXT_SCC") << RESET << endl;
+                    } else {
+                        cout << YELLOW << endl << get_string("MSG_EDIT_ANNULLATA") << RESET << endl;
+                    }
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 3) { // Rimuovi un'estensione a scelta
+                vector<valoriMenu> menuRimuoviExt;
+                for (const auto& e : estensioniEsportate) {
+                    menuRimuoviExt.push_back({e, false});
+                }
+                menuRimuoviExt.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_EXT_ESP") << RESET << endl << endl;
+                cout << get_string("MSG_SELECT_EXT_REMOVE") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuRimuoviExt);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)estensioniEsportate.size()) {
+                    string extRimossa = estensioniEsportate[indiceScelto - 1];
+                    estensioniEsportate.erase(estensioniEsportate.begin() + (indiceScelto - 1));
+                    
+                    cout << endl << GREEN << get_string("MSG_EXT") << " [" << YELLOW << extRimossa << GREEN << "] " << get_string("SUCC_REMOVED") << RESET << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 4) { // Rimuovi tutte le estensioni
+                estensioniEsportate.clear();
+                cout << GREEN << get_string("MSG_ALL_EXT_REMOVED") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
+                break;
+            } 
+            else if (sceltaOpzione == 5) { // Torna indietro
+                break;
+            }
+        } else {
+            cout << get_string("MSG_NO_EXT") << endl << endl;
+            cout << get_string("PROMPT_INSERISCI_EST") << endl << "> ";
+            string linea, ext;
+            getline(cin, linea);
+
+            stringstream ss(linea);
+            estensioniEsportate.clear();
+            while (ss >> ext) {
+                if (!ext.empty() && ext[0] == '.') ext.erase(0, 1);
+                ext = to_lowercase(ext);
+                if (!ext.empty()) {
+                    estensioniEsportate.push_back(ext);
+                }
+            }
+            break;
+        }
+
+        subMenu_regoleCerca.at(1).decisione = !estensioniEsportate.empty();
     }
-
-    cout << get_string("PROMPT_INSERISCI_EST") << endl << "> ";
-    string linea, ext;
-    getline(cin, linea);
-
-    stringstream ss(linea);
-    estensioniEsportate.clear();
-    while (ss >> ext) {
-        if (!ext.empty() && ext[0] == '.') ext.erase(0, 1);
-        estensioniEsportate.push_back(to_lowercase(ext));
-    }
-
     subMenu_regoleCerca.at(1).decisione = !estensioniEsportate.empty();
 }
 
 void gestisci_menu_sottostringhe_esporta() {
-    system("cls");
-    cout << BOLD << get_string("BANNER_DEF_SOTTO_ESP") << RESET << endl << endl;
-    if (!sottostringheEsportate.empty()) {
-        cout << get_string("MSG_SOTTO_ATTUALI");
-        for (const auto& s : sottostringheEsportate) cout << "[" << YELLOW << s << RESET << "] ";
-        cout << endl << endl;
-    } else {
-        cout << get_string("MSG_NO_SOTTO") << endl << endl;
+    while (true) {
+        system("cls");
+        cout << BOLD << get_string("BANNER_DEF_SOTTO_ESP") << RESET << endl << endl;
+
+        if (!sottostringheEsportate.empty()) {
+            cout << get_string("MSG_SOTTO_ATTUALI");
+            for (const auto& s : sottostringheEsportate) {
+                cout << "[" << YELLOW << s << RESET << "] ";
+            }
+            cout << endl << endl;
+
+            int sceltaOpzione = menuScelta(1, 5, 
+                get_string("POPUP_ADD_PAROLA").c_str(),
+                get_string("POPUP_EDIT_PAROLA").c_str(),
+                get_string("POPUP_CANC_PAROLA").c_str(),
+                get_string("POPUP_ERASE_ALL_PAROLE").c_str(),
+                get_string("SUB_INDIETRO").c_str()
+            );
+
+            cout << endl;
+
+            if (sceltaOpzione == 1) { // Aggiungi nuova sottostringa
+                cout << get_string("PROMPT_INSERISCI_SOTTO") << endl << "> ";
+                string linea, sottos;
+                getline(cin, linea);
+                stringstream ss(linea);
+                while (ss >> sottos) {
+                    if (!sottos.empty()) {
+                        if (find(sottostringheEsportate.begin(), sottostringheEsportate.end(), sottos) == sottostringheEsportate.end()) {
+                            sottostringheEsportate.push_back(sottos);
+                        }
+                    }
+                }
+            }
+            else if (sceltaOpzione == 2) { // Modifica una sottostringa esistente
+                vector<valoriMenu> menuModificaSotto;
+                for (const auto& s : sottostringheEsportate) {
+                    menuModificaSotto.push_back({s, false});
+                }
+                menuModificaSotto.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_SOTTO_ESP") << RESET << endl << endl;
+                cout << get_string("MSG_SELEZIONA_PAROLE_MODIFICA") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuModificaSotto);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)sottostringheEsportate.size()) {
+                    cout << endl << get_string("POPUP_PAROLA_ATT") << YELLOW << sottostringheEsportate[indiceScelto - 1] << RESET << endl;
+                    cout << get_string("POPUP_INS_VALORE") << endl << "> ";
+                    
+                    string nuovoValore;
+                    getline(cin, nuovoValore);
+
+                    if (!nuovoValore.empty()) {
+                        sottostringheEsportate[indiceScelto - 1] = nuovoValore;
+                        cout << GREEN << endl << get_string("MGS_SCC_EDIT_PAROLA") << RESET << endl;
+                    } else {
+                        cout << YELLOW << endl << get_string("MSG_EDIT_ANNULLATA") << RESET << endl;
+                    }
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 3) { // Rimuovi una sottostringa a scelta
+                vector<valoriMenu> menuRimuoviSotto;
+                for (const auto& s : sottostringheEsportate) {
+                    menuRimuoviSotto.push_back({s, false});
+                }
+                menuRimuoviSotto.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_SOTTO_ESP") << RESET << endl << endl;
+                cout << get_string("BANNER_SELECT_PAROLA_REMOVE") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuRimuoviSotto);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)sottostringheEsportate.size()) {
+                    string sottoRimossa = sottostringheEsportate[indiceScelto - 1];
+                    sottostringheEsportate.erase(sottostringheEsportate.begin() + (indiceScelto - 1));
+                    
+                    cout << endl << GREEN << get_string("WORD") << " [" << YELLOW << sottoRimossa << GREEN << "] " << get_string("SUCC_REMOVED") << RESET << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 4) { // Rimuovi tutte le sottostringhe
+                sottostringheEsportate.clear();
+                cout << GREEN << get_string("MSG_ALL_WORDS_REMOVED") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
+                break;
+            }
+            else if (sceltaOpzione == 5) { // Torna indietro
+                break;
+            }
+        } else {
+            cout << get_string("MSG_NO_SOTTO") << endl << endl;
+            cout << get_string("PROMPT_INSERISCI_SOTTO") << endl << "> ";
+            string linea, sottos;
+            getline(cin, linea);
+
+            stringstream ss(linea);
+            sottostringheEsportate.clear();
+            while (ss >> sottos) {
+                sottostringheEsportate.push_back(sottos);
+            }
+            break;
+        }
+
+        subMenu_regoleCerca.at(2).decisione = !sottostringheEsportate.empty();
     }
-
-    cout << get_string("PROMPT_INSERISCI_SOTTO") << endl << "> ";
-    string linea, sottos;
-    getline(cin, linea);
-
-    stringstream ss(linea);
-    sottostringheEsportate.clear();
-    while (ss >> sottos) {
-        sottostringheEsportate.push_back(sottos);
-    }
-
     subMenu_regoleCerca.at(2).decisione = !sottostringheEsportate.empty();
 }
 
@@ -559,7 +743,6 @@ void gestisci_menu_estensioni_target() {
             for (const auto& e : estensioniTargetMultiple) cout << "[" << YELLOW << e << RESET << "] ";
             cout << endl << endl;
 
-            // Menu interattivo con le opzioni avanzate
             int sceltaOpzione = menuScelta(1, 5, 
                 get_string("POPUP_ADD_NEW_EXT").c_str(), 
                 get_string("POPUP_EDIT_EXT").c_str(),
@@ -574,15 +757,11 @@ void gestisci_menu_estensioni_target() {
                 cout << get_string("PROMPT_INSERISCI_EXT_TARGET") << endl << "> ";
                 string linea, ext;
                 getline(cin, linea);
-                cout << endl;
-
                 stringstream ss(linea);
                 while (ss >> ext) {
                     if (!ext.empty() && ext[0] == '.') ext.erase(0, 1);
                     ext = to_lowercase(ext);
-                    
                     if (!ext.empty()) {
-                        // Inserimento diretto (evita duplicati)
                         if (find(estensioniTargetMultiple.begin(), estensioniTargetMultiple.end(), ext) == estensioniTargetMultiple.end()) {
                             estensioniTargetMultiple.push_back(ext);
                         }
@@ -650,7 +829,6 @@ void gestisci_menu_estensioni_target() {
                 break;
             }
         } else {
-            // Comportamento standard all'inserimento iniziale (se il vettore è vuoto)
             cout << get_string("MSG_NO_EXT_TARGET") << endl << endl;
             cout << get_string("PROMPT_INSERISCI_EXT_TARGET") << endl << "> ";
             string linea, ext;
@@ -665,113 +843,435 @@ void gestisci_menu_estensioni_target() {
                     estensioniTargetMultiple.push_back(ext);
                 }
             }
-
             break;
         }
 
-        // Sincronizzazione automatica degli stati del sottomenu
         subMenu_regoleTarget.at(1).decisione = !estensioniTargetMultiple.empty();
-        if (!estensioniTargetMultiple.empty()) {
-            subMenu_regoleTarget.at(0).decisione = false;
-        }
+        if (!estensioniTargetMultiple.empty()) subMenu_regoleTarget.at(0).decisione = false;
     }
 
-    // Aggiornamento finale per sicurezza alla chiusura della funzione
     subMenu_regoleTarget.at(1).decisione = !estensioniTargetMultiple.empty();
-    if (!estensioniTargetMultiple.empty()) {
-        subMenu_regoleTarget.at(0).decisione = false;
-    }
+    if (!estensioniTargetMultiple.empty()) subMenu_regoleTarget.at(0).decisione = false;
 }
 
 void gestisci_menu_sottostringhe_target() {
-    system("cls");
-    cout << BOLD << get_string("BANNER_DEF_SOTTO_TARGET") << RESET << endl << endl;
-    if (!sottostringheTarget.empty()) {
-        cout << get_string("MSG_SOTTO_TARGET_ATTUALI");
-        for (const auto& s : sottostringheTarget) cout << "[" << YELLOW << s << RESET << "] ";
-        cout << endl << endl;
+    while (true) {
+        system("cls");
+        cout << BOLD << get_string("BANNER_DEF_SOTTO_TARGET") << RESET << endl << endl;
+        
+        if (!sottostringheTarget.empty()) {
+            cout << get_string("MSG_SOTTO_TARGET_ATTUALI");
+            for (const auto& s : sottostringheTarget) cout << "[" << YELLOW << s << RESET << "] ";
+            cout << endl << endl;
+
+            int sceltaOpzione = menuScelta(1, 5, 
+                get_string("POPUP_ADD_PAROLA").c_str(),
+                get_string("POPUP_EDIT_PAROLA").c_str(),
+                get_string("POPUP_CANC_PAROLA").c_str(),
+                get_string("POPUP_ERASE_ALL_PAROLE").c_str(),
+                get_string("SUB_INDIETRO").c_str()
+            );
+
+            cout << endl;
+
+            if (sceltaOpzione == 1) { // Aggiungi
+                cout << get_string("PROMPT_INSERISCI_SOTTO_TARGET") << endl << "> ";
+                string linea, sottos;
+                getline(cin, linea);
+                stringstream ss(linea);
+                while (ss >> sottos) {
+                    if (!sottos.empty() && find(sottostringheTarget.begin(), sottostringheTarget.end(), sottos) == sottostringheTarget.end()) {
+                        sottostringheTarget.push_back(sottos);
+                    }
+                }
+            }
+            else if (sceltaOpzione == 2) { // Modifica
+                vector<valoriMenu> menuModificaSotto;
+                for (const auto& s : sottostringheTarget) menuModificaSotto.push_back({s, false});
+                menuModificaSotto.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_SOTTO_TARGET") << RESET << endl << endl;
+                cout << get_string("MSG_SELEZIONA_PAROLE_MODIFICA") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuModificaSotto);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)sottostringheTarget.size()) {
+                    cout << endl << get_string("POPUP_PAROLA_ATT") << YELLOW << sottostringheTarget[indiceScelto - 1] << RESET << endl;
+                    cout << get_string("POPUP_INS_VALORE") << endl << "> ";
+                    string nuovoValore;
+                    getline(cin, nuovoValore);
+
+                    if (!nuovoValore.empty()) {
+                        sottostringheTarget[indiceScelto - 1] = nuovoValore;
+                        cout << GREEN << endl << get_string("MGS_SCC_EDIT_PAROLA") << RESET << endl;
+                    } else {
+                        cout << YELLOW << endl << get_string("MSG_EDIT_ANNULLATA") << RESET << endl;
+                    }
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 3) { // Rimuovi singola
+                vector<valoriMenu> menuRimuoviSotto;
+                for (const auto& s : sottostringheTarget) menuRimuoviSotto.push_back({s, false});
+                menuRimuoviSotto.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_SOTTO_TARGET") << RESET << endl << endl;
+                cout << get_string("BANNER_SELECT_PAROLA_REMOVE") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuRimuoviSotto);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)sottostringheTarget.size()) {
+                    string sottoRimossa = sottostringheTarget[indiceScelto - 1];
+                    sottostringheTarget.erase(sottostringheTarget.begin() + (indiceScelto - 1));
+                    cout << endl << GREEN << get_string("WORD") << " [" << YELLOW << sottoRimossa << GREEN << "] " << get_string("SUCC_REMOVED") << RESET << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 4) { // Rimuovi tutte
+                sottostringheTarget.clear();
+                cout << GREEN << get_string("MSG_ALL_WORDS_REMOVED") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
+                break;
+            }
+            else if (sceltaOpzione == 5) { // Torna indietro
+                break;
+            }
+        } else {
+            cout << get_string("MSG_SOTTO_TARGET_ATTUALI") << endl << endl; // O un messaggio simile se vuoto
+            cout << get_string("PROMPT_INSERISCI_SOTTO_TARGET") << endl << "> ";
+            string linea, sottos;
+            getline(cin, linea);
+
+            stringstream ss(linea);
+            sottostringheTarget.clear();
+            while (ss >> sottos) {
+                sottostringheTarget.push_back(sottos);
+            }
+            break;
+        }
+
+        subMenu_regoleTarget.at(2).decisione = !sottostringheTarget.empty();
+        if (!sottostringheTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
     }
 
-    cout << get_string("PROMPT_INSERISCI_SOTTO_TARGET") << endl << "> ";
-    string linea, sottos;
-    getline(cin, linea);
-
-    stringstream ss(linea);
-    sottostringheTarget.clear();
-    while (ss >> sottos) {
-        sottostringheTarget.push_back(sottos);
-    }
-
-    subMenu_regoleTarget.at(2).decisione = !sottostringheTarget.empty(); // CORRETTO (Indice 2)
+    subMenu_regoleTarget.at(2).decisione = !sottostringheTarget.empty();
     if (!sottostringheTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
 }
 
 void gestisci_menu_cifre_target() {
-    system("cls");
-    cout << BOLD << get_string("BANNER_DEF_CIFRE_TARGET") << RESET << endl << endl;
-    if (!cifreTarget.empty()) {
-        cout << get_string("MSG_CIFRE_TARGET_ATTUALI");
-        for (const auto& c : cifreTarget) cout << "[" << YELLOW << c << RESET << "] ";
-        cout << endl << endl;
+    while (true) {
+        system("cls");
+        cout << BOLD << get_string("BANNER_DEF_CIFRE_TARGET") << RESET << endl << endl;
+        
+        if (!cifreTarget.empty()) {
+            cout << get_string("MSG_CIFRE_TARGET_ATTUALI");
+            for (const auto& c : cifreTarget) cout << "[" << YELLOW << c << RESET << "] ";
+            cout << endl << endl;
+
+            int sceltaOpzione = menuScelta(1, 5, 
+                get_string("POPUP_ADD_PAROLA").c_str(),
+                get_string("POPUP_EDIT_PAROLA").c_str(),
+                get_string("POPUP_CANC_PAROLA").c_str(),
+                get_string("POPUP_ERASE_ALL_PAROLE").c_str(),
+                get_string("SUB_INDIETRO").c_str()
+            );
+
+            cout << endl;
+
+            if (sceltaOpzione == 1) { // Aggiungi
+                cout << get_string("PROMPT_INSERISCI_CIFRE_TARGET") << endl << "> ";
+                string linea, cifra;
+                getline(cin, linea);
+                stringstream ss(linea);
+                while (ss >> cifra) {
+                    if (!cifra.empty() && find(cifreTarget.begin(), cifreTarget.end(), cifra) == cifreTarget.end()) {
+                        cifreTarget.push_back(cifra);
+                    }
+                }
+            }
+            else if (sceltaOpzione == 2) { // Modifica
+                vector<valoriMenu> menuModificaCifre;
+                for (const auto& c : cifreTarget) menuModificaCifre.push_back({c, false});
+                menuModificaCifre.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_CIFRE_TARGET") << RESET << endl << endl;
+                cout << get_string("MSG_SELEZIONA_PAROLE_MODIFICA") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuModificaCifre);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)cifreTarget.size()) {
+                    cout << endl << get_string("POPUP_PAROLA_ATT") << YELLOW << cifreTarget[indiceScelto - 1] << RESET << endl;
+                    cout << get_string("POPUP_INS_VALORE") << endl << "> ";
+                    string nuovoValore;
+                    getline(cin, nuovoValore);
+
+                    if (!nuovoValore.empty()) {
+                        cifreTarget[indiceScelto - 1] = nuovoValore;
+                        cout << GREEN << endl << get_string("MGS_SCC_EDIT_PAROLA") << RESET << endl;
+                    } else {
+                        cout << YELLOW << endl << get_string("MSG_EDIT_ANNULLATA") << RESET << endl;
+                    }
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 3) { // Rimuovi singola
+                vector<valoriMenu> menuRimuoviCifre;
+                for (const auto& c : cifreTarget) menuRimuoviCifre.push_back({c, false});
+                menuRimuoviCifre.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_DEF_CIFRE_TARGET") << RESET << endl << endl;
+                cout << get_string("BANNER_SELECT_PAROLA_REMOVE") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuRimuoviCifre);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)cifreTarget.size()) {
+                    string cifraRimossa = cifreTarget[indiceScelto - 1]; // (senza spazio nel nome variabile)
+                    cifreTarget.erase(cifreTarget.begin() + (indiceScelto - 1));
+                    cout << endl << GREEN << get_string("WORD") << " [" << YELLOW << cifraRimossa << GREEN << "] " << get_string("SUCC_REMOVED") << RESET << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 4) { // Rimuovi tutte
+                cifreTarget.clear();
+                cout << GREEN << get_string("MSG_ALL_WORDS_REMOVED") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
+                break;
+            }
+            else if (sceltaOpzione == 5) { // Torna indietro
+                break;
+            }
+        } else {
+            cout << get_string("PROMPT_INSERISCI_CIFRE_TARGET") << endl << "> ";
+            string linea, cifra;
+            getline(cin, linea);
+
+            stringstream ss(linea);
+            cifreTarget.clear();
+            while (ss >> cifra) {
+                cifreTarget.push_back(cifra);
+            }
+            break;
+        }
+
+        subMenu_regoleTarget.at(4).decisione = !cifreTarget.empty();
+        if (!cifreTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
     }
 
-    cout << get_string("PROMPT_INSERISCI_CIFRE_TARGET") << endl << "> ";
-    string linea, cifra;
-    getline(cin, linea);
-
-    stringstream ss(linea);
-    cifreTarget.clear();
-    while (ss >> cifra) {
-        cifreTarget.push_back(cifra);
-    }
-
-    subMenu_regoleTarget.at(4).decisione = !cifreTarget.empty(); // CORRETTO (Indice 4)
+    subMenu_regoleTarget.at(4).decisione = !cifreTarget.empty();
     if (!cifreTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
 }
 
 void gestisci_menu_inizia_con() {
-    system("cls");
-    cout << BOLD << get_string("BANNER_INIZIA_CON") << RESET << endl << endl;
-    if (!iniziaConTarget.empty()) {
-        cout << get_string("MSG_PREFISSI_ATTUALI");
-        for (const auto& s : iniziaConTarget) cout << "[" << YELLOW << s << RESET << "] ";
-        cout << endl << endl;
+    while (true) {
+        system("cls");
+        cout << BOLD << get_string("BANNER_INIZIA_CON") << RESET << endl << endl;
+        
+        if (!iniziaConTarget.empty()) {
+            cout << get_string("MSG_PREFISSI_ATTUALI");
+            for (const auto& s : iniziaConTarget) cout << "[" << YELLOW << s << RESET << "] ";
+            cout << endl << endl;
+
+            int sceltaOpzione = menuScelta(1, 5, 
+                get_string("POPUP_ADD_PAROLA").c_str(),
+                get_string("POPUP_EDIT_PAROLA").c_str(),
+                get_string("POPUP_CANC_PAROLA").c_str(),
+                get_string("POPUP_ERASE_ALL_PAROLE").c_str(),
+                get_string("SUB_INDIETRO").c_str()
+            );
+
+            cout << endl;
+
+            if (sceltaOpzione == 1) { // Aggiungi
+                cout << get_string("PROMPT_INSERISCI_PREFISSI") << endl << "> ";
+                string linea, pref;
+                getline(cin, linea);
+                stringstream ss(linea);
+                while (ss >> pref) {
+                    if (!pref.empty() && find(iniziaConTarget.begin(), iniziaConTarget.end(), pref) == iniziaConTarget.end()) {
+                        iniziaConTarget.push_back(pref);
+                    }
+                }
+            }
+            else if (sceltaOpzione == 2) { // Modifica
+                vector<valoriMenu> menuModificaPref;
+                for (const auto& s : iniziaConTarget) menuModificaPref.push_back({s, false});
+                menuModificaPref.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_INIZIA_CON") << RESET << endl << endl;
+                cout << get_string("MSG_SELEZIONA_PAROLE_MODIFICA") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuModificaPref);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)iniziaConTarget.size()) {
+                    cout << endl << get_string("POPUP_PAROLA_ATT") << YELLOW << iniziaConTarget[indiceScelto - 1] << RESET << endl;
+                    cout << get_string("POPUP_INS_VALORE") << endl << "> ";
+                    string nuovoValore;
+                    getline(cin, nuovoValore);
+
+                    if (!nuovoValore.empty()) {
+                        iniziaConTarget[indiceScelto - 1] = nuovoValore;
+                        cout << GREEN << endl << get_string("MGS_SCC_EDIT_PAROLA") << RESET << endl;
+                    } else {
+                        cout << YELLOW << endl << get_string("MSG_EDIT_ANNULLATA") << RESET << endl;
+                    }
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 3) { // Rimuovi singola
+                vector<valoriMenu> menuRimuoviPref;
+                for (const auto& s : iniziaConTarget) menuRimuoviPref.push_back({s, false});
+                menuRimuoviPref.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_INIZIA_CON") << RESET << endl << endl;
+                cout << get_string("BANNER_SELECT_PAROLA_REMOVE") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuRimuoviPref);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)iniziaConTarget.size()) {
+                    string prefRimosso = iniziaConTarget[indiceScelto - 1];
+                    iniziaConTarget.erase(iniziaConTarget.begin() + (indiceScelto - 1));
+                    cout << endl << GREEN << get_string("WORD") << " [" << YELLOW << prefRimosso << GREEN << "] " << get_string("SUCC_REMOVED") << RESET << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 4) { // Rimuovi tutte
+                iniziaConTarget.clear();
+                cout << GREEN << get_string("MSG_ALL_WORDS_REMOVED") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
+                break;
+            }
+            else if (sceltaOpzione == 5) { // Torna indietro
+                break;
+            }
+        } else {
+            cout << get_string("PROMPT_INSERISCI_PREFISSI") << endl << "> ";
+            string linea, pref;
+            getline(cin, linea);
+
+            stringstream ss(linea);
+            iniziaConTarget.clear();
+            while (ss >> pref) {
+                iniziaConTarget.push_back(pref);
+            }
+            break;
+        }
+
+        subMenu_regoleTarget.at(7).decisione = !iniziaConTarget.empty();
+        if (!iniziaConTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
     }
 
-    cout << get_string("PROMPT_INSERISCI_PREFISSI") << endl << "> ";
-    string linea, pref;
-    getline(cin, linea);
-
-    stringstream ss(linea);
-    iniziaConTarget.clear();
-    while (ss >> pref) {
-        iniziaConTarget.push_back(pref);
-    }
-
-    subMenu_regoleTarget.at(7).decisione = !iniziaConTarget.empty(); // CORRETTO (Indice 7)
+    subMenu_regoleTarget.at(7).decisione = !iniziaConTarget.empty();
     if (!iniziaConTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
 }
 
 void gestisci_menu_finisce_con() {
-    system("cls");
-    cout << BOLD << get_string("BANNER_FINISCE_CON") << RESET << endl << endl;
-    if (!finisceConTarget.empty()) {
-        cout << get_string("MSG_SUFFISSI_ATTUALI");
-        for (const auto& s : finisceConTarget) cout << "[" << YELLOW << s << RESET << "] ";
-        cout << endl << endl;
+    while (true) {
+        system("cls");
+        cout << BOLD << get_string("BANNER_FINISCE_CON") << RESET << endl << endl;
+        
+        if (!finisceConTarget.empty()) {
+            cout << get_string("MSG_SUFFISSI_ATTUALI");
+            for (const auto& s : finisceConTarget) cout << "[" << YELLOW << s << RESET << "] ";
+            cout << endl << endl;
+
+            int sceltaOpzione = menuScelta(1, 5, 
+                get_string("POPUP_ADD_PAROLA").c_str(),
+                get_string("POPUP_EDIT_PAROLA").c_str(),
+                get_string("POPUP_CANC_PAROLA").c_str(),
+                get_string("POPUP_ERASE_ALL_PAROLE").c_str(),
+                get_string("SUB_INDIETRO").c_str()
+            );
+
+            cout << endl;
+
+            if (sceltaOpzione == 1) { // Aggiungi
+                cout << get_string("PROMPT_INSERISCI_SUFFISSI") << endl << "> ";
+                string linea, suff;
+                getline(cin, linea);
+                stringstream ss(linea);
+                while (ss >> suff) {
+                    if (!suff.empty() && find(finisceConTarget.begin(), finisceConTarget.end(), suff) == finisceConTarget.end()) {
+                        finisceConTarget.push_back(suff);
+                    }
+                }
+            }
+            else if (sceltaOpzione == 2) { // Modifica
+                vector<valoriMenu> menuModificaSuff;
+                for (const auto& s : finisceConTarget) menuModificaSuff.push_back({s, false});
+                menuModificaSuff.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_FINISCE_CON") << RESET << endl << endl;
+                cout << get_string("MSG_SELEZIONA_PAROLE_MODIFICA") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuModificaSuff);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)finisceConTarget.size()) {
+                    cout << endl << get_string("POPUP_PAROLA_ATT") << YELLOW << finisceConTarget[indiceScelto - 1] << RESET << endl;
+                    cout << get_string("POPUP_INS_VALORE") << endl << "> ";
+                    string nuovoValore;
+                    getline(cin, nuovoValore);
+
+                    if (!nuovoValore.empty()) {
+                        finisceConTarget[indiceScelto - 1] = nuovoValore;
+                        cout << GREEN << endl << get_string("MGS_SCC_EDIT_PAROLA") << RESET << endl;
+                    } else {
+                        cout << YELLOW << endl << get_string("MSG_EDIT_ANNULLATA") << RESET << endl;
+                    }
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 3) { // Rimuovi singola
+                vector<valoriMenu> menuRimuoviSuff;
+                for (const auto& s : finisceConTarget) menuRimuoviSuff.push_back({s, false});
+                menuRimuoviSuff.push_back({get_string("POPUP_ANNULLA"), false});
+
+                system("cls");
+                cout << BOLD << get_string("BANNER_FINISCE_CON") << RESET << endl << endl;
+                cout << get_string("BANNER_SELECT_PAROLA_REMOVE") << endl << endl;
+
+                int indiceScelto = menuScelta(1, menuRimuoviSuff);
+
+                if (indiceScelto > 0 && indiceScelto <= (int)finisceConTarget.size()) {
+                    string suffRimosso = finisceConTarget[indiceScelto - 1];
+                    finisceConTarget.erase(finisceConTarget.begin() + (indiceScelto - 1));
+                    cout << endl << GREEN << get_string("WORD") << " [" << YELLOW << suffRimosso << GREEN << "] " << get_string("SUCC_REMOVED") << RESET << endl;
+                    PAUSE(get_string("PROMPT_CONTINUA"));
+                }
+            }
+            else if (sceltaOpzione == 4) { // Rimuovi tutte
+                finisceConTarget.clear();
+                cout << GREEN << get_string("MSG_ALL_WORDS_REMOVED") << RESET << endl;
+                PAUSE(get_string("PROMPT_CONTINUA"));
+                break;
+            }
+            else if (sceltaOpzione == 5) { // Torna indietro
+                break;
+            }
+        } else {
+            cout << get_string("PROMPT_INSERISCI_SUFFISSI") << endl << "> ";
+            string linea, suff;
+            getline(cin, linea);
+
+            stringstream ss(linea);
+            finisceConTarget.clear();
+            while (ss >> suff) {
+                finisceConTarget.push_back(suff);
+            }
+            break;
+        }
+
+        subMenu_regoleTarget.at(8).decisione = !finisceConTarget.empty();
+        if (!finisceConTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
     }
 
-    cout << get_string("PROMPT_INSERISCI_SUFFISSI") << endl << "> ";
-    string linea, suff;
-    getline(cin, linea);
-
-    stringstream ss(linea);
-    finisceConTarget.clear();
-    while (ss >> suff) {
-        finisceConTarget.push_back(suff);
-    }
-
-    subMenu_regoleTarget.at(8).decisione = !finisceConTarget.empty(); // CORRETTO (Indice 8)
+    subMenu_regoleTarget.at(8).decisione = !finisceConTarget.empty();
     if (!finisceConTarget.empty()) subMenu_regoleTarget.at(0).decisione = false;
 }
 
@@ -1982,6 +2482,7 @@ void esporta_lista() {
     bool esportaCsv  = menu_formatoFile[1].decisione;
     bool esportaJson = menu_formatoFile[2].decisione;
 
+    // --- ELABORAZIONE DATI FILE ---
     vector<string> righeTxt;
     vector<string> righeCsv;
     vector<string> righeJson;
@@ -2113,8 +2614,8 @@ void esporta_lista() {
             vector<string> partiCsv;
             if (espNome) partiCsv.push_back("\"" + nomePulito + "\"");
             if (espExt)  partiCsv.push_back("\"" + estensione + "\"");
-            if (espDim)  partiCsv.push_back("\"" + dimensioneDinamica + "\"");
-            if (espAnno) partiCsv.push_back("\"" + valoreAnnoEsportato + "\"");
+            if (espDim)  partiCsv.push_back(dimensioneDinamica);
+            if (espAnno) partiCsv.push_back(valoreAnnoEsportato);
 
             for (size_t i = 0; i < partiCsv.size(); ++i) {
                 rigaCsv += partiCsv[i] + (i + 1 < partiCsv.size() ? "," : "");
@@ -2150,8 +2651,29 @@ void esporta_lista() {
         goto inizioConfig;
     }
 
+    // --- GESTIONE NOME FILE PULITA E SENZA DOPPIO INVIO ---
+    system("cls");
+    string nomeCartellaCorrente = fs::current_path().filename().string();
+    if (nomeCartellaCorrente.empty()) {
+        nomeCartellaCorrente = "Cartella";
+    }
+
+    string nomeFileDefault = "Lista_esportata_in_" + nomeCartellaCorrente;
+
+    cout << BOLD << get_string("BANNER_CONFIG_ESPORTAZIONE") << RESET << endl << endl;
+    cout << "Inserisci il nome del file (o premi INVIO per usare il default):" << endl;
+    cout << DIM << "Default: " << nomeFileDefault << RESET;
+    cout << ": ";
+
+    string nomeFileScelto;
+    getline(cin, nomeFileScelto);
+
+    // Se l'utente preme invio a vuoto, usa il default; altrimenti usa ciò che ha digitato
+    string nomeFileFinale = nomeFileScelto.empty() ? nomeFileDefault : nomeFileScelto;
+
+    // --- SALVATAGGIO DEI FILE SU DISCO CON IL NOME SCELTO ---
     if (esportaTxt && !righeTxt.empty()) {
-        fs::path pTxt = fs::current_path() / (get_string("FILE_NAME_EXP") + ".txt");
+        fs::path pTxt = fs::current_path() / (nomeFileFinale + ".txt");
         ofstream fTxt(pTxt, ios::trunc);
         if (fTxt.is_open()) {
             for (const auto& r : righeTxt) fTxt << r << "\n";
@@ -2160,7 +2682,7 @@ void esporta_lista() {
     }
 
     if (esportaCsv && !righeCsv.empty()) {
-        fs::path pCsv = fs::current_path() / (get_string("FILE_NAME_EXP") + ".csv");
+        fs::path pCsv = fs::current_path() / (nomeFileFinale + ".csv");
         ofstream fCsv(pCsv, ios::trunc);
         if (fCsv.is_open()) {
             vector<string> headersCsv;
@@ -2178,7 +2700,7 @@ void esporta_lista() {
     }
 
     if (esportaJson && !righeJson.empty()) {
-        fs::path pJson = fs::current_path() / (get_string("FILE_NAME_EXP") + ".json");
+        fs::path pJson = fs::current_path() / (nomeFileFinale + ".json");
         ofstream fJson(pJson, ios::trunc);
         if (fJson.is_open()) {
             fJson << "[\n";
@@ -2489,7 +3011,7 @@ void aboutMe() {
     cout << string(60, '=') << endl << endl;
 
     cout << BOLD << "  " << get_string("SECTION_INFO") << RESET << endl;
-    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.2.3" << RESET << endl;
+    cout << "  " << get_string("INFO_VERSIONE") << GREEN << "v1.2.5" << RESET << endl;
     cout << "  " << get_string("INFO_SVILUPPATORE") << YELLOW << "Raizen" << RESET << endl;
     cout << "  " << get_string("INFO_LICENZA") << DIM << "MIT Open Source" << RESET << endl << endl;
 

@@ -223,23 +223,52 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                     cout << ((menu.at(i - 1).decisione) ? " " : "");
                 }
             } 
-            else if (&menu == &subMenu_regoleCerca || &menu == &subMenu_regoleTarget) {
-                // escludiamo gli ultimi 3 elementi (Menu Selezione/Esegui, riga vuota e Torna al menu)
-                size_t limiteStato =  menu.size() - 3;
+            // --- GESTIONE SPECIFICA PER SUBMENU REGOLE CERCA ---
+            else if (&menu == &subMenu_regoleCerca) {
+                size_t limiteStato = menu.size() - 3;
 
                 if (i >= 1 && i <= limiteStato) {
                     cout << " = [" << (menu.at(i - 1).decisione ? GREEN : RED) << menu.at(i - 1).decisione << RESET << "]";
                     cout << ((menu.at(i - 1).decisione) ? " " : "");
                 }
                 
-                // Mostra l'elenco delle estensioni target a destra se definite
-                if (&menu == &subMenu_regoleTarget && i == 2 && !estensioniTargetMultiple.empty()) {
-                    cout << "  (" << get_string("EXT_SRC");
-                    for (size_t idx = 0; idx < estensioniTargetMultiple.size(); ++idx) {
-                        cout << YELLOW << estensioniTargetMultiple[idx] << RESET;
-                        if (idx < estensioniTargetMultiple.size() - 1) cout << " - ";
-                    }
-                    cout << ")";
+                // Mostra il conteggio per "Definisci Estensioni" (Indice 2)
+                if (i == 2 && !estensioniEsportate.empty()) {
+                    cout << "  (" << get_string("EXT_SRC") << YELLOW << estensioniEsportate.size() << RESET << ")";
+                }
+
+                // Mostra il conteggio per "Cerca Sottostringhe" (Indice 3)
+                if (i == 3 && !sottostringheEsportate.empty()) {
+                    cout << "  (" << get_string("STR_SRC") << YELLOW << sottostringheEsportate.size() << RESET << ")";
+                }
+            }
+            // --- GESTIONE SPECIFICA PER SUBMENU REGOLE TARGET ---
+            else if (&menu == &subMenu_regoleTarget) {
+                size_t limiteStato = menu.size() - 3;
+
+                if (i >= 1 && i <= limiteStato) {
+                    cout << " = [" << (menu.at(i - 1).decisione ? GREEN : RED) << menu.at(i - 1).decisione << RESET << "]";
+                    cout << ((menu.at(i - 1).decisione) ? " " : "");
+                }
+                
+                if (i == 2 && !estensioniTargetMultiple.empty()) {
+                    cout << "  (" << get_string("EXT_SRC") << YELLOW << estensioniTargetMultiple.size() << RESET << ")";
+                }
+
+                if (i == 3 && !sottostringheTarget.empty()) {
+                    cout << "  (" << get_string("STR_SRC") << YELLOW << sottostringheTarget.size() << RESET << ")";
+                }
+
+                if (i == 5 && !cifreTarget.empty()) {
+                    cout << "  (" << get_string("CIFRA_SRC") << YELLOW << cifreTarget.size() << RESET << ")";
+                }
+
+                if (i == 8 && !iniziaConTarget.empty()) {
+                     cout << "  (" << get_string("ELM_INIZ") << YELLOW << iniziaConTarget.size() << RESET << ")";
+                }
+
+                if (i == 9 && !finisceConTarget.empty()) {
+                     cout << "  (" << get_string("ELM_FINAL") << YELLOW << finisceConTarget.size() << RESET << ")";
                 }
             }
 
@@ -303,7 +332,6 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
             if (&menu == &mainMenu) {
                 MenuMain voceSelezionata = static_cast<MenuMain>(pos);
                 
-                // La Q nel mainMenu funziona ESCLUSIVAMENTE per Punteggiatura, Parentesi e Simboli
                 if (voceSelezionata == MenuMain::RIMUOVI_PUNTEGGIATURA || 
                     voceSelezionata == MenuMain::RIMUOVI_PARENTESI || 
                     voceSelezionata == MenuMain::RIMUOVI_SIMBOLI) {
@@ -315,7 +343,7 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                     else if (voceSelezionata == MenuMain::RIMUOVI_SIMBOLI) targetCorrente = &menuSimboli;
 
                     if (targetCorrente != nullptr) {
-                        size_t limiteVoci = targetCorrente->size() - 2; // Esclude riga vuota e "Torna al menu"
+                        size_t limiteVoci = targetCorrente->size() - 2; 
                         bool giaTuttiAttivi = true;
                         
                         for (size_t i = 0; i < limiteVoci; i++) {
@@ -335,11 +363,9 @@ int menuScelta(int pos, const vector<valoriMenu>& menu) {
                     }
                 } 
                 else if (voceSelezionata == MenuMain::SOSTITUISCI_ESTENSIONE) {
-                    // Attiva o disattiva direttamente con Q
                     mainMenu.at(pos - 1).decisione = !mainMenu.at(pos - 1).decisione;
                     continue;
                 }
-                // Per tutte le altre voci del mainMenu, la Q viene ignorata completamente
                 continue;
             }
             else if (&menu == &menuPunteggiatura || &menu == &menuParentesi || &menu == &menuSimboli) {

@@ -153,6 +153,10 @@ static const std::unordered_map<std::string, std::string> dizionarioIT = {
     {"POPUP_NO_ANNULLA", "No, annulla e torna al menu"},
 
     {"EXT_SRC","Estensioni cercate: "},
+    {"STR_SRC","Sottostringhe cercate: "},
+    {"CIFRA_SRC","Cifre cercate: "},
+    {"ELM_INIZ","Elementi iniziali: "},
+    {"ELM_FINAL","Elementi finali: "},
 
     // Etichette dinamiche menuScelta
     {"LBL_TUTTI_FILE", " =          (Tutti i file: "},
@@ -481,6 +485,10 @@ static const std::unordered_map<std::string, std::string> dizionarioEN = {
     {"POPUP_NO_ANNULLA", "No, cancel and return to menu"},
 
     {"EXT_SRC","Extensions searched: "},
+    {"STR_SRC","Substrings searched: "},
+    {"CIFRA_SRC","Digit searched: "},
+    {"ELM_INIZ","Started elements: "},
+    {"ELM_FINAL","Ends elements: "},
 
     // Dynamic labels menuScelta
     {"LBL_TUTTI_FILE", " =          (All files: "},
